@@ -1,7 +1,7 @@
 const { awscdk } = require('projen');
 const project = new awscdk.AwsCdkConstructLibrary({
-  author: 'Timothy Harris',
-  authorAddress: 'timothy.harris@kikoda.com',
+  author: 'Kikoda',
+  authorAddress: 'hr@kikoda.com',
   cdkVersion: '2.1.0',
   defaultReleaseBranch: 'main',
   name: 'kikoda-cdk-constructs',

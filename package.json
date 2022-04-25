@@ -30,8 +30,8 @@
     "projen": "npx projen"
   },
   "author": {
-    "name": "Timothy Harris",
-    "email": "timothy.harris@kikoda.com",
+    "name": "Kikoda",
+    "email": "hr@kikoda.com",
     "organization": false
   },
   "devDependencies": {
