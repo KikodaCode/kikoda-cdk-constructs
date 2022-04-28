@@ -1,11 +1,16 @@
-const { awscdk } = require('projen');
+import { awscdk } from "projen";
 const project = new awscdk.AwsCdkConstructLibrary({
-  author: 'Kikoda',
-  authorAddress: 'hr@kikoda.com',
-  cdkVersion: '2.1.0',
-  defaultReleaseBranch: 'main',
-  name: 'kikoda-cdk-constructs',
-  repositoryUrl: 'https://github.com/KikodaCode/kikoda-cdk-constructs.git',
+  author: "Timothy Harris",
+  authorAddress: "timothy.harris@kikoda.com",
+  cdkVersion: "2.1.0",
+  defaultReleaseBranch: "main",
+  devContainer: true,
+  docgen: true,
+  name: "kikoda-cdk-constructs",
+  prettier: true,
+  projenrcTs: true,
+  repositoryUrl: "https://github.com/KikodaCode/kikoda-cdk-constructs.git",
+  vscode: true,
 
   // deps: [],                /* Runtime dependencies of this module. */
   // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */

@@ -30,8 +30,8 @@
     "projen": "npx projen"
   },
   "author": {
-    "name": "Kikoda",
-    "email": "hr@kikoda.com",
+    "name": "Timothy Harris",
+    "email": "timothy.harris@kikoda.com",
     "organization": false
   },
   "devDependencies": {
@@ -42,21 +42,25 @@
     "aws-cdk-lib": "2.1.0",
     "constructs": "10.0.5",
     "eslint": "^8",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-import-resolver-node": "^0.3.6",
     "eslint-import-resolver-typescript": "^2.7.1",
     "eslint-plugin-import": "^2.26.0",
-    "jest": "^28.0.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27",
     "jest-junit": "^13",
     "jsii": "^1.57.0",
     "jsii-diff": "^1.57.0",
-    "jsii-docgen": "^6.3.20",
+    "jsii-docgen": "^6.3.23",
     "jsii-pacmak": "^1.57.0",
     "json-schema": "^0.4.0",
     "npm-check-updates": "^12",
-    "projen": "^0.54.42",
+    "prettier": "^2.6.2",
+    "projen": "^0.54.51",
     "standard-version": "^9",
     "ts-jest": "^27.1.4",
-    "typescript": "^4.6.3"
+    "ts-node": "^9",
+    "typescript": "^4.6.4"
   },
   "peerDependencies": {
     "aws-cdk-lib": "^2.1.0",
