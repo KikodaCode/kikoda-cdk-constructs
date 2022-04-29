@@ -20,9 +20,9 @@ export enum AlarmLevels {
  * @param {boolean} createCfnExport If true a CFN export will be created available at: {@link EnvironmentAlarmTopic.exportName}.
  */
 export interface EnvironmentAlarmTopicProps {
-  level: AlarmLevels;
-  prefix?: string;
-  createCfnExport?: boolean;
+  readonly level: AlarmLevels;
+  readonly prefix?: string;
+  readonly createCfnExport?: boolean;
 }
 
 /**
