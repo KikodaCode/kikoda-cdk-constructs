@@ -1,4 +1,4 @@
-import { App, AppProps, Aspects, Tags } from 'aws-cdk-lib';
+import { App, AppProps, Aspects, Tags } from "aws-cdk-lib";
 
 import {
   CostOptimizationAspects,
@@ -7,7 +7,7 @@ import {
   ReliabilityAspects,
   SecurityAspects,
   SustainabilityAspects,
-} from './aspects';
+} from "./aspects";
 
 export interface CompliantAppProps extends AppProps {}
 
@@ -19,7 +19,7 @@ export class CompliantApp extends App {
   constructor(props?: CompliantAppProps) {
     super(props);
     // Standard Tags
-    Tags.of(this).add('well-architected', 'true');
+    Tags.of(this).add("well-architected", "true");
 
     // Service Stack Aspects
     Aspects.of(this).add(new CostOptimizationAspects());

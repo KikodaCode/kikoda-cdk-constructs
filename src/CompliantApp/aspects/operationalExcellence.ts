@@ -3,11 +3,15 @@
  * https://docs.aws.amazon.com/wellarchitected/latest/framework/operational-excellence.html
  */
 
-import { IAspect } from 'aws-cdk-lib';
-import { CfnFunction } from 'aws-cdk-lib/aws-lambda';
-import { IConstruct } from 'constructs';
+import { IAspect } from "aws-cdk-lib";
+import { CfnFunction } from "aws-cdk-lib/aws-lambda";
+import { IConstruct } from "constructs";
 
-import { FlagBasedAnnotator, FlagLevel, WellArchitectedAspectsFeatureFlags } from '.';
+import {
+  FlagBasedAnnotator,
+  FlagLevel,
+  WellArchitectedAspectsFeatureFlags,
+} from ".";
 
 export class OperationalExcellenceAspects implements IAspect {
   public visit(node: IConstruct): void {
@@ -15,13 +19,13 @@ export class OperationalExcellenceAspects implements IAspect {
       if (!node.tracingConfig) {
         const { annotate, flagLevel } = new FlagBasedAnnotator(
           node,
-          WellArchitectedAspectsFeatureFlags.EnableXRayTracing,
+          WellArchitectedAspectsFeatureFlags.EnableXRayTracing
         );
-        let message = 'X-Ray Tracing is not enabled for this function';
+        let message = "X-Ray Tracing is not enabled for this function";
 
         if (flagLevel === FlagLevel.FIX) {
-          message += '. Automatically setting tracingConfig.mode to Active';
-          node.addPropertyOverride('TracingConfig', { mode: 'Active' });
+          message += ". Automatically setting tracingConfig.mode to Active";
+          node.addPropertyOverride("TracingConfig", { mode: "Active" });
         }
 
         annotate(message);

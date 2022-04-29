@@ -3,13 +3,17 @@
  * https://docs.aws.amazon.com/wellarchitected/latest/framework/security.html
  */
 
-import { Annotations, IAspect } from 'aws-cdk-lib';
-import { CfnPolicy, Effect } from 'aws-cdk-lib/aws-iam';
-import { CfnDBCluster } from 'aws-cdk-lib/aws-rds';
-import { CfnBucket } from 'aws-cdk-lib/aws-s3';
-import { IConstruct } from 'constructs';
+import { Annotations, IAspect } from "aws-cdk-lib";
+import { CfnPolicy, Effect } from "aws-cdk-lib/aws-iam";
+import { CfnDBCluster } from "aws-cdk-lib/aws-rds";
+import { CfnBucket } from "aws-cdk-lib/aws-s3";
+import { IConstruct } from "constructs";
 
-import { FlagBasedAnnotator, FlagLevel, WellArchitectedAspectsFeatureFlags } from '.';
+import {
+  FlagBasedAnnotator,
+  FlagLevel,
+  WellArchitectedAspectsFeatureFlags,
+} from ".";
 
 interface PolicyDocument {
   statements: {
@@ -30,7 +34,7 @@ export class SecurityAspects implements IAspect {
        * @link https://docs.aws.amazon.com/config/latest/developerguide/s3-bucket-server-side-encryption-enabled.html
        */
       if (!node.bucketEncryption) {
-        Annotations.of(node).addError('S3 bucket encryption is not enabled');
+        Annotations.of(node).addError("S3 bucket encryption is not enabled");
       }
 
       /**
@@ -40,7 +44,7 @@ export class SecurityAspects implements IAspect {
        */
       if (!node.versioningConfiguration) {
         Annotations.of(node).addWarning(
-          'S3 bucket versioning is not enabled. Versioning is recommended however, you can explicity disable versioning for a bucket if applicable to remove this warning.',
+          "S3 bucket versioning is not enabled. Versioning is recommended however, you can explicity disable versioning for a bucket if applicable to remove this warning."
         );
       }
 
@@ -62,19 +66,19 @@ export class SecurityAspects implements IAspect {
        */
       const { annotate, flagLevel } = new FlagBasedAnnotator(
         node,
-        WellArchitectedAspectsFeatureFlags.BlockPublicBuckets,
+        WellArchitectedAspectsFeatureFlags.BlockPublicBuckets
       );
       const config =
         node.publicAccessBlockConfiguration as CfnBucket.PublicAccessBlockConfigurationProperty;
 
       if (!config) {
-        let message = 'Block Public Access is not configured for this bucket';
+        let message = "Block Public Access is not configured for this bucket";
 
         if (flagLevel === FlagLevel.FIX) {
           message +=
-            '. Automatically configuring publicAccessBlockConfiguration to block public access';
+            ". Automatically configuring publicAccessBlockConfiguration to block public access";
 
-          node.addPropertyOverride('PublicAccessBlockConfiguration', {
+          node.addPropertyOverride("PublicAccessBlockConfiguration", {
             BlockPublicPolicy: true,
             BlockPublicAcls: true,
             IgnorePublicAcls: true,
@@ -86,16 +90,20 @@ export class SecurityAspects implements IAspect {
       } else {
         if (config.blockPublicPolicy === false) {
           Annotations.of(node).addWarning(
-            "publicAccessBlockConfiguration.blockPublicPolicy is explicity set to False. This is not recommended, but we're assuming you have a good reason for doing so. Continuing...",
+            "publicAccessBlockConfiguration.blockPublicPolicy is explicity set to False. This is not recommended, but we're assuming you have a good reason for doing so. Continuing..."
           );
         } else if (!config.blockPublicPolicy) {
-          let message = 'Block Public Access settings do not restrict public policies';
+          let message =
+            "Block Public Access settings do not restrict public policies";
 
           if (flagLevel === FlagLevel.FIX) {
             message +=
-              '. Automatically setting publicAccessBlockConfiguration.blockPublicPolicy to True';
+              ". Automatically setting publicAccessBlockConfiguration.blockPublicPolicy to True";
 
-            node.addPropertyOverride('PublicAccessBlockConfiguration.BlockPublicPolicy', true);
+            node.addPropertyOverride(
+              "PublicAccessBlockConfiguration.BlockPublicPolicy",
+              true
+            );
           }
 
           annotate(message);
@@ -103,16 +111,20 @@ export class SecurityAspects implements IAspect {
 
         if (config.blockPublicAcls === false) {
           Annotations.of(node).addWarning(
-            "publicAccessBlockConfiguration.blockPublicAcls is explicity set to False. This is not recommended, but we're assuming you have a good reason for doing so. Continuing...",
+            "publicAccessBlockConfiguration.blockPublicAcls is explicity set to False. This is not recommended, but we're assuming you have a good reason for doing so. Continuing..."
           );
         } else if (!config.blockPublicAcls) {
-          let message = 'Block Public Access settings do not restrict public bucket ACLs';
+          let message =
+            "Block Public Access settings do not restrict public bucket ACLs";
 
           if (flagLevel === FlagLevel.FIX) {
             message +=
-              '. Automatically setting publicAccessBlockConfiguration.blockPublicAcls to True';
+              ". Automatically setting publicAccessBlockConfiguration.blockPublicAcls to True";
 
-            node.addPropertyOverride('PublicAccessBlockConfiguration.BlockPublicAcls', true);
+            node.addPropertyOverride(
+              "PublicAccessBlockConfiguration.BlockPublicAcls",
+              true
+            );
           }
 
           annotate(message);
@@ -136,11 +148,11 @@ export class SecurityAspects implements IAspect {
       for (const { effect, action, resource } of policy.statements) {
         if (
           effect === Effect.ALLOW &&
-          !!action.find(a => a === '*') &&
-          !!resource.find(r => r.includes('*'))
+          !!action.find((a) => a === "*") &&
+          !!resource.find((r) => r.includes("*"))
         ) {
           Annotations.of(node).addError(
-            'Policy statement includes "Effect": "Allow" with "Action": "*" over "Resource" with "*". If a wildcard Resource is absolutely required, scope down the Actions in the statement.',
+            'Policy statement includes "Effect": "Allow" with "Action": "*" over "Resource" with "*". If a wildcard Resource is absolutely required, scope down the Actions in the statement.'
           );
         }
       }
@@ -154,8 +166,11 @@ export class SecurityAspects implements IAspect {
        *
        * @link https://docs.aws.amazon.com/config/latest/developerguide/rds-storage-encrypted.html
        */
-      if (node.storageEncrypted !== true && node.snapshotIdentifier === undefined) {
-        Annotations.of(node).addError('Encryption at rest is not enabled');
+      if (
+        node.storageEncrypted !== true &&
+        node.snapshotIdentifier === undefined
+      ) {
+        Annotations.of(node).addError("Encryption at rest is not enabled");
       }
     }
   }

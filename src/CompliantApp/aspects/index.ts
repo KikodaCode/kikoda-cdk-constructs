@@ -4,22 +4,22 @@
  * https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html
  * */
 
-import { Annotations } from 'aws-cdk-lib';
-import { IConstruct } from 'constructs';
+import { Annotations } from "aws-cdk-lib";
+import { IConstruct } from "constructs";
 
 export enum WellArchitectedAspectsFeatureFlags {
   /** Enable X-Ray Tracing for Lambda functions */
-  EnableXRayTracing = 'well-architected-aspects:enableActiveXRayTracing',
+  EnableXRayTracing = "well-architected-aspects:enableActiveXRayTracing",
 
   /** Define the behavior for regarding public access policies on S3 Buckets */
-  BlockPublicBuckets = 'well-architected-aspects:blockPublicBuckets',
+  BlockPublicBuckets = "well-architected-aspects:blockPublicBuckets",
 }
 
 export enum FlagLevel {
-  INFO = 'info',
-  WARN = 'warn',
-  ERROR = 'error',
-  FIX = 'fix',
+  INFO = "info",
+  WARN = "warn",
+  ERROR = "error",
+  FIX = "fix",
 }
 
 export class FlagBasedAnnotator {
@@ -29,7 +29,7 @@ export class FlagBasedAnnotator {
 
   constructor(
     scope: IConstruct,
-    featureFlag: WellArchitectedAspectsFeatureFlags,
+    featureFlag: WellArchitectedAspectsFeatureFlags
   ) {
     this.scope = scope;
     this.flagLevel = scope.node.tryGetContext(featureFlag);
@@ -53,9 +53,9 @@ export class FlagBasedAnnotator {
   };
 }
 
-export * from './costOptimization';
-export * from './operationalExcellence';
-export * from './performanceEfficiency';
-export * from './reliability';
-export * from './security';
-export * from './sustainability';
+export * from "./costOptimization";
+export * from "./operationalExcellence";
+export * from "./performanceEfficiency";
+export * from "./reliability";
+export * from "./security";
+export * from "./sustainability";
