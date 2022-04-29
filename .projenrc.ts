@@ -2,7 +2,7 @@ import { awscdk } from "projen";
 const project = new awscdk.AwsCdkConstructLibrary({
   author: "Timothy Harris",
   authorAddress: "timothy.harris@kikoda.com",
-  cdkVersion: "2.1.0",
+  cdkVersion: "2.22.0",
   defaultReleaseBranch: "main",
   devContainer: true,
   docgen: true,
