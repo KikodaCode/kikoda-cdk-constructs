@@ -1,5 +1,5 @@
 {
-  "name": "kikoda-cdk-constructs",
+  "name": "@kikoda/cdk-constructs",
   "repository": {
     "type": "git",
     "url": "https://github.com/KikodaCode/kikoda-cdk-constructs.git"
