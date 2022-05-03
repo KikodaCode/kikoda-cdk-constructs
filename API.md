@@ -142,13 +142,13 @@ on a nested stage, returns its parent.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.account">account</a></code> | <code>string</code> | The default account for all resources defined within this stage. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.artifactId">artifactId</a></code> | <code>string</code> | Artifact ID of the assembly if it is a nested stage. The root stage (app) will return an empty string. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.assetOutdir">assetOutdir</a></code> | <code>string</code> | The cloud assembly asset output directory. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.outdir">outdir</a></code> | <code>string</code> | The cloud assembly output directory. |
+| <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.stageName">stageName</a></code> | <code>string</code> | The name of the stage. |
+| <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.account">account</a></code> | <code>string</code> | The default account for all resources defined within this stage. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.parentStage">parentStage</a></code> | <code>aws-cdk-lib.Stage</code> | The parent stage or `undefined` if this is the app. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.region">region</a></code> | <code>string</code> | The default region for all resources defined within this stage. |
-| <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.stageName">stageName</a></code> | <code>string</code> | The name of the stage. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.config">config</a></code> | <code><a href="#@kikoda/cdk-constructs.StageConfig">StageConfig</a></code> | The configuration for the stage. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | The vpc as configured via {@link StageConfig.vpcId} this vpc must be created as a predicate for the application. |
 
@@ -163,18 +163,6 @@ public readonly node: Node;
 - *Type:* constructs.Node
 
 The tree node.
-
----
-
-##### `account`<sup>Optional</sup> <a name="account" id="@kikoda/cdk-constructs.ConfiguredStage.property.account"></a>
-
-```typescript
-public readonly account: string;
-```
-
-- *Type:* string
-
-The default account for all resources defined within this stage.
 
 ---
 
@@ -216,6 +204,33 @@ The cloud assembly output directory.
 
 ---
 
+##### `stageName`<sup>Required</sup> <a name="stageName" id="@kikoda/cdk-constructs.ConfiguredStage.property.stageName"></a>
+
+```typescript
+public readonly stageName: string;
+```
+
+- *Type:* string
+
+The name of the stage.
+
+Based on names of the parent stages separated by
+hypens.
+
+---
+
+##### `account`<sup>Optional</sup> <a name="account" id="@kikoda/cdk-constructs.ConfiguredStage.property.account"></a>
+
+```typescript
+public readonly account: string;
+```
+
+- *Type:* string
+
+The default account for all resources defined within this stage.
+
+---
+
 ##### `parentStage`<sup>Optional</sup> <a name="parentStage" id="@kikoda/cdk-constructs.ConfiguredStage.property.parentStage"></a>
 
 ```typescript
@@ -242,21 +257,6 @@ The default region for all resources defined within this stage.
 
 ---
 
-##### `stageName`<sup>Required</sup> <a name="stageName" id="@kikoda/cdk-constructs.ConfiguredStage.property.stageName"></a>
-
-```typescript
-public readonly stageName: string;
-```
-
-- *Type:* string
-
-The name of the stage.
-
-Based on names of the parent stages separated by
-hypens.
-
----
-
 ##### `config`<sup>Required</sup> <a name="config" id="@kikoda/cdk-constructs.ConfiguredStage.property.config"></a>
 
 ```typescript
@@ -280,6 +280,129 @@ public readonly vpc: IVpc;
 - *Type:* aws-cdk-lib.aws_ec2.IVpc
 
 The vpc as configured via {@link StageConfig.vpcId} this vpc must be created as a predicate for the application.
+
+---
+
+
+### StageAlarmTopic <a name="StageAlarmTopic" id="@kikoda/cdk-constructs.StageAlarmTopic"></a>
+
+An alarm topic and optional cfn export of the topic name.
+
+#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.StageAlarmTopic.Initializer"></a>
+
+```typescript
+import { StageAlarmTopic } from '@kikoda/cdk-constructs'
+
+new StageAlarmTopic(scope: Construct, id: string, props: StageAlarmTopicProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.StageAlarmTopic.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.StageAlarmTopic.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.StageAlarmTopic.Initializer.parameter.props">props</a></code> | <code><a href="#@kikoda/cdk-constructs.StageAlarmTopicProps">StageAlarmTopicProps</a></code> | *No description.* |
+
+---
+
+##### `scope`<sup>Required</sup> <a name="scope" id="@kikoda/cdk-constructs.StageAlarmTopic.Initializer.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+---
+
+##### `id`<sup>Required</sup> <a name="id" id="@kikoda/cdk-constructs.StageAlarmTopic.Initializer.parameter.id"></a>
+
+- *Type:* string
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@kikoda/cdk-constructs.StageAlarmTopic.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@kikoda/cdk-constructs.StageAlarmTopicProps">StageAlarmTopicProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.StageAlarmTopic.toString">toString</a></code> | Returns a string representation of this construct. |
+
+---
+
+##### `toString` <a name="toString" id="@kikoda/cdk-constructs.StageAlarmTopic.toString"></a>
+
+```typescript
+public toString(): string
+```
+
+Returns a string representation of this construct.
+
+#### Static Functions <a name="Static Functions" id="Static Functions"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.StageAlarmTopic.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+
+---
+
+##### ~~`isConstruct`~~ <a name="isConstruct" id="@kikoda/cdk-constructs.StageAlarmTopic.isConstruct"></a>
+
+```typescript
+import { StageAlarmTopic } from '@kikoda/cdk-constructs'
+
+StageAlarmTopic.isConstruct(x: any)
+```
+
+Checks if `x` is a construct.
+
+###### `x`<sup>Required</sup> <a name="x" id="@kikoda/cdk-constructs.StageAlarmTopic.isConstruct.parameter.x"></a>
+
+- *Type:* any
+
+Any object.
+
+---
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.StageAlarmTopic.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#@kikoda/cdk-constructs.StageAlarmTopic.property.topic">topic</a></code> | <code>aws-cdk-lib.aws_sns.Topic</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.StageAlarmTopic.property.cfnOutput">cfnOutput</a></code> | <code>aws-cdk-lib.CfnOutput</code> | *No description.* |
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.StageAlarmTopic.property.node"></a>
+
+```typescript
+public readonly node: Node;
+```
+
+- *Type:* constructs.Node
+
+The tree node.
+
+---
+
+##### `topic`<sup>Required</sup> <a name="topic" id="@kikoda/cdk-constructs.StageAlarmTopic.property.topic"></a>
+
+```typescript
+public readonly topic: Topic;
+```
+
+- *Type:* aws-cdk-lib.aws_sns.Topic
+
+---
+
+##### `cfnOutput`<sup>Optional</sup> <a name="cfnOutput" id="@kikoda/cdk-constructs.StageAlarmTopic.property.cfnOutput"></a>
+
+```typescript
+public readonly cfnOutput: CfnOutput;
+```
+
+- *Type:* aws-cdk-lib.CfnOutput
 
 ---
 
@@ -374,6 +497,56 @@ public readonly config: StageConfig;
 
 ---
 
+### StageAlarmTopicProps <a name="StageAlarmTopicProps" id="@kikoda/cdk-constructs.StageAlarmTopicProps"></a>
+
+#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.StageAlarmTopicProps.Initializer"></a>
+
+```typescript
+import { StageAlarmTopicProps } from '@kikoda/cdk-constructs'
+
+const stageAlarmTopicProps: StageAlarmTopicProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.StageAlarmTopicProps.property.level">level</a></code> | <code><a href="#@kikoda/cdk-constructs.AlarmLevels">AlarmLevels</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.StageAlarmTopicProps.property.createCfnExport">createCfnExport</a></code> | <code>boolean</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.StageAlarmTopicProps.property.prefix">prefix</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `level`<sup>Required</sup> <a name="level" id="@kikoda/cdk-constructs.StageAlarmTopicProps.property.level"></a>
+
+```typescript
+public readonly level: AlarmLevels;
+```
+
+- *Type:* <a href="#@kikoda/cdk-constructs.AlarmLevels">AlarmLevels</a>
+
+---
+
+##### `createCfnExport`<sup>Optional</sup> <a name="createCfnExport" id="@kikoda/cdk-constructs.StageAlarmTopicProps.property.createCfnExport"></a>
+
+```typescript
+public readonly createCfnExport: boolean;
+```
+
+- *Type:* boolean
+
+---
+
+##### `prefix`<sup>Optional</sup> <a name="prefix" id="@kikoda/cdk-constructs.StageAlarmTopicProps.property.prefix"></a>
+
+```typescript
+public readonly prefix: string;
+```
+
+- *Type:* string
+
+---
+
 ### StageConfig <a name="StageConfig" id="@kikoda/cdk-constructs.StageConfig"></a>
 
 Configuration for the stage.
@@ -459,4 +632,40 @@ The subdomain for the stage.
 ---
 
 
+
+## Enums <a name="Enums" id="Enums"></a>
+
+### AlarmLevels <a name="AlarmLevels" id="@kikoda/cdk-constructs.AlarmLevels"></a>
+
+The Alarm levels.
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.AlarmLevels.INFO">INFO</a></code> | For general information these are typically the most verbose. |
+| <code><a href="#@kikoda/cdk-constructs.AlarmLevels.WARNING">WARNING</a></code> | Events that indicate service degredation, inefficency, and/or non blocking errors. |
+| <code><a href="#@kikoda/cdk-constructs.AlarmLevels.CRITICAL">CRITICAL</a></code> | Events that indicate system failures, data loss, and/or blocking errors. |
+
+---
+
+##### `INFO` <a name="INFO" id="@kikoda/cdk-constructs.AlarmLevels.INFO"></a>
+
+For general information these are typically the most verbose.
+
+---
+
+
+##### `WARNING` <a name="WARNING" id="@kikoda/cdk-constructs.AlarmLevels.WARNING"></a>
+
+Events that indicate service degredation, inefficency, and/or non blocking errors.
+
+---
+
+
+##### `CRITICAL` <a name="CRITICAL" id="@kikoda/cdk-constructs.AlarmLevels.CRITICAL"></a>
+
+Events that indicate system failures, data loss, and/or blocking errors.
+
+---
 
