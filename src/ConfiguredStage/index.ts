@@ -19,7 +19,7 @@ export interface StageConfig<T> {
 }
 
 export interface ConfiguredStageProps<T> extends StageProps {
-  config: StageConfig<T>;
+  readonly config: StageConfig<T>;
 }
 
 /**
