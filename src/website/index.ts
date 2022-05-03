@@ -12,6 +12,7 @@ import {
   AwsCustomResourcePolicy,
 } from "aws-cdk-lib/custom-resources";
 import { Construct } from "constructs";
+
 import md5 from "md5";
 import { v4 as uuid } from "uuid";
 import { GeneratedConfig } from "./GeneratedConfig";

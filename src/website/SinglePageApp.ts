@@ -72,6 +72,7 @@ export class SinglePageApp extends Construct {
     const hostedZone = HostedZone.fromLookup(this, "HostedZone", {
       domainName: props.zoneName,
     });
+
     const domainName = props.subdomain
       ? `${props.subdomain}.${props.zoneName}`
       : props.zoneName;
@@ -121,6 +122,7 @@ export class SinglePageApp extends Construct {
       minimumProtocolVersion:
         props.securityPolicy ?? SecurityPolicyProtocol.TLS_V1_2_2021,
     });
+    // console.log(this.distribution);
 
     let assetOpts: AssetOptions = {
       exclude: props.buildAssetExcludes,

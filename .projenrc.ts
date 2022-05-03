@@ -12,7 +12,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   projenrcTs: true,
   repositoryUrl: "https://github.com/KikodaCode/kikoda-cdk-constructs.git",
   vscode: true,
-  deps: ["md5", "uuid"],
+  bundledDeps: ["md5", "uuid"],
 
   // deps: [],                /* Runtime dependencies of this module. */
   // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */
