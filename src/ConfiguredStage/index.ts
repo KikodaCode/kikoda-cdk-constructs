@@ -7,15 +7,15 @@ import { Construct } from "constructs";
  */
 export interface StageConfig<T> {
   /** The subdomain for the stage. */
-  subDomain?: string;
+  readonly subDomain?: string;
   /** The vpcId of a prexisting vpc. */
-  vpcId: string;
+  readonly vpcId: string;
   /** The name of this stage. */
-  stageName: string;
+  readonly stageName: string;
   /** Enable stage level alarms. */
-  enableAlarms: boolean;
+  readonly enableAlarms: boolean;
   /** Stack specific configs. */
-  stackConfigs: T;
+  readonly stackConfigs: T;
 }
 
 export interface ConfiguredStageProps<T> extends StageProps {
