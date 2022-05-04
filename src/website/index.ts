@@ -13,7 +13,8 @@ import {
 } from "aws-cdk-lib/custom-resources";
 import { Construct } from "constructs";
 
-import md5 from "md5";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+import md5 = require("md5");
 import { v4 as uuid } from "uuid";
 import { GeneratedConfig } from "./GeneratedConfig";
 import { SinglePageApp } from "./SinglePageApp";

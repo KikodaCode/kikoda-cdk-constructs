@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 // import { DefaultConfigDir } from './constants';
-import md5 from "md5";
+import md5 = require("md5");
 
 export const DefaultConfigDir: string = "config";
 
