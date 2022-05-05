@@ -1,17 +1,17 @@
-import { CfnOutput } from "aws-cdk-lib";
-import { Topic } from "aws-cdk-lib/aws-sns";
-import { Construct } from "constructs";
+import { CfnOutput } from 'aws-cdk-lib';
+import { Topic } from 'aws-cdk-lib/aws-sns';
+import { Construct } from 'constructs';
 
 /**
  * The Alarm levels.
  */
 export enum AlarmLevels {
   /** For general information these are typically the most verbose. */
-  INFO = "Information",
+  INFO = 'Information',
   /** Events that indicate service degredation, inefficency, and/or non blocking errors. */
-  WARNING = "Warning",
+  WARNING = 'Warning',
   /** Events that indicate system failures, data loss, and/or blocking errors. */
-  CRITICAL = "Critical",
+  CRITICAL = 'Critical',
 }
 
 /**
@@ -36,9 +36,7 @@ export class StageAlarmTopic extends Construct {
   public topic: Topic;
   constructor(scope: Construct, id: string, props: StageAlarmTopicProps) {
     super(scope, id);
-    const identifierPrefix = props.prefix
-      ? `${props.prefix}-${props.level}`
-      : props.level;
+    const identifierPrefix = props.prefix ? `${props.prefix}-${props.level}` : props.level;
 
     this.topic = new Topic(this, `${identifierPrefix}SnsTopic`, {
       displayName: `${props.level} SNS Topic`,
