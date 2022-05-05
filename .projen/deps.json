@@ -5,8 +5,16 @@
       "type": "build"
     },
     {
+      "name": "@types/md5",
+      "type": "build"
+    },
+    {
       "name": "@types/node",
       "version": "^12",
+      "type": "build"
+    },
+    {
+      "name": "@types/uuid",
       "type": "build"
     },
     {
@@ -115,6 +123,14 @@
     {
       "name": "typescript",
       "type": "build"
+    },
+    {
+      "name": "md5",
+      "type": "bundled"
+    },
+    {
+      "name": "uuid",
+      "type": "bundled"
     },
     {
       "name": "aws-cdk-lib",

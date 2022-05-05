@@ -36,7 +36,9 @@
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
+    "@types/md5": "^2.3.2",
     "@types/node": "^12",
+    "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
     "aws-cdk-lib": "2.22.0",
@@ -66,6 +68,14 @@
     "aws-cdk-lib": "^2.22.0",
     "constructs": "^10.0.5"
   },
+  "dependencies": {
+    "md5": "^2.3.0",
+    "uuid": "^8.3.2"
+  },
+  "bundledDependencies": [
+    "md5",
+    "uuid"
+  ],
   "keywords": [
     "cdk"
   ],
