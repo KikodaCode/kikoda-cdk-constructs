@@ -26,7 +26,7 @@ describe('Given a Website', () => {
     public website: Website;
     constructor(props: WebsiteProps) {
       super();
-      this.website = new Website(this, 'website', props);
+      this.website = new Website(this, 'Website', props);
     }
   }
   const baseDomain = 'baseDomain';
@@ -71,6 +71,48 @@ describe('Given a Website', () => {
             MaxAge: rule.maxAge,
           };
         }),
+      },
+    });
+  });
+
+  const generatedConfigStack = new WebStack({
+    stage: 'test',
+    appDir: __dirname,
+    subdomain: subDomain,
+    baseDomain: baseDomain,
+    buildDir: '',
+    generateWebConfigProps: {
+      configDir: 'test_configs',
+      additionalConfig: {
+        configValue: true,
+      },
+    },
+  });
+
+  const generatedConfigTemplate = Template.fromStack(generatedConfigStack);
+  const customResources = generatedConfigTemplate.findResources('Custom::AWS');
+  console.log(JSON.stringify(customResources, null, 2));
+
+  test('Generated config with additionalConfig object should be deployed to S3', () => {
+    generatedConfigTemplate.hasResourceProperties('Custom::AWS', {
+      Create: {
+        'Fn::Join': [
+          '',
+          [Match.anyValue(), Match.anyValue(), Match.stringLikeRegexp('config-manifest.json')],
+        ],
+      },
+    });
+
+    generatedConfigTemplate.hasResourceProperties('Custom::AWS', {
+      Create: {
+        'Fn::Join': [
+          '',
+          [
+            Match.stringLikeRegexp('additionalConfig.*configValue'),
+            Match.anyValue(),
+            Match.anyValue(),
+          ],
+        ],
       },
     });
   });
