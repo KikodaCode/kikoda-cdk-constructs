@@ -24,7 +24,7 @@ export interface GeneratedConfigProps {
   /**
    * Base config file name (if applicable)
    *
-   * @default `base.config.(json|js|ts)`
+   * @default `base.config.ts`
    */
   baseConfigFileName?: string;
 
@@ -54,7 +54,7 @@ export class GeneratedConfig<T extends AdditionalConfig> {
     this.props = props;
 
     // set some defaults
-    this.props.baseConfigFileName = this.props.baseConfigFileName ?? 'base.config';
+    this.props.baseConfigFileName = this.props.baseConfigFileName ?? 'base.config.ts';
 
     // generate config
     this.config = this.generate();
@@ -94,18 +94,20 @@ export class GeneratedConfig<T extends AdditionalConfig> {
     ) {
       // layer config
       const stageConfig = require(stageConfigFilePath);
-      finalConfig = Object.assign({}, finalConfig, stageConfig.default || stageConfig, {
-        additionalConfig: this.props.additionalConfig,
-      });
-
-      return finalConfig as T;
+      finalConfig = Object.assign({}, finalConfig, stageConfig.default || stageConfig);
     } else {
       console.log(
         `Missing config file for stage: ${this.props.stage}. Expected ${stageConfigFilePath}... moving on without config`,
       );
-
-      return {} as T;
     }
+
+    // always add in additionalConfig
+    if (!!this.props.additionalConfig)
+      finalConfig = Object.assign({}, finalConfig, {
+        additionalConfig: this.props.additionalConfig,
+      });
+
+    return finalConfig as T;
   };
 
   private writeToFile = () => {

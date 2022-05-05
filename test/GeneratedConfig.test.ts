@@ -70,4 +70,26 @@ describe('GeneratedConfig', () => {
       expect(inheritedTSConfig.config.additionalConfig).not.toBeNull();
     });
   });
+
+  test('still returns base config when no stage config present', () => {
+    type OnlyBaseConfig = {
+      baseConfigValue?: boolean;
+      additionalConfig: {
+        hasValue: boolean;
+      };
+    };
+
+    const nonExistentStageConfig = new GeneratedConfig<OnlyBaseConfig>({
+      stage: 'nonExistentStage',
+      servicePath: __dirname,
+      configDir: 'test_configs',
+      baseConfigFileName: 'base.config.ts',
+      additionalConfig: {
+        hasValue: true,
+      },
+    });
+
+    expect(nonExistentStageConfig.config.baseConfigValue).toBe(true);
+    expect(nonExistentStageConfig.config.additionalConfig.hasValue).toBe(true);
+  });
 });
