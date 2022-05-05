@@ -832,3 +832,39 @@ for the Docker container during bundling. If this is not provided, the `appDir` 
 
 
 
+## Enums <a name="Enums" id="Enums"></a>
+
+### AlarmLevels <a name="AlarmLevels" id="@kikoda/cdk-constructs.AlarmLevels"></a>
+
+The Alarm levels.
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.AlarmLevels.INFO">INFO</a></code> | For general information these are typically the most verbose. |
+| <code><a href="#@kikoda/cdk-constructs.AlarmLevels.WARNING">WARNING</a></code> | Events that indicate service degredation, inefficency, and/or non blocking errors. |
+| <code><a href="#@kikoda/cdk-constructs.AlarmLevels.CRITICAL">CRITICAL</a></code> | Events that indicate system failures, data loss, and/or blocking errors. |
+
+---
+
+##### `INFO` <a name="INFO" id="@kikoda/cdk-constructs.AlarmLevels.INFO"></a>
+
+For general information these are typically the most verbose.
+
+---
+
+
+##### `WARNING` <a name="WARNING" id="@kikoda/cdk-constructs.AlarmLevels.WARNING"></a>
+
+Events that indicate service degredation, inefficency, and/or non blocking errors.
+
+---
+
+
+##### `CRITICAL` <a name="CRITICAL" id="@kikoda/cdk-constructs.AlarmLevels.CRITICAL"></a>
+
+Events that indicate system failures, data loss, and/or blocking errors.
+
+---
+
