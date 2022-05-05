@@ -1,59 +1,76 @@
-import { App } from "aws-cdk-lib";
-// import { Template } from "aws-cdk-lib/assertions";
-// import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
+import { App, Aspects, Stack } from "aws-cdk-lib";
+import { Annotations, Match } from "aws-cdk-lib/assertions";
+import { Code, Function, Runtime, Tracing } from "aws-cdk-lib/aws-lambda";
 import {
-  // CostOptimizationAspects,
+  CostOptimizationAspects,
   SecurityAspects,
   ReliabilityAspects,
   SustainabilityAspects,
-  // OperationalExcellenceAspects,
+  OperationalExcellenceAspects,
   PerformanceEfficiencyAspects,
   FlagBasedAnnotator,
   WellArchitectedAspectsFeatureFlags,
 } from "../../src/WellArchitected/aspects";
 
-// describe("CostOptimizationAspects", () => {
-//   test("not yet implemented", () => {
-//     const stack = new Stack();
-//     Aspects.of(stack).add(new CostOptimizationAspects());
-//   });
-// });
-
-test("SecurityAspects, no errors.", () => {
-  expect(new SecurityAspects()).toBeDefined;
+describe("CostOptimizationAspects", () => {
+  test("not yet implemented", () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new CostOptimizationAspects());
+    Annotations.fromStack(stack).hasInfo(
+      "*",
+      Match.stringLikeRegexp("implemented")
+    );
+  });
 });
 
-test("ReliabilityAspects, no errors.", () => {
-  expect(new ReliabilityAspects()).toBeDefined;
+describe("SecurityAspects", () => {
+  test("SecurityAspects, no errors.", () => {
+    expect(new SecurityAspects()).toBeDefined;
+  });
 });
 
-test("SustainabilityAspects, no errors.", () => {
-  expect(new SustainabilityAspects()).toBeDefined;
+describe("ReliabilityAspects", () => {
+  test("not yet implemented", () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new ReliabilityAspects());
+    Annotations.fromStack(stack).hasInfo(
+      "*",
+      Match.stringLikeRegexp("implemented")
+    );
+  });
 });
 
-test("OperationalExcellenceAspects, no errors.", () => {
-  // const stack = new Stack();
-  // new Function(stack, "test", {
-  //   runtime: Runtime.PYTHON_3_9,
-  //   handler: "index.handler",
-  //   code: Code.fromInline(
-  //     "" + "def handler(event, context):" + " print(event)"
-  //   ),
-  // });
-  // Aspects.of(stack).add(new OperationalExcellenceAspects());
-  // const template = Template.fromStack(stack);
-  // console.log(template.toJSON());
-  // template.hasResourceProperties("AWS::Lambda::Function", {
-  //   TracingConfig: {
-  //     Mode: "active",
-  //   },
-  // });
+describe("SustainabilityAspects", () => {
+  test("not yet implemented", () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new SustainabilityAspects());
+    Annotations.fromStack(stack).hasInfo(
+      "*",
+      Match.stringLikeRegexp("implemented")
+    );
+  });
 });
 
-test("PerformanceEfficiencyAspects, no errors.", () => {
-  expect(new PerformanceEfficiencyAspects()).toBeDefined;
+describe("OperationalExcellenceAspects", () => {
+  test("OperationalExcellenceAspects, no errors.", () => {
+    const stack = new Stack();
+    new Function(stack, "test", {
+      runtime: Runtime.PYTHON_3_9,
+      handler: "index.handler",
+      code: Code.fromInline(
+        "" + "def handler(event, context):" + " print(event)"
+      ),
+      tracing: Tracing.ACTIVE,
+    });
+    Aspects.of(stack).add(new OperationalExcellenceAspects());
+  });
 });
 
+describe("PerformanceEfficiencyAspects", () => {
+  test("PerformanceEfficiencyAspects, no errors.", () => {
+    expect(new PerformanceEfficiencyAspects()).toBeDefined;
+  });
+});
 test("FlagBasedAnnotator, no errors.", () => {
   expect(
     new FlagBasedAnnotator(
