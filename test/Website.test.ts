@@ -90,8 +90,6 @@ describe('Given a Website', () => {
   });
 
   const generatedConfigTemplate = Template.fromStack(generatedConfigStack);
-  const customResources = generatedConfigTemplate.findResources('Custom::AWS');
-  console.log(JSON.stringify(customResources, null, 2));
 
   test('Generated config with additionalConfig object should be deployed to S3', () => {
     generatedConfigTemplate.hasResourceProperties('Custom::AWS', {
