@@ -1,6 +1,6 @@
-import { Stage, StageProps } from "aws-cdk-lib";
-import { IVpc, Vpc } from "aws-cdk-lib/aws-ec2";
-import { Construct } from "constructs";
+import { Stage, StageProps } from 'aws-cdk-lib';
+import { IVpc, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { Construct } from 'constructs';
 
 /**
  * Configuration for the stage.

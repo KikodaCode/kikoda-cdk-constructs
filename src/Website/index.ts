@@ -1,23 +1,20 @@
-import {
-  OriginRequestPolicy,
-  SecurityPolicyProtocol,
-} from "aws-cdk-lib/aws-cloudfront";
-import { PolicyStatement } from "aws-cdk-lib/aws-iam";
-import { HttpMethods } from "aws-cdk-lib/aws-s3";
-import { BucketDeployment, Source } from "aws-cdk-lib/aws-s3-deployment";
-import { AssetOptions, Stack } from "aws-cdk-lib/core";
+import { OriginRequestPolicy, SecurityPolicyProtocol } from 'aws-cdk-lib/aws-cloudfront';
+import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { HttpMethods } from 'aws-cdk-lib/aws-s3';
+import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import { AssetOptions, Stack } from 'aws-cdk-lib/core';
 import {
   AwsCustomResource,
   PhysicalResourceId,
   AwsCustomResourcePolicy,
-} from "aws-cdk-lib/custom-resources";
-import { Construct } from "constructs";
+} from 'aws-cdk-lib/custom-resources';
+import { Construct } from 'constructs';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-import md5 = require("md5");
-import { v4 as uuid } from "uuid";
-import { GeneratedConfig } from "./GeneratedConfig";
-import { SinglePageApp } from "./SinglePageApp";
+import md5 = require('md5');
+import { v4 as uuid } from 'uuid';
+import { GeneratedConfig } from './GeneratedConfig';
+import { SinglePageApp } from './SinglePageApp';
 
 /** Presets used for invalidation after deployments to Cloudfront Distributions */
 export const DistributionPathsConfig = {
@@ -25,11 +22,11 @@ export const DistributionPathsConfig = {
    * that includes a custom config file and config-manifest.json
    */
   ReactApp: [
-    "/asset-manifest.json",
-    "/config-manifest.json",
-    "/index.html",
-    "/manifest.json",
-    "/robots.txt",
+    '/asset-manifest.json',
+    '/config-manifest.json',
+    '/index.html',
+    '/manifest.json',
+    '/robots.txt',
   ],
 };
 
@@ -67,7 +64,7 @@ export interface WebsiteProps {
   /** Path to the build output, relative to the `appDir` */
   readonly buildDir?: string;
 
-  readonly bundling?: AssetOptions["bundling"];
+  readonly bundling?: AssetOptions['bundling'];
 
   /** The name of the index document to load, typically 'index.html'
    *
@@ -126,32 +123,24 @@ export class Website extends Construct {
     // export endpoint
     this.endpoint = `https://${subdomain}.${baseDomain}`;
 
-    const website = new SinglePageApp(this, "Spa", {
+    const website = new SinglePageApp(this, 'Spa', {
       zoneName: baseDomain,
       subdomain,
       appDir,
       buildDir,
-      buildAssetExcludes: !!generateWebConfigProps
-        ? ["config-manifest.json"]
-        : undefined,
+      buildAssetExcludes: !!generateWebConfigProps ? ['config-manifest.json'] : undefined,
       buildCommand,
       bundling,
-      indexDoc: indexDoc ?? "index.html",
+      indexDoc: indexDoc ?? 'index.html',
       securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
-      originRequestPolicy: props.enableCors
-        ? OriginRequestPolicy.CORS_S3_ORIGIN
-        : undefined,
+      originRequestPolicy: props.enableCors ? OriginRequestPolicy.CORS_S3_ORIGIN : undefined,
       bucketCorsRules: props.enableCors
         ? [
             {
-              allowedHeaders: ["*"],
+              allowedHeaders: ['*'],
               allowedMethods: [HttpMethods.GET],
-              allowedOrigins: props.corsAllowedOrigins ?? ["*"],
-              exposedHeaders: [
-                "x-amz-server-side-encryption",
-                "x-amz-request-id",
-                "x-amz-id-2",
-              ],
+              allowedOrigins: props.corsAllowedOrigins ?? ['*'],
+              exposedHeaders: ['x-amz-server-side-encryption', 'x-amz-request-id', 'x-amz-id-2'],
               maxAge: 3000,
             },
           ]
@@ -172,64 +161,58 @@ export class Website extends Construct {
       const hashedContents = md5(JSON.stringify(generatedWebConfig.config));
 
       const s3ActionConfigManifest = {
-        action: "putObject",
+        action: 'putObject',
         parameters: {
           Body: Stack.of(this).toJsonString({
             files: {
-              "config.json": generatedWebConfig.fileName,
+              'config.json': generatedWebConfig.fileName,
             },
           }),
           Bucket: website.websiteBucket.bucketName,
-          CacheControl: "max-age=0, no-cache, no-store, must-revalidate",
-          ContentType: "application/json",
-          Key: "config-manifest.json",
+          CacheControl: 'max-age=0, no-cache, no-store, must-revalidate',
+          ContentType: 'application/json',
+          Key: 'config-manifest.json',
         },
         /** Generate a unique uuid on every single deployment to ensure this file gets replaced
          * every time
          */
         physicalResourceId: PhysicalResourceId.of(uuid()),
-        service: "S3",
+        service: 'S3',
       };
 
-      const configManifest = new AwsCustomResource(this, "ConfigManifest", {
+      const configManifest = new AwsCustomResource(this, 'ConfigManifest', {
         onCreate: s3ActionConfigManifest,
         onUpdate: s3ActionConfigManifest,
         policy: AwsCustomResourcePolicy.fromStatements([
           new PolicyStatement({
-            actions: ["s3:PutObject"],
-            resources: [
-              website.websiteBucket.arnForObjects("config-manifest.json"),
-            ],
+            actions: ['s3:PutObject'],
+            resources: [website.websiteBucket.arnForObjects('config-manifest.json')],
           }),
         ]),
       });
 
       const s3Action = {
-        action: "putObject",
+        action: 'putObject',
         parameters: {
           Body: Stack.of(this).toJsonString(generatedWebConfig.config),
           Bucket: website.websiteBucket.bucketName,
-          CacheControl: "max-age=0, no-cache, no-store, must-revalidate",
-          ContentType: "application/json",
+          CacheControl: 'max-age=0, no-cache, no-store, must-revalidate',
+          ContentType: 'application/json',
           Key: generatedWebConfig.fileName,
         },
         // hash the contents of the config file to use as physical id. This will ensure replacement
         // when the contents change, even if the name does not.
-        physicalResourceId: PhysicalResourceId.of(
-          `${hashedContents}-config-file`
-        ),
-        service: "S3",
+        physicalResourceId: PhysicalResourceId.of(`${hashedContents}-config-file`),
+        service: 'S3',
       };
 
-      const configFile = new AwsCustomResource(this, "ConfigFile", {
+      const configFile = new AwsCustomResource(this, 'ConfigFile', {
         onCreate: s3Action,
         onUpdate: s3Action,
         policy: AwsCustomResourcePolicy.fromStatements([
           new PolicyStatement({
-            actions: ["s3:PutObject"],
-            resources: [
-              website.websiteBucket.arnForObjects(generatedWebConfig.fileName),
-            ],
+            actions: ['s3:PutObject'],
+            resources: [website.websiteBucket.arnForObjects(generatedWebConfig.fileName)],
           }),
         ]),
       });
@@ -239,16 +222,16 @@ export class Website extends Construct {
       configFile.node.addDependency(website);
 
       // Create an cloudfront invalidation.
-      new BucketDeployment(this, "Invalidation", {
+      new BucketDeployment(this, 'Invalidation', {
         sources: [
           Source.asset(`${appDir}/${buildDir}`, {
-            exclude: ["*", "!index.html"],
+            exclude: ['*', '!index.html'],
           }),
         ],
         destinationBucket: website.websiteBucket,
         prune: false,
         distribution: website.distribution,
-        distributionPaths: props.cloudfrontInvalidationPaths ?? ["/*"],
+        distributionPaths: props.cloudfrontInvalidationPaths ?? ['/*'],
       }).node.addDependency(configFile);
     }
   }

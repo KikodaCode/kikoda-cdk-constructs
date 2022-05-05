@@ -1,38 +1,33 @@
-import { execSync, ExecSyncOptions } from "child_process";
-import { DnsValidatedCertificate } from "aws-cdk-lib/aws-certificatemanager";
+import { execSync, ExecSyncOptions } from 'child_process';
+import { DnsValidatedCertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import {
   SecurityPolicyProtocol,
   Distribution,
   ViewerProtocolPolicy,
   IOriginRequestPolicy,
-} from "aws-cdk-lib/aws-cloudfront";
-import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
+} from 'aws-cdk-lib/aws-cloudfront';
+import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import {
   HostedZone,
   ARecord,
   RecordTarget,
   HostedZoneProviderProps,
-} from "aws-cdk-lib/aws-route53";
-import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
-import {
-  BlockPublicAccess,
-  Bucket,
-  BucketEncryption,
-  CorsRule,
-} from "aws-cdk-lib/aws-s3";
-import { AssetOptions } from "aws-cdk-lib/aws-s3-assets";
-import { BucketDeployment, Source } from "aws-cdk-lib/aws-s3-deployment";
-import { DockerImage, FileCopyOptions } from "aws-cdk-lib/core";
-import { Construct } from "constructs";
+} from 'aws-cdk-lib/aws-route53';
+import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
+import { BlockPublicAccess, Bucket, BucketEncryption, CorsRule } from 'aws-cdk-lib/aws-s3';
+import { AssetOptions } from 'aws-cdk-lib/aws-s3-assets';
+import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import { DockerImage, FileCopyOptions } from 'aws-cdk-lib/core';
+import { Construct } from 'constructs';
 
 export interface SinglePageAppProps {
-  readonly zoneName: HostedZoneProviderProps["domainName"];
+  readonly zoneName: HostedZoneProviderProps['domainName'];
   readonly subdomain?: string;
   readonly indexDoc: string;
   readonly errorDoc?: string;
 
   /** list of files to exclude from the build artifact when deploying */
-  readonly buildAssetExcludes?: FileCopyOptions["exclude"];
+  readonly buildAssetExcludes?: FileCopyOptions['exclude'];
 
   /** This should be the full absolute path of root directory of the git repository. Dependending on your repository setup
    * this may be required for Docker-based bundling. This path, if provided will be used as the mount point
@@ -50,7 +45,7 @@ export interface SinglePageAppProps {
 
   /** Specify a build command to use with the default bundling options, or specify the `bundling` prop */
   readonly buildCommand?: string;
-  readonly bundling?: AssetOptions["bundling"];
+  readonly bundling?: AssetOptions['bundling'];
   readonly blockPublicAccess?: BlockPublicAccess;
   readonly bucketCorsRules?: CorsRule[];
   readonly viewerProtocolPolicy?: ViewerProtocolPolicy;
@@ -69,20 +64,18 @@ export class SinglePageApp extends Construct {
   constructor(scope: Construct, id: string, props: SinglePageAppProps) {
     super(scope, id);
 
-    const hostedZone = HostedZone.fromLookup(this, "HostedZone", {
+    const hostedZone = HostedZone.fromLookup(this, 'HostedZone', {
       domainName: props.zoneName,
     });
 
-    const domainName = props.subdomain
-      ? `${props.subdomain}.${props.zoneName}`
-      : props.zoneName;
+    const domainName = props.subdomain ? `${props.subdomain}.${props.zoneName}` : props.zoneName;
 
-    const cert = new DnsValidatedCertificate(this, "Certificate", {
+    const cert = new DnsValidatedCertificate(this, 'Certificate', {
       hostedZone,
       domainName,
     });
 
-    this.websiteBucket = new Bucket(this, "WebsiteBucket", {
+    this.websiteBucket = new Bucket(this, 'WebsiteBucket', {
       publicReadAccess: false,
       blockPublicAccess: props.blockPublicAccess,
       encryption: BucketEncryption.S3_MANAGED,
@@ -94,33 +87,27 @@ export class SinglePageApp extends Construct {
       });
     }
 
-    this.distribution = new Distribution(this, "CloudfrontDistribution", {
+    this.distribution = new Distribution(this, 'CloudfrontDistribution', {
       defaultBehavior: {
         origin: new S3Origin(this.websiteBucket),
-        viewerProtocolPolicy:
-          props.viewerProtocolPolicy ?? ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        viewerProtocolPolicy: props.viewerProtocolPolicy ?? ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         originRequestPolicy: props.originRequestPolicy,
       },
       errorResponses: [
         {
           httpStatus: 403,
-          responsePagePath: props.errorDoc
-            ? `/${props.errorDoc}`
-            : `/${props.indexDoc}`,
+          responsePagePath: props.errorDoc ? `/${props.errorDoc}` : `/${props.indexDoc}`,
           responseHttpStatus: 200,
         },
         {
           httpStatus: 404,
-          responsePagePath: props.errorDoc
-            ? `/${props.errorDoc}`
-            : `/${props.indexDoc}`,
+          responsePagePath: props.errorDoc ? `/${props.errorDoc}` : `/${props.indexDoc}`,
           responseHttpStatus: 200,
         },
       ],
       domainNames: [domainName],
       certificate: cert,
-      minimumProtocolVersion:
-        props.securityPolicy ?? SecurityPolicyProtocol.TLS_V1_2_2021,
+      minimumProtocolVersion: props.securityPolicy ?? SecurityPolicyProtocol.TLS_V1_2_2021,
     });
     // console.log(this.distribution);
 
@@ -131,48 +118,41 @@ export class SinglePageApp extends Construct {
 
     if (!assetOpts.bundling && props.buildCommand) {
       const execOptions: ExecSyncOptions = {
-        stdio: ["ignore", process.stderr, "inherit"],
+        stdio: ['ignore', process.stderr, 'inherit'],
       };
       const buildCmd = `cd ${props.appDir} && ${props.buildCommand}`;
 
       assetOpts = {
         bundling: {
           local: {
-            tryBundle: (outputDir) => {
+            tryBundle: outputDir => {
               try {
-                execSync("node -v", execOptions);
+                execSync('node -v', execOptions);
               } catch {
                 console.log(
-                  "Local bundling dependencies not found, falling back to docker-based build..."
+                  'Local bundling dependencies not found, falling back to docker-based build...',
                 );
                 return false;
               }
 
-              execSync(
-                `${buildCmd} && cp -a ${props.buildDir}/* ${outputDir}/`,
-                execOptions
-              );
+              execSync(`${buildCmd} && cp -a ${props.buildDir}/* ${outputDir}/`, execOptions);
               return true;
             },
           },
-          image: DockerImage.fromRegistry("node:16"),
-          command: [
-            "bash",
-            "-c",
-            `${buildCmd}  && cp -a ${props.buildDir}/* /asset-output/`,
-          ],
-          user: "root",
+          image: DockerImage.fromRegistry('node:16'),
+          command: ['bash', '-c', `${buildCmd}  && cp -a ${props.buildDir}/* /asset-output/`],
+          user: 'root',
         },
       };
     }
 
-    new BucketDeployment(this, "BucketDeployment", {
+    new BucketDeployment(this, 'BucketDeployment', {
       sources: [Source.asset(props.repoRoot || props.appDir, assetOpts)],
       destinationBucket: this.websiteBucket,
       prune: false,
     });
 
-    new ARecord(this, "Alias", {
+    new ARecord(this, 'Alias', {
       zone: hostedZone,
       recordName: domainName,
       target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
