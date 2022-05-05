@@ -1,3 +1,4 @@
+import { existsSync } from 'fs';
 import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { HostedZoneProviderProps } from 'aws-cdk-lib/aws-route53';
@@ -94,5 +95,17 @@ describe('Given simple Single Page App', () => {
         Aliases: [Match.stringLikeRegexp(`(?=.*${subDomain})(?=.*${givenZoneName}).*`)],
       },
     });
+  });
+
+  new SPAStack({
+    appDir: 'test',
+    zoneName: givenZoneName,
+    indexDoc: 'indexDoc',
+    buildCommand: 'touch spa_local_build_artifact',
+    buildDir: __dirname,
+  });
+
+  test('local bundling', () => {
+    expect(existsSync(`${__dirname}/spa_local_build_artifact`)).toBe(true);
   });
 });

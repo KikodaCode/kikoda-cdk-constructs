@@ -53,3 +53,4 @@ junit.xml
 .jsii
 tsconfig.json
 !/API.md
+spa_local_build_artifact
