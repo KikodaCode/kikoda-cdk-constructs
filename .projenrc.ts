@@ -1,51 +1,16 @@
-import { FileBase, FileBaseOptions, Project } from 'projen';
-import { AwsCdkConstructLibrary, AwsCdkConstructLibraryOptions } from 'projen/lib/awscdk';
+import { TextFile } from 'projen';
+import { AwsCdkConstructLibrary } from 'projen/lib/awscdk';
 import { ArrowParens, EndOfLine, TrailingComma } from 'projen/lib/javascript';
 
-interface NoticeFileOptions extends FileBaseOptions {
-  /**
-   * Contents of the NOTICE file
-   */
-  content: string;
-}
-class NoticeFile extends FileBase {
-  readonly options: NoticeFileOptions;
-
-  constructor(project: Project, options: NoticeFileOptions) {
-    super(project, 'NOTICE', options);
-    this.options = options;
-  }
-
-  synthesizeContent() {
-    return this.options.content;
-  }
-}
-interface KikodaCdkConstructLibraryOptions extends AwsCdkConstructLibraryOptions {
-  /**
-   * Generate a NOTICE file for use in conjunction with licenses like Apache-2.0
-   */
-  notice: true;
-}
-class KikodaCdkConstructLibrary extends AwsCdkConstructLibrary {
-  constructor(options: KikodaCdkConstructLibraryOptions) {
-    super(options);
-
-    new NoticeFile(this, {
-      marker: false,
-      content: `Kikoda Open Source Software - Platform Constructs Library
-Copyright ${options.copyrightPeriod} ${options.copyrightOwner ?? options.author}`,
-    });
-  }
-}
-
-const project = new KikodaCdkConstructLibrary({
+const project = new AwsCdkConstructLibrary({
   author: 'Kikoda, LLC',
   authorAddress: 'platform@kikoda.com',
   description:
     'Collection of useful platform constructs for use with modern applications deployed with AWS',
+  keywords: ['cdk', 'awscdk', 'compliance', 'configuration', 'websites', 'scaffolding', 'cicd'],
   license: 'Apache-2.0',
-  notice: true,
-  copyrightPeriod: '2022-2022',
+  stability: 'experimental',
+  minNodeVersion: '16.0.0',
   cdkVersion: '2.22.0',
   defaultReleaseBranch: 'main',
   devContainer: true,
@@ -74,6 +39,17 @@ const project = new KikodaCdkConstructLibrary({
   devDeps: ['@types/md5', '@types/uuid'] /* Build dependencies for this module. */,
   packageName: '@kikoda/constructs',
   gitignore: ['spa_local_build_artifact'],
+});
+
+// Generate a NOTICE file for license
+new TextFile(project, 'NOTICE', {
+  marker: false,
+  lines: [
+    'Kikoda Constructs Library',
+    'Copyright 2022-2022 Kikoda, LLC',
+    '',
+    'This product includes software developed at Kikoda (https://www.kikoda.com)',
+  ],
 });
 
 project.synth();

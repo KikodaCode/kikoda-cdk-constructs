@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 // import { DefaultConfigDir } from './constants';
+// @ts-ignore
 import md5 = require('md5');
 
 const SUPPORTED_CONFIG_EXTENSIONS = ['.json', '.js', '.ts'];
