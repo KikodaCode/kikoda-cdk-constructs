@@ -10,6 +10,11 @@
     "@jridgewell/gen-mapping" "^0.1.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
+"@aws-cdk/aws-apigatewayv2-alpha@2.23.0-alpha.0":
+  version "2.23.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-apigatewayv2-alpha/-/aws-apigatewayv2-alpha-2.23.0-alpha.0.tgz#1528d4d44f3326b13d93a80460190338cc843b6a"
+  integrity sha512-fAje5M/iDHLSEregfBN0zr3gPUa7BJkcwxZhQQUYDZi3RUdBx5HBTqPXXkZ/sGZ331OYb8Z+S5pM7i0rttZ/qA==
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.16.7":
   version "7.16.7"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.16.7.tgz#44416b6bd7624b998f5b1af5d470856c40138789"

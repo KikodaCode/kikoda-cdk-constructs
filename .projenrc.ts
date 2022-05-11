@@ -37,6 +37,7 @@ const project = new AwsCdkConstructLibrary({
 
   // deps: [],                /* Runtime dependencies of this module. */
   devDeps: ['@types/md5', '@types/uuid'] /* Build dependencies for this module. */,
+  peerDeps: ['@aws-cdk/aws-apigatewayv2-alpha'],
   packageName: '@kikoda/constructs',
   gitignore: ['spa_local_build_artifact'],
 });

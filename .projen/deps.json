@@ -1,6 +1,10 @@
 {
   "dependencies": [
     {
+      "name": "@aws-cdk/aws-apigatewayv2-alpha",
+      "type": "build"
+    },
+    {
       "name": "@types/jest",
       "type": "build"
     },
@@ -131,6 +135,10 @@
     {
       "name": "uuid",
       "type": "bundled"
+    },
+    {
+      "name": "@aws-cdk/aws-apigatewayv2-alpha",
+      "type": "peer"
     },
     {
       "name": "aws-cdk-lib",
