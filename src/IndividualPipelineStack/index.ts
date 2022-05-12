@@ -1,87 +1,48 @@
-import { Environment, Stack, StackProps } from 'aws-cdk-lib';
-import { ComputeType } from 'aws-cdk-lib/aws-codebuild';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { BuildSpec, ComputeType } from 'aws-cdk-lib/aws-codebuild';
+import { Effect, Policy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { CodePipeline, ShellStep, AddStageOpts, ManualApprovalStep } from 'aws-cdk-lib/pipelines';
-import { Construct } from 'constructs';
-import { CodeSource, RepositoryConfig } from '../CodeSource';
-import { ConfiguredStage, StageConfig } from '../ConfiguredStage';
-import { PipelineEventNotificationRule } from '../PipelineEventNotificationRule';
+import { CodeSource } from '../CodeSource';
+import { DeploymentBranch, DeploymentPipelines } from '../DeploymentPipelines';
 import { TrimCloudAssemblyStep } from '../TrimCloudAssemblyStep';
-
-export interface EnvironmentStage<T> {
-  /** The name of the deployment stage eg. 'dev', 'test, 'prod' */
-  readonly name: string;
-  /** Manually approve this stage's deployment before continuing the pipeline? */
-  readonly manualApproval?: boolean;
-  /** Optionally provide the deployment environment for this stage. */
-  readonly env?: Environment;
-
-  /**
-   * Configuration for the environment.
-   */
-  readonly config: StageConfig<T>;
-}
-
-export interface DeploymentBranch<T> {
-  /**
-   * The source branch name to deploy from
-   */
-  readonly name: string;
-  /**
-   * This is a unique string used to differentiate pipleine constructs
-   * in CDK. This is important as it's used to scope all environments
-   * and the resources therein and their associate PhysicalIds in Cloudformation.
-   * **!!! Changing this can result in unwanted updates/replacement to stack resources !!!**
-   *
-   * Typically you want to set this to the type (See Git Flow) of branch being deployed
-   */
-  readonly staticPipelineIdentifier: string;
-  readonly stages: EnvironmentStage<T>[];
-}
 
 /**
  * Individual Pipelines
  */
 export interface IndividualPipelineStackProps<T> extends StackProps {
-  readonly component: string;
-  readonly baseDir: string;
-  readonly synthOuputDir: string;
-  /**
-   * Add a step to pull down and remove asset zips from the cloud assembly output from the Synth
-   * step. This is usefull when you have a lot of resources and are hitting the CFN limit for input
-   * artifact size.
-   *
-   * @default true
-   */
-  readonly pruneCloudAssembly?: boolean;
-  readonly stageType: typeof ConfiguredStage;
-  readonly deploymentBranches: DeploymentBranch<T>[];
-  readonly notificationTopicArn?: string;
   readonly branch: DeploymentBranch<T>;
-  readonly codeSource: RepositoryConfig;
 }
 
 /**
- * An individual pipeline
- * @class
+ * An individual pipeline stack.
+ * @author Kikoda
+ *
+ * @export
+ * @class IndividualPipelineStack
+ * @typedef {IndividualPipelineStack}
+ * @template T
+ * @extends {Stack}
  */
 export class IndividualPipelineStack<T> extends Stack {
-  constructor(scope: Construct, id: string, props: IndividualPipelineStackProps<T>) {
+  constructor(scope: DeploymentPipelines<T>, id: string, props: IndividualPipelineStackProps<T>) {
     super(scope, id, props);
 
-    const {
-      component: stackName,
-      baseDir,
-      synthOuputDir,
-      pruneCloudAssembly = true,
-      stageType,
-      branch,
-    } = props;
+    const { baseDir = '.', synthOuputDir = 'out', pruneCloudAssembly = true } = scope.config;
+    const { branch } = props;
 
     // Static Pipeline id
-    const pipelineId = `${stackName}-${branch.staticPipelineIdentifier}`;
-
+    const pipelineId = `${scope.component.name}-${branch.staticPipelineIdentifier}`;
+    const codeArtifactAccessRole = new Role(this, 'CodeArtifactsAccessRole', {
+      assumedBy: new ServicePrincipal('codepipeline.amazonaws.com'),
+    });
+    codeArtifactAccessRole.addToPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['codeartifacts:*'], //TODO: probably dont allow absolutely everything....
+      }),
+    );
     // Branch-based pipeline name
-    const pipelineName = `${stackName}-${branch.name.replace('/', '-')}`;
+    const pipelineName = `${scope.component.name}-${branch.name.replace('/', '-')}`;
     const pipeline = new CodePipeline(this, pipelineId, {
       pipelineName,
       dockerEnabledForSynth: true,
@@ -91,11 +52,43 @@ export class IndividualPipelineStack<T> extends Stack {
         },
       },
       synth: new ShellStep('Synth', {
-        input: new CodeSource(this, branch.name, props.codeSource).source,
+        input: new CodeSource(this, branch.name, scope.config.repository).source,
         commands: [`cd ${baseDir}`, `npm run cdk synth -o ${synthOuputDir}`],
         primaryOutputDirectory: `${baseDir}/${synthOuputDir}`,
       }),
+      assetPublishingCodeBuildDefaults: {
+        partialBuildSpec: BuildSpec.fromObject({
+          phases: {
+            install: {
+              commands: [
+                `ASSUME_ROLE_ARN=${codeArtifactAccessRole.roleArn}`,
+                'TEMP_ROLE=$(aws sts assume-role --role-arn $ASSUME_ROLE_ARN --role-session-name test)',
+                'export TEMP_ROLE',
+                'export AWS_ACCESS_KEY_ID=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.AccessKeyId\')',
+                'export AWS_SECRET_ACCESS_KEY=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.SecretAccessKey\')',
+                'export AWS_SESSION_TOKEN=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.SessionToken\')',
+              ],
+            },
+            preBuild: {
+              commands: [
+                "echo Build started on 'date'",
+                'echo Building the Docker image...',
+                'docker build --build-arg AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID --build-arg AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --build-arg AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN',
+              ],
+            },
+          },
+        }),
+        buildEnvironment: {
+          environmentVariables: {},
+        },
+      },
     });
+    pipeline.pipeline.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['sts:assumerole'],
+      }),
+    );
 
     branch.stages.forEach(stage => {
       const pre: AddStageOpts['pre'] = [];
@@ -108,8 +101,9 @@ export class IndividualPipelineStack<T> extends Stack {
       // add manual approval step if applicable
       if (stage.manualApproval) pre.push(new ManualApprovalStep(`Promote To ${stage.name}`));
 
+      const stageType = scope.component.stage;
       pipeline.addStage(
-        new stageType<typeof stage.config.stackConfigs>(this, stage.name, {
+        new stageType<T>(this, stage.name, {
           config: stage.config,
           env: stage.env,
         }),
@@ -119,8 +113,9 @@ export class IndividualPipelineStack<T> extends Stack {
 
     pipeline.buildPipeline();
 
-    if (props.notificationTopicArn && props.notificationTopicArn !== '') {
-      new PipelineEventNotificationRule(pipeline, props.notificationTopicArn);
-    }
+    // TODO: Move to custom Aspect
+    // if (props.notificationTopicArn && props.notificationTopicArn !== '') {
+    //   new PipelineEventNotificationRule(pipeline, props.notificationTopicArn);
+    // }
   }
 }
