@@ -32,6 +32,7 @@ export class IndividualPipelineStack<T> extends Stack {
 
     // Static Pipeline id
     const pipelineId = `${scope.component.name}-${branch.staticPipelineIdentifier}`;
+    const codeArtifactRepositoryArn = '';
     const codeArtifactAccessRole = new Role(this, 'CodeArtifactsAccessRole', {
       assumedBy: new ServicePrincipal('codepipeline.amazonaws.com'),
     });
@@ -39,6 +40,7 @@ export class IndividualPipelineStack<T> extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['codeartifacts:*'], //TODO: probably dont allow absolutely everything....
+        resources: [codeArtifactRepositoryArn],
       }),
     );
     // Branch-based pipeline name
