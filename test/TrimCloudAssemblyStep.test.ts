@@ -1,4 +1,4 @@
-import { TrimCloudAssemblyStep } from '../src';
+import { TrimCloudAssemblyStep } from '../src/DeploymentPipelines/IndividualPipelineStack/TrimCloudAssemblyStep';
 
 describe('TrimCloudAssemblyStep', () => {
   it('should create without error.', () => {

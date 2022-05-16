@@ -1,7 +1,7 @@
 import { App, Stack } from 'aws-cdk-lib';
 import { CodePipeline, ShellStep } from 'aws-cdk-lib/pipelines';
 import { CodeSource } from '../src';
-import { PipelineEventNotificationRule } from '../src/PipelineEventNotificationRule';
+import { PipelineEventNotificationRule } from '../src/DeploymentPipelines/PipelineEventNotificationRule';
 
 const stack = new Stack(new App(), 'TestStack', {
   env: {

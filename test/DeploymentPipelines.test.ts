@@ -1,48 +1,40 @@
-import { App, StageProps } from 'aws-cdk-lib';
+import { App } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { ConfiguredStage, DeploymentPipelines, StageConfig, StageConfigBase } from '../src';
+import { ConfiguredStage, ConfiguredStageProps, DeploymentPipelines } from '../src';
 
 describe('DeploymentPipelines', () => {
-  const base: StageConfigBase = {
-    baseDomain: 'test.com',
-  };
-  interface TestConfig {
+  interface CoreConfig {
     someBool: boolean;
   }
-  type ConfigType = TestConfig & StageConfig;
-  const testConfig: ConfigType = {
-    ...base,
-    stageName: 'test',
-    vpcId: 'testVpc',
-    enableAlarms: false,
-    someBool: false,
-  };
-  interface TestStackProps extends StageProps, StageConfig, TestConfig {}
-  class TestStage extends ConfiguredStage<TestConfig> {
-    constructor(scope: Construct, id: string, props: TestStackProps) {
+
+  class TestStage extends ConfiguredStage<CoreConfig> {
+    constructor(scope: Construct, id: string, props: ConfiguredStageProps<CoreConfig>) {
       super(scope, id, props);
-      props.someBool;
-      this.additonalConfig.someBool;
     }
   }
 
   it('should create without error.', () => {
-    const statement = new DeploymentPipelines<TestConfig>(new App(), {
-      component: { name: 'yes', stage: TestStage },
+    const statement = new DeploymentPipelines<CoreConfig, TestStage>(new App(), {
+      component: 'test',
       deploymentBranches: [
         {
-          name: 'test',
+          branchName: 'test',
           staticPipelineIdentifier: 'test',
-          stages: [{ name: 'test', config: { ...testConfig } }],
+          stages: [
+            {
+              stageName: 'dev',
+              manualApproval: false,
+              config: {
+                someBool: false,
+              },
+            },
+          ],
         },
       ],
-      repoConfig: {
-        baseDir: '',
-        pruneCloudAssembly: true,
-        repository: {
-          codeCommitArn: 'arn:codecommit:thing:us-east-1:123456789012:thing',
-        },
+      repository: {
+        codeCommitArn: 'yas',
       },
+      getStage: (scope, id, props) => new TestStage(scope, id, props),
     });
     expect(statement).not.toBeNull;
   });

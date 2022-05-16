@@ -17,7 +17,7 @@ import {
 import { Construct } from 'constructs';
 import { merge } from 'lodash';
 import { IDeploymentBranch } from '..';
-import { CodeSource, DeploymentPipelinesProps } from '../..';
+import { CodeSource, ConfiguredStage, DeploymentPipelinesProps } from '../..';
 import { PipelineEventNotificationRule } from '../PipelineEventNotificationRule';
 import { TrimCloudAssemblyStep } from './TrimCloudAssemblyStep';
 
@@ -36,8 +36,11 @@ const createAssumeRoleCommands = (role?: string) =>
 /**
  * Individual Pipelines
  */
-export interface IndividualPipelineStackProps<TConfig, TBranch extends IDeploymentBranch<TConfig>>
-  extends DeploymentPipelinesProps<TConfig, TBranch> {
+export interface IndividualPipelineStackProps<
+  TConfig,
+  TStage extends ConfiguredStage<TConfig>,
+  TBranch extends IDeploymentBranch<TConfig>,
+> extends DeploymentPipelinesProps<TConfig, TStage, TBranch> {
   branch: TBranch;
 }
 
@@ -47,9 +50,14 @@ export interface IndividualPipelineStackProps<TConfig, TBranch extends IDeployme
  */
 export class IndividualPipelineStack<
   TConfig,
+  TStage extends ConfiguredStage<TConfig>,
   TBranch extends IDeploymentBranch<TConfig>,
 > extends Stack {
-  constructor(scope: Construct, id: string, props: IndividualPipelineStackProps<TConfig, TBranch>) {
+  constructor(
+    scope: Construct,
+    id: string,
+    props: IndividualPipelineStackProps<TConfig, TStage, TBranch>,
+  ) {
     super(scope, id, props);
 
     const {
@@ -57,7 +65,7 @@ export class IndividualPipelineStack<
       baseDir,
       synthOuputDir,
       pruneCloudAssembly = true,
-      Stage,
+      getStage,
       branch,
     } = props;
 
@@ -67,7 +75,7 @@ export class IndividualPipelineStack<
     const pipelineId = `${stackName}-${branch.staticPipelineIdentifier}`;
 
     // Branch-based pipeline name
-    const pipelineName = `${stackName}-${branch.name.replace('/', '-')}`;
+    const pipelineName = `${stackName}-${branch.branchName.replace('/', '-')}`;
 
     const additonalPolicyStatements: PolicyStatementProps[] = [];
     let assetPublishingCodeBuildDefaults: CodeBuildOptions = {};
@@ -124,7 +132,7 @@ export class IndividualPipelineStack<
         },
       },
       synth: new ShellStep('Synth', {
-        input: new CodeSource(this, branch.name, props.repository).source,
+        input: new CodeSource(this, branch.branchName, props.repository).source,
         commands: this.defineSynthCommands(
           synthOuputDir,
           baseDir,
@@ -152,9 +160,9 @@ export class IndividualPipelineStack<
       if (prune) pre.push(new TrimCloudAssemblyStep(id, pipelineName));
 
       // add manual approval step if applicable
-      if (stage.manualApproval) pre.push(new ManualApprovalStep(`Promote To ${stage.name}`));
+      if (stage.manualApproval) pre.push(new ManualApprovalStep(`Promote To ${stage.stageName}`));
 
-      pipeline.addStage(new Stage(this, stage.name, { config: stage.config, env: stage.env }), {
+      pipeline.addStage(getStage(this, stage.stageName, { config: stage.config, env: stage.env }), {
         pre,
       });
     });

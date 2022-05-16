@@ -1,4 +1,4 @@
-import AllowCodeStarSnsPublishStatement from '../src/PolicyStatements/AllowCodeStarSnsPublishStatement';
+import AllowCodeStarSnsPublishStatement from '../src/DeploymentPipelines/AllowCodeStarSnsPublishStatement';
 
 describe('AllowCodeStarSnsPublishStatement', () => {
   it('should create without error.', () => {

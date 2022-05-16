@@ -3,8 +3,9 @@
  */
 import { App, StackProps, StageProps } from 'aws-cdk-lib';
 import { PolicyStatementProps } from 'aws-cdk-lib/aws-iam';
+import { Construct } from 'constructs';
 import { RepositoryConfig } from '../CodeSource';
-import { ConfiguredStage } from '../ConfiguredStage';
+import { ConfiguredStage, ConfiguredStageProps } from '../ConfiguredStage';
 import { IndividualPipelineStack } from './IndividualPipelineStack';
 
 /**
@@ -16,13 +17,13 @@ export interface Component {
 }
 
 export interface IStage<TConfig> extends StageProps {
-  name: string;
-  manualApproval: boolean;
+  stageName: string;
+  manualApproval?: boolean;
   config: TConfig;
 }
 
 export interface IDeploymentBranch<TConfig> {
-  name: string;
+  branchName: string;
   staticPipelineIdentifier: string;
   stages: IStage<TConfig>[];
 }
@@ -30,11 +31,14 @@ export interface IDeploymentBranch<TConfig> {
 /**
  * DeploymentPipelinesProps
  */
-export interface DeploymentPipelinesProps<TConfig, TBranch extends IDeploymentBranch<TConfig>>
-  extends StackProps {
+export interface DeploymentPipelinesProps<
+  TConfig,
+  TStage extends ConfiguredStage<TConfig>,
+  TBranch extends IDeploymentBranch<TConfig> = IDeploymentBranch<TConfig>,
+> extends StackProps {
   component: string;
-  baseDir: string;
-  synthOuputDir: string;
+  baseDir?: string;
+  synthOuputDir?: string;
 
   /**
    * Add a step to pull down and remove asset zips from the cloud assembly output from the Synth
@@ -44,7 +48,7 @@ export interface DeploymentPipelinesProps<TConfig, TBranch extends IDeploymentBr
    * @default true
    */
   pruneCloudAssembly?: boolean;
-  Stage: typeof ConfiguredStage;
+  getStage: (scope: Construct, id: string, props: ConfiguredStageProps<TConfig>) => TStage;
   deploymentBranches: TBranch[];
   notificationTopicArn?: string;
   builderAssumeRole?: string;
@@ -53,8 +57,12 @@ export interface DeploymentPipelinesProps<TConfig, TBranch extends IDeploymentBr
   additionalBuildRolePolicies?: PolicyStatementProps[];
 }
 
-export class DeploymentPipelines<TConfig, TBranch extends IDeploymentBranch<TConfig>> {
-  constructor(app: App, props: DeploymentPipelinesProps<TConfig, TBranch>) {
+export class DeploymentPipelines<
+  TConfig,
+  TStage extends ConfiguredStage<TConfig>,
+  TBranch extends IDeploymentBranch<TConfig> = IDeploymentBranch<TConfig>,
+> {
+  constructor(app: App, props: DeploymentPipelinesProps<TConfig, TStage, TBranch>) {
     props.deploymentBranches.forEach((branch: TBranch) => {
       const pipelineStackId = `${props.component}-${branch.staticPipelineIdentifier}-pipeline`;
 
