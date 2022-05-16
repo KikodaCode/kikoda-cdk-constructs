@@ -32,11 +32,11 @@ const project = new AwsCdkConstructLibrary({
   projenrcTs: true,
   repositoryUrl: 'https://github.com/KikodaCode/kikoda-constructs.git',
   vscode: true,
-  bundledDeps: ['md5', 'uuid'],
+  bundledDeps: ['md5', 'uuid', 'lodash'],
   tsconfig: { compilerOptions: { esModuleInterop: true } },
 
   // deps: [],                /* Runtime dependencies of this module. */
-  devDeps: ['@types/md5', '@types/uuid'] /* Build dependencies for this module. */,
+  devDeps: ['@types/md5', '@types/uuid', '@types/lodash'] /* Build dependencies for this module. */,
   packageName: '@kikoda/constructs',
   gitignore: ['spa_local_build_artifact'],
 });
