@@ -13,7 +13,7 @@ export interface GitHubSourceConfig {
 
 /**
  * Configuration properties for the code source repository. Currently supports CodeCommit and GitHub Sources.
- * GitHug source requrires a preexisting CodeStarConnection.
+ * GitHub source requrires a preexisting CodeStarConnection.
  */
 export type RepositoryConfig = GitHubSourceConfig | CodeCommitSourceConfig;
 
