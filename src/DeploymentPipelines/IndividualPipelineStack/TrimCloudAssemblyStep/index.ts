@@ -7,7 +7,7 @@ export class TrimCloudAssemblyStep extends CodeBuildStep {
     let bucketPrefix = stackId.substring(0, 24);
     bucketPrefix = bucketPrefix.slice(-1) === '-' ? bucketPrefix : `${bucketPrefix}-`;
 
-    super('', {
+    super('TrimCloudAssemblyStep', {
       rolePolicyStatements: [
         new PolicyStatement({
           effect: Effect.ALLOW,
