@@ -10,7 +10,7 @@ const project = new AwsCdkConstructLibrary({
   keywords: ['cdk', 'awscdk', 'compliance', 'configuration', 'websites', 'scaffolding', 'cicd'],
   license: 'Apache-2.0',
   stability: 'experimental',
-  minNodeVersion: '16.0.0',
+  minNodeVersion: '14.0.0',
   cdkVersion: '2.22.0',
   defaultReleaseBranch: 'main',
   devContainer: true,
