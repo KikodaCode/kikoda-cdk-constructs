@@ -17,7 +17,7 @@ import {
 import { Construct } from 'constructs';
 import { merge } from 'lodash';
 import { IDeploymentBranch } from '..';
-import { CodeSource, ConfiguredStage, DeploymentPipelinesProps } from '../..';
+import { CodeSource, DeploymentPipelinesProps } from '../..';
 import { PipelineEventNotificationRule } from '../PipelineEventNotificationRule';
 import { TrimCloudAssemblyStep } from './TrimCloudAssemblyStep';
 
@@ -36,28 +36,16 @@ const createAssumeRoleCommands = (role?: string) =>
 /**
  * Individual Pipelines
  */
-export interface IndividualPipelineStackProps<
-  TConfig,
-  TStage extends ConfiguredStage<TConfig>,
-  TBranch extends IDeploymentBranch<TConfig>,
-> extends DeploymentPipelinesProps<TConfig, TStage, TBranch> {
+export interface IndividualPipelineStackProps<TConfig, TBranch extends IDeploymentBranch<TConfig>>
+  extends DeploymentPipelinesProps<TConfig, TBranch> {
   branch: TBranch;
 }
 
-/**
- * An individual pipeline
- * @class
- */
 export class IndividualPipelineStack<
   TConfig,
-  TStage extends ConfiguredStage<TConfig>,
   TBranch extends IDeploymentBranch<TConfig>,
 > extends Stack {
-  constructor(
-    scope: Construct,
-    id: string,
-    props: IndividualPipelineStackProps<TConfig, TStage, TBranch>,
-  ) {
+  constructor(scope: Construct, id: string, props: IndividualPipelineStackProps<TConfig, TBranch>) {
     super(scope, id, props);
 
     const {
@@ -65,7 +53,7 @@ export class IndividualPipelineStack<
       baseDir,
       synthOuputDir,
       pruneCloudAssembly = true,
-      getStage,
+      stageType,
       branch,
     } = props;
 
@@ -162,7 +150,7 @@ export class IndividualPipelineStack<
       // add manual approval step if applicable
       if (stage.manualApproval) pre.push(new ManualApprovalStep(`Promote To ${stage.stageName}`));
 
-      pipeline.addStage(getStage(this, stage.stageName, { config: stage.config, env: stage.env }), {
+      pipeline.addStage(new stageType(this, stage.stageName, stage), {
         pre,
       });
     });

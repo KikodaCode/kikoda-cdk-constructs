@@ -12,7 +12,7 @@ import { Construct } from 'constructs';
  * @extends {StageProps}
  */
 export interface ConfiguredStageProps<T> extends StageProps {
-  config: T;
+  readonly config: T;
 }
 
 /**

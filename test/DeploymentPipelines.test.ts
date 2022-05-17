@@ -14,7 +14,7 @@ describe('DeploymentPipelines', () => {
   }
 
   it('should create without error.', () => {
-    const statement = new DeploymentPipelines<CoreConfig, TestStage>(new App(), {
+    const statement = new DeploymentPipelines<CoreConfig>(new App(), {
       component: 'test',
       deploymentBranches: [
         {
@@ -34,7 +34,7 @@ describe('DeploymentPipelines', () => {
       repository: {
         codeCommitArn: 'yas',
       },
-      getStage: (scope, id, props) => new TestStage(scope, id, props),
+      stageType: TestStage,
     });
     expect(statement).not.toBeNull;
   });
