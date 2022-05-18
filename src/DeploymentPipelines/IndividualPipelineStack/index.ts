@@ -21,6 +21,13 @@ import { CodeSource, DeploymentPipelinesProps } from '../..';
 import { PipelineEventNotificationRule } from '../PipelineEventNotificationRule';
 import { TrimCloudAssemblyStep } from './TrimCloudAssemblyStep';
 
+/**
+ * TODO: Update documentation
+ * @author Kikoda
+ *
+ * @param {?string} [role]
+ * @returns {{}}
+ */
 const createAssumeRoleCommands = (role?: string) =>
   role
     ? [
@@ -34,17 +41,49 @@ const createAssumeRoleCommands = (role?: string) =>
     : [];
 
 /**
- * Individual Pipelines
+ * The properties for the IndividualPipelineStack construct.
+ *
+ * @export
+ * @interface IndividualPipelineStackProps
+ * @typedef {IndividualPipelineStackProps}
+ * @template TConfig
+ * @template TBranch extends IDeploymentBranch<TConfig>
+ * @extends {DeploymentPipelinesProps<TConfig, TBranch>}
  */
 export interface IndividualPipelineStackProps<TConfig, TBranch extends IDeploymentBranch<TConfig>>
   extends DeploymentPipelinesProps<TConfig, TBranch> {
+  /**
+   * The deployment branch that this stack represents.
+   * @author Kikoda
+   *
+   * @type {TBranch}
+   */
   branch: TBranch;
 }
 
+/**
+ * An individual deployment pipeline stack.
+ *
+ * @export
+ * @class IndividualPipelineStack
+ * @typedef {IndividualPipelineStack}
+ * @template TConfig
+ * @template TBranch extends IDeploymentBranch<TConfig>
+ * @extends {Stack}
+ */
 export class IndividualPipelineStack<
   TConfig,
   TBranch extends IDeploymentBranch<TConfig>,
 > extends Stack {
+  /**
+   * Creates an instance of IndividualPipelineStack.
+   * @author Kikoda
+   *
+   * @constructor
+   * @param {Construct} scope
+   * @param {string} id
+   * @param {IndividualPipelineStackProps<TConfig, TBranch>} props
+   */
   constructor(scope: Construct, id: string, props: IndividualPipelineStackProps<TConfig, TBranch>) {
     super(scope, id, props);
 
@@ -91,7 +130,7 @@ export class IndividualPipelineStack<
                 `ASSUME_ROLE_ARN=${codeArtifactAccessRole.roleArn}`,
                 'TEMP_ROLE=$(aws sts assume-role --role-arn $ASSUME_ROLE_ARN --role-session-name test)',
                 'export TEMP_ROLE',
-                'export AWS_ACCESS_KEY_ID=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.AccessKeyId\')',
+                'export AWS_ACCESS_KEY_ID=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.AccessKeyId\')', // TODO: JQ dependency
                 'export AWS_SECRET_ACCESS_KEY=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.SecretAccessKey\')',
                 'export AWS_SESSION_TOKEN=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.SessionToken\')',
               ],
@@ -159,10 +198,24 @@ export class IndividualPipelineStack<
 
     // TODO: move to an aspect?
     if (props.notificationTopicArn && props.notificationTopicArn !== '') {
-      new PipelineEventNotificationRule(pipeline, props.notificationTopicArn);
+      new PipelineEventNotificationRule(pipeline, {
+        notificationTopicArn: props.notificationTopicArn,
+      });
     }
   }
 
+  /**
+   * TODO: Update documentation
+   * @author Kikoda
+   *
+   * @private
+   * @param {?string} [synthOutputDir]
+   * @param {?string} [baseDir]
+   * @param {?string} [assumeRole]
+   * @param {boolean} [installRequired=true]
+   * @param {string} [pkgManager='yarn']
+   * @returns {{}}
+   */
   private defineSynthCommands(
     synthOutputDir?: string,
     baseDir?: string,

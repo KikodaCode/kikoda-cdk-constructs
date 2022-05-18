@@ -1,7 +1,24 @@
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { CodeBuildStep } from 'aws-cdk-lib/pipelines';
 
+/**
+ * TODO: Update documentation
+ * @author Kikoda
+ *
+ * @export
+ * @class TrimCloudAssemblyStep
+ * @typedef {TrimCloudAssemblyStep}
+ * @extends {CodeBuildStep}
+ */
 export class TrimCloudAssemblyStep extends CodeBuildStep {
+  /**
+   * TODO: Creates an instance of TrimCloudAssemblyStep.
+   * @author Kikoda
+   *
+   * @constructor
+   * @param {string} stackId
+   * @param {string} pipelineName
+   */
   constructor(stackId: string, pipelineName: string) {
     // for grep'ing, truncate to 24 chars; if not already ends in dash, then add one
     let bucketPrefix = stackId.substring(0, 24);

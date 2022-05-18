@@ -16,34 +16,31 @@ export interface ConfiguredStageProps<T> extends StageProps {
 }
 
 /**
- * A Stage that is configured with a specific configuration.
- * @author Kikoda
+ * A Stage that has a specific configuration.
  *
  * @export
  * @class ConfiguredStage
  * @typedef {ConfiguredStage}
- * @template T
+ * @template TConfig - a generic type that represents the configuration for the stage.
  * @extends {Stage}
  */
-export class ConfiguredStage<T> extends Stage {
+export class ConfiguredStage<TConfig> extends Stage {
   /**
    * The configuration for the stage.
-   * @author Kikoda
    *
    * @readonly
    */
-  readonly config: T;
+  readonly config: TConfig;
   /**
    * Configured Stage construct to be used with the Deployment Piplelines construct.
    * This stage allows for use of the specified generic type to be made available as the config property.
-   * @author Kikoda
    *
    * @constructor
    * @param {Construct} scope - The scope of the construct.
    * @param {string} id - The construct's id.
-   * @param {ConfiguredStageProps<T>} props - The configuration based upon a generic type.
+   * @param {ConfiguredStageProps<TConfig>} props - The configuration based upon a generic type.
    */
-  constructor(scope: Construct, id: string, props: ConfiguredStageProps<T>) {
+  constructor(scope: Construct, id: string, props: ConfiguredStageProps<TConfig>) {
     super(scope, id, props);
     this.config = props.config;
   }
