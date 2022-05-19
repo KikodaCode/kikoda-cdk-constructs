@@ -5,12 +5,16 @@
       "type": "build"
     },
     {
+      "name": "@types/lodash",
+      "type": "build"
+    },
+    {
       "name": "@types/md5",
       "type": "build"
     },
     {
       "name": "@types/node",
-      "version": "^16",
+      "version": "^14",
       "type": "build"
     },
     {
@@ -123,6 +127,10 @@
     {
       "name": "typescript",
       "type": "build"
+    },
+    {
+      "name": "lodash",
+      "type": "bundled"
     },
     {
       "name": "md5",

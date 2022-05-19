@@ -20,7 +20,8 @@
 	"extensions": [
 		"dbaeumer.vscode-eslint",
 		"ms-vscode.atom-keybindings",
-		"eamodio.gitlens"
+		"eamodio.gitlens",
+		"crystal-spider.jsdoc-generator"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
