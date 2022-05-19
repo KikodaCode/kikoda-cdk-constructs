@@ -3,18 +3,21 @@ import { AwsCdkConstructLibrary } from 'projen/lib/awscdk';
 import { ArrowParens, EndOfLine, TrailingComma } from 'projen/lib/javascript';
 
 const project = new AwsCdkConstructLibrary({
-  author: 'Kikoda, LLC',
-  authorAddress: 'platform@kikoda.com',
+  name: 'kikoda-constructs',
   description:
     'Collection of useful platform constructs for use with modern applications deployed with AWS',
-  keywords: ['cdk', 'awscdk', 'compliance', 'configuration', 'websites', 'scaffolding', 'cicd'],
-  license: 'Apache-2.0',
-  stability: 'experimental',
-  cdkVersion: '2.22.0',
+  author: 'Kikoda, LLC',
+  authorAddress: 'platform@kikoda.com',
+  repositoryUrl: 'https://github.com/KikodaCode/kikoda-constructs.git',
   defaultReleaseBranch: 'main',
+  keywords: ['cdk', 'awscdk', 'compliance', 'configuration', 'websites', 'scaffolding', 'cicd'],
+  stability: 'experimental',
+  license: 'Apache-2.0',
+  cdkVersion: '2.22.0',
+  projenrcTs: true,
   devContainer: true,
+  vscode: true,
   docgen: true,
-  name: 'kikoda-constructs',
   prettier: true,
   prettierOptions: {
     settings: {
@@ -28,9 +31,6 @@ const project = new AwsCdkConstructLibrary({
       endOfLine: EndOfLine.LF,
     },
   },
-  projenrcTs: true,
-  repositoryUrl: 'https://github.com/KikodaCode/kikoda-constructs.git',
-  vscode: true,
   bundledDeps: ['md5', 'uuid', 'lodash'],
   tsconfig: { compilerOptions: { esModuleInterop: true } },
 
