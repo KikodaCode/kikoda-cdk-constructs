@@ -1,7 +1,7 @@
 [<img src="https://kikoda.com/wp-content/uploads/2019/07/Logo_White_bg.svg" width="300"/>](https://kikoda.com)
 # Kikoda Constructs Library
 
-[![NPM](https://img.shields.io/npm/v/kikoda-constructs?color=39a356&label=npm+cdk+v2)](https://www.npmjs.com/package/@kikoda/constructs)
+[![NPM](https://img.shields.io/npm/v/@kikoda/constructs?color=39a356&label=npm+cdk+v2)](https://www.npmjs.com/package/@kikoda/constructs)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/KikodaCode/kikoda-constructs/blob/main/LICENSE)
 
 Use this Kikoda Constructs Library to architect and model modern applications deployed with AWS.
