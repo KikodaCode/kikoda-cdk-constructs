@@ -21,10 +21,9 @@ const codePipeline = new CodePipeline(stack, 'TestPipeline', {
 codePipeline.buildPipeline();
 describe('PipelineEventNotificationRule', () => {
   it('should create without error.', () => {
-    const rule = new PipelineEventNotificationRule(
-      codePipeline,
-      'arn:sns:us-east-1:us-east-1:123456789012:yes',
-    );
+    const rule = new PipelineEventNotificationRule(codePipeline, {
+      notificationTopicArn: 'arn:sns:us-east-1:us-east-1:123456789012:yes',
+    });
     expect(rule).not.toBeNull;
   });
 });

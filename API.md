@@ -4,6 +4,11 @@
 
 ### CodeSource <a name="CodeSource" id="@kikoda/constructs.CodeSource"></a>
 
+Configuration properties for the code source repository.
+
+Currently supports CodeCommit and GitHub Sources.
+GitHub source requrires a preexisting CodeStarConnection.
+
 #### Initializers <a name="Initializers" id="@kikoda/constructs.CodeSource.Initializer"></a>
 
 ```typescript
@@ -85,7 +90,7 @@ Any object.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@kikoda/constructs.CodeSource.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@kikoda/constructs.CodeSource.property.source">source</a></code> | <code>aws-cdk-lib.pipelines.CodePipelineSource</code> | *No description.* |
+| <code><a href="#@kikoda/constructs.CodeSource.property.source">source</a></code> | <code>aws-cdk-lib.pipelines.CodePipelineSource</code> | The Source of the pipeline. |
 
 ---
 
@@ -109,12 +114,14 @@ public readonly source: CodePipelineSource;
 
 - *Type:* aws-cdk-lib.pipelines.CodePipelineSource
 
+The Source of the pipeline.
+
 ---
 
 
 ### ConfiguredStage <a name="ConfiguredStage" id="@kikoda/constructs.ConfiguredStage"></a>
 
-A Stage that is configured with a specific configuration.
+A Stage that has a specific configuration.
 
 #### Initializers <a name="Initializers" id="@kikoda/constructs.ConfiguredStage.Initializer"></a>
 
@@ -399,9 +406,9 @@ new StageAlarmTopic(scope: Construct, id: string, props: StageAlarmTopicProps)
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@kikoda/constructs.StageAlarmTopic.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.StageAlarmTopic.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.StageAlarmTopic.Initializer.parameter.props">props</a></code> | <code><a href="#@kikoda/constructs.StageAlarmTopicProps">StageAlarmTopicProps</a></code> | *No description.* |
+| <code><a href="#@kikoda/constructs.StageAlarmTopic.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | - The scope of the construct. |
+| <code><a href="#@kikoda/constructs.StageAlarmTopic.Initializer.parameter.id">id</a></code> | <code>string</code> | - The construct's id. |
+| <code><a href="#@kikoda/constructs.StageAlarmTopic.Initializer.parameter.props">props</a></code> | <code><a href="#@kikoda/constructs.StageAlarmTopicProps">StageAlarmTopicProps</a></code> | - The configuration for the construct. |
 
 ---
 
@@ -409,17 +416,23 @@ new StageAlarmTopic(scope: Construct, id: string, props: StageAlarmTopicProps)
 
 - *Type:* constructs.Construct
 
+The scope of the construct.
+
 ---
 
 ##### `id`<sup>Required</sup> <a name="id" id="@kikoda/constructs.StageAlarmTopic.Initializer.parameter.id"></a>
 
 - *Type:* string
 
+The construct's id.
+
 ---
 
 ##### `props`<sup>Required</sup> <a name="props" id="@kikoda/constructs.StageAlarmTopic.Initializer.parameter.props"></a>
 
 - *Type:* <a href="#@kikoda/constructs.StageAlarmTopicProps">StageAlarmTopicProps</a>
+
+The configuration for the construct.
 
 ---
 
@@ -470,8 +483,8 @@ Any object.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@kikoda/constructs.StageAlarmTopic.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@kikoda/constructs.StageAlarmTopic.property.topic">topic</a></code> | <code>aws-cdk-lib.aws_sns.Topic</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.StageAlarmTopic.property.cfnOutput">cfnOutput</a></code> | <code>aws-cdk-lib.CfnOutput</code> | *No description.* |
+| <code><a href="#@kikoda/constructs.StageAlarmTopic.property.topic">topic</a></code> | <code>aws-cdk-lib.aws_sns.Topic</code> | The SNS Topic. |
+| <code><a href="#@kikoda/constructs.StageAlarmTopic.property.cfnOutput">cfnOutput</a></code> | <code>aws-cdk-lib.CfnOutput</code> | The CFN Export, will be populated if createCfnExport is true. |
 
 ---
 
@@ -495,6 +508,8 @@ public readonly topic: Topic;
 
 - *Type:* aws-cdk-lib.aws_sns.Topic
 
+The SNS Topic.
+
 ---
 
 ##### `cfnOutput`<sup>Optional</sup> <a name="cfnOutput" id="@kikoda/constructs.StageAlarmTopic.property.cfnOutput"></a>
@@ -504,6 +519,8 @@ public readonly cfnOutput: CfnOutput;
 ```
 
 - *Type:* aws-cdk-lib.CfnOutput
+
+The CFN Export, will be populated if createCfnExport is true.
 
 ---
 
@@ -630,6 +647,8 @@ Full website endpoint w/protocol.
 
 ### CodeCommitSourceConfig <a name="CodeCommitSourceConfig" id="@kikoda/constructs.CodeCommitSourceConfig"></a>
 
+Configuration for specifying a codecommit repository as the source.
+
 #### Initializer <a name="Initializer" id="@kikoda/constructs.CodeCommitSourceConfig.Initializer"></a>
 
 ```typescript
@@ -642,7 +661,7 @@ const codeCommitSourceConfig: CodeCommitSourceConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@kikoda/constructs.CodeCommitSourceConfig.property.codeCommitArn">codeCommitArn</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/constructs.CodeCommitSourceConfig.property.codeCommitArn">codeCommitArn</a></code> | <code>string</code> | ARN of the CodeCommit repository to use. |
 
 ---
 
@@ -653,6 +672,8 @@ public readonly codeCommitArn: string;
 ```
 
 - *Type:* string
+
+ARN of the CodeCommit repository to use.
 
 ---
 
@@ -748,6 +769,8 @@ public readonly config: any;
 
 ### DeploymentPipelinesProps <a name="DeploymentPipelinesProps" id="@kikoda/constructs.DeploymentPipelinesProps"></a>
 
+TODO: Update documentation.
+
 #### Initializer <a name="Initializer" id="@kikoda/constructs.DeploymentPipelinesProps.Initializer"></a>
 
 ```typescript
@@ -767,17 +790,17 @@ const deploymentPipelinesProps: DeploymentPipelinesProps = { ... }
 | <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.synthesizer">synthesizer</a></code> | <code>aws-cdk-lib.IStackSynthesizer</code> | Synthesis method to use while deploying this stack. |
 | <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Stack tags that will be applied to all the taggable resources and the stack itself. |
 | <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether to enable termination protection for this stack. |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.component">component</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.deploymentBranches">deploymentBranches</a></code> | <code><a href="#@kikoda/constructs.IDeploymentBranch">IDeploymentBranch</a>[]</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.repository">repository</a></code> | <code><a href="#@kikoda/constructs.GitHubSourceConfig">GitHubSourceConfig</a> \| <a href="#@kikoda/constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a></code> | *No description.* |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.stageType">stageType</a></code> | <code>aws-cdk-lib.Stage</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.additionalBuildRolePolicies">additionalBuildRolePolicies</a></code> | <code>aws-cdk-lib.aws_iam.PolicyStatementProps[]</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.baseDir">baseDir</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.builderAssumeRole">builderAssumeRole</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.codeArtifactRepositoryArn">codeArtifactRepositoryArn</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.notificationTopicArn">notificationTopicArn</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.component">component</a></code> | <code>string</code> | TODO: Update documentation. |
+| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.deploymentBranches">deploymentBranches</a></code> | <code><a href="#@kikoda/constructs.IDeploymentBranch">IDeploymentBranch</a>[]</code> | An interface representing the configutation for each branch and its related stage. |
+| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.repository">repository</a></code> | <code><a href="#@kikoda/constructs.GitHubSourceConfig">GitHubSourceConfig</a> \| <a href="#@kikoda/constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a></code> | Configuration for the source code repository. |
+| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.stageType">stageType</a></code> | <code>aws-cdk-lib.Stage</code> | A class that extends Stage. |
+| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.additionalBuildRolePolicies">additionalBuildRolePolicies</a></code> | <code>aws-cdk-lib.aws_iam.PolicyStatementProps[]</code> | A list of policies that will be added to the build role. |
+| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.baseDir">baseDir</a></code> | <code>string</code> | TODO: Update documentation. |
+| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.builderAssumeRole">builderAssumeRole</a></code> | <code>string</code> | An optional role that can be assumed to perform the build. |
+| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.codeArtifactRepositoryArn">codeArtifactRepositoryArn</a></code> | <code>string</code> | Specifying a codeartifacts ARN here will enable asset phase of the pipeline to access that codeartifacts repository. |
+| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.notificationTopicArn">notificationTopicArn</a></code> | <code>string</code> | A SNS Topic arn that when specified will be used to send pipleine notifications. |
 | <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.pruneCloudAssembly">pruneCloudAssembly</a></code> | <code>boolean</code> | Add a step to pull down and remove asset zips from the cloud assembly output from the Synth step. |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.synthOuputDir">synthOuputDir</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.synthOuputDir">synthOuputDir</a></code> | <code>string</code> | TODO: Update documentation. |
 
 ---
 
@@ -941,6 +964,8 @@ public readonly component: string;
 
 - *Type:* string
 
+TODO: Update documentation.
+
 ---
 
 ##### `deploymentBranches`<sup>Required</sup> <a name="deploymentBranches" id="@kikoda/constructs.DeploymentPipelinesProps.property.deploymentBranches"></a>
@@ -950,6 +975,8 @@ public readonly deploymentBranches: IDeploymentBranch[];
 ```
 
 - *Type:* <a href="#@kikoda/constructs.IDeploymentBranch">IDeploymentBranch</a>[]
+
+An interface representing the configutation for each branch and its related stage.
 
 ---
 
@@ -961,6 +988,10 @@ public readonly repository: GitHubSourceConfig | CodeCommitSourceConfig;
 
 - *Type:* <a href="#@kikoda/constructs.GitHubSourceConfig">GitHubSourceConfig</a> | <a href="#@kikoda/constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a>
 
+Configuration for the source code repository.
+
+Currently supports GitHub and CodeArtifacts.
+
 ---
 
 ##### `stageType`<sup>Required</sup> <a name="stageType" id="@kikoda/constructs.DeploymentPipelinesProps.property.stageType"></a>
@@ -970,6 +1001,10 @@ public readonly stageType: Stage;
 ```
 
 - *Type:* aws-cdk-lib.Stage
+
+A class that extends Stage.
+
+This class will be used to create the individual stages for each specified stage configuration.
 
 ---
 
@@ -981,6 +1016,8 @@ public readonly additionalBuildRolePolicies: PolicyStatementProps[];
 
 - *Type:* aws-cdk-lib.aws_iam.PolicyStatementProps[]
 
+A list of policies that will be added to the build role.
+
 ---
 
 ##### `baseDir`<sup>Optional</sup> <a name="baseDir" id="@kikoda/constructs.DeploymentPipelinesProps.property.baseDir"></a>
@@ -990,6 +1027,8 @@ public readonly baseDir: string;
 ```
 
 - *Type:* string
+
+TODO: Update documentation.
 
 ---
 
@@ -1001,6 +1040,8 @@ public readonly builderAssumeRole: string;
 
 - *Type:* string
 
+An optional role that can be assumed to perform the build.
+
 ---
 
 ##### `codeArtifactRepositoryArn`<sup>Optional</sup> <a name="codeArtifactRepositoryArn" id="@kikoda/constructs.DeploymentPipelinesProps.property.codeArtifactRepositoryArn"></a>
@@ -1010,6 +1051,10 @@ public readonly codeArtifactRepositoryArn: string;
 ```
 
 - *Type:* string
+
+Specifying a codeartifacts ARN here will enable asset phase of the pipeline to access that codeartifacts repository.
+
+This includes adding approprate roles and leveraging an assumed role for the docker build so that the docker build can pull from codeartifacts.
 
 ---
 
@@ -1021,6 +1066,8 @@ public readonly notificationTopicArn: string;
 
 - *Type:* string
 
+A SNS Topic arn that when specified will be used to send pipleine notifications.
+
 ---
 
 ##### `pruneCloudAssembly`<sup>Optional</sup> <a name="pruneCloudAssembly" id="@kikoda/constructs.DeploymentPipelinesProps.property.pruneCloudAssembly"></a>
@@ -1030,7 +1077,6 @@ public readonly pruneCloudAssembly: boolean;
 ```
 
 - *Type:* boolean
-- *Default:* true
 
 Add a step to pull down and remove asset zips from the cloud assembly output from the Synth step.
 
@@ -1046,6 +1092,8 @@ public readonly synthOuputDir: string;
 ```
 
 - *Type:* string
+
+TODO: Update documentation.
 
 ---
 
@@ -1103,6 +1151,8 @@ will be added to the config as the `additionalConfig` attribute.
 
 ### GitHubSourceConfig <a name="GitHubSourceConfig" id="@kikoda/constructs.GitHubSourceConfig"></a>
 
+Configuration for specifying a GitHub repository as the source.
+
 #### Initializer <a name="Initializer" id="@kikoda/constructs.GitHubSourceConfig.Initializer"></a>
 
 ```typescript
@@ -1115,8 +1165,8 @@ const gitHubSourceConfig: GitHubSourceConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@kikoda/constructs.GitHubSourceConfig.property.options">options</a></code> | <code>aws-cdk-lib.pipelines.ConnectionSourceOptions</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.GitHubSourceConfig.property.owner">owner</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/constructs.GitHubSourceConfig.property.options">options</a></code> | <code>aws-cdk-lib.pipelines.ConnectionSourceOptions</code> | CodeStar connection options. |
+| <code><a href="#@kikoda/constructs.GitHubSourceConfig.property.owner">owner</a></code> | <code>string</code> | The owner of the GitHub repository. |
 
 ---
 
@@ -1128,6 +1178,10 @@ public readonly options: ConnectionSourceOptions;
 
 - *Type:* aws-cdk-lib.pipelines.ConnectionSourceOptions
 
+CodeStar connection options.
+
+GitHub sources require use of a CodeStar connection.
+
 ---
 
 ##### `owner`<sup>Required</sup> <a name="owner" id="@kikoda/constructs.GitHubSourceConfig.property.owner"></a>
@@ -1138,9 +1192,13 @@ public readonly owner: string;
 
 - *Type:* string
 
+The owner of the GitHub repository.
+
 ---
 
 ### StageAlarmTopicProps <a name="StageAlarmTopicProps" id="@kikoda/constructs.StageAlarmTopicProps"></a>
+
+Configuration for StageAlarmTopic.
 
 #### Initializer <a name="Initializer" id="@kikoda/constructs.StageAlarmTopicProps.Initializer"></a>
 
@@ -1154,9 +1212,9 @@ const stageAlarmTopicProps: StageAlarmTopicProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@kikoda/constructs.StageAlarmTopicProps.property.level">level</a></code> | <code><a href="#@kikoda/constructs.AlarmLevels">AlarmLevels</a></code> | *No description.* |
-| <code><a href="#@kikoda/constructs.StageAlarmTopicProps.property.createCfnExport">createCfnExport</a></code> | <code>boolean</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.StageAlarmTopicProps.property.prefix">prefix</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/constructs.StageAlarmTopicProps.property.level">level</a></code> | <code><a href="#@kikoda/constructs.AlarmLevels">AlarmLevels</a></code> | The alert level. |
+| <code><a href="#@kikoda/constructs.StageAlarmTopicProps.property.createCfnExport">createCfnExport</a></code> | <code>boolean</code> | If true a CFN export will be created. |
+| <code><a href="#@kikoda/constructs.StageAlarmTopicProps.property.prefix">prefix</a></code> | <code>string</code> | The identifier prefix. |
 
 ---
 
@@ -1168,6 +1226,10 @@ public readonly level: AlarmLevels;
 
 - *Type:* <a href="#@kikoda/constructs.AlarmLevels">AlarmLevels</a>
 
+The alert level.
+
+This is used in the Topic displayName and topicName, and the cfn export name.
+
 ---
 
 ##### `createCfnExport`<sup>Optional</sup> <a name="createCfnExport" id="@kikoda/constructs.StageAlarmTopicProps.property.createCfnExport"></a>
@@ -1177,6 +1239,8 @@ public readonly createCfnExport: boolean;
 ```
 
 - *Type:* boolean
+
+If true a CFN export will be created.
 
 ---
 
@@ -1188,9 +1252,15 @@ public readonly prefix: string;
 
 - *Type:* string
 
+The identifier prefix.
+
+This could be a stage name or similar identifier.
+
 ---
 
 ### StageConfig <a name="StageConfig" id="@kikoda/constructs.StageConfig"></a>
+
+TODO: Update documentation.
 
 #### Initializer <a name="Initializer" id="@kikoda/constructs.StageConfig.Initializer"></a>
 
@@ -1206,9 +1276,9 @@ const stageConfig: StageConfig = { ... }
 | --- | --- | --- |
 | <code><a href="#@kikoda/constructs.StageConfig.property.env">env</a></code> | <code>aws-cdk-lib.Environment</code> | Default AWS environment (account/region) for `Stack`s in this `Stage`. |
 | <code><a href="#@kikoda/constructs.StageConfig.property.outdir">outdir</a></code> | <code>string</code> | The output directory into which to emit synthesized artifacts. |
-| <code><a href="#@kikoda/constructs.StageConfig.property.config">config</a></code> | <code>any</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.StageConfig.property.stageName">stageName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.StageConfig.property.manualApproval">manualApproval</a></code> | <code>boolean</code> | *No description.* |
+| <code><a href="#@kikoda/constructs.StageConfig.property.config">config</a></code> | <code>any</code> | TODO: Update documentation. |
+| <code><a href="#@kikoda/constructs.StageConfig.property.stageName">stageName</a></code> | <code>string</code> | TODO: Update documentation. |
+| <code><a href="#@kikoda/constructs.StageConfig.property.manualApproval">manualApproval</a></code> | <code>boolean</code> | TODO: Update documentation. |
 
 ---
 
@@ -1278,6 +1348,8 @@ public readonly config: any;
 
 - *Type:* any
 
+TODO: Update documentation.
+
 ---
 
 ##### `stageName`<sup>Required</sup> <a name="stageName" id="@kikoda/constructs.StageConfig.property.stageName"></a>
@@ -1288,6 +1360,8 @@ public readonly stageName: string;
 
 - *Type:* string
 
+TODO: Update documentation.
+
 ---
 
 ##### `manualApproval`<sup>Optional</sup> <a name="manualApproval" id="@kikoda/constructs.StageConfig.property.manualApproval"></a>
@@ -1297,6 +1371,8 @@ public readonly manualApproval: boolean;
 ```
 
 - *Type:* boolean
+
+TODO: Update documentation.
 
 ---
 
@@ -1506,6 +1582,8 @@ for the Docker container during bundling. If this is not provided, the `appDir` 
 
 ### DeploymentPipelines <a name="DeploymentPipelines" id="@kikoda/constructs.DeploymentPipelines"></a>
 
+TODO: Update documentation.
+
 #### Initializers <a name="Initializers" id="@kikoda/constructs.DeploymentPipelines.Initializer"></a>
 
 ```typescript
@@ -1543,14 +1621,16 @@ new DeploymentPipelines(app: App, props: DeploymentPipelinesProps)
 
 - *Implemented By:* <a href="#@kikoda/constructs.IDeploymentBranch">IDeploymentBranch</a>
 
+TODO: Update documentation.
+
 
 #### Properties <a name="Properties" id="Properties"></a>
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@kikoda/constructs.IDeploymentBranch.property.branchName">branchName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.IDeploymentBranch.property.stages">stages</a></code> | <code><a href="#@kikoda/constructs.StageConfig">StageConfig</a>[]</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.IDeploymentBranch.property.staticPipelineIdentifier">staticPipelineIdentifier</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/constructs.IDeploymentBranch.property.branchName">branchName</a></code> | <code>string</code> | TODO: Update documentation. |
+| <code><a href="#@kikoda/constructs.IDeploymentBranch.property.stages">stages</a></code> | <code><a href="#@kikoda/constructs.StageConfig">StageConfig</a>[]</code> | TODO: Update documentation. |
+| <code><a href="#@kikoda/constructs.IDeploymentBranch.property.staticPipelineIdentifier">staticPipelineIdentifier</a></code> | <code>string</code> | TODO: Update documentation. |
 
 ---
 
@@ -1562,6 +1642,8 @@ public readonly branchName: string;
 
 - *Type:* string
 
+TODO: Update documentation.
+
 ---
 
 ##### `stages`<sup>Required</sup> <a name="stages" id="@kikoda/constructs.IDeploymentBranch.property.stages"></a>
@@ -1572,6 +1654,8 @@ public readonly stages: StageConfig[];
 
 - *Type:* <a href="#@kikoda/constructs.StageConfig">StageConfig</a>[]
 
+TODO: Update documentation.
+
 ---
 
 ##### `staticPipelineIdentifier`<sup>Required</sup> <a name="staticPipelineIdentifier" id="@kikoda/constructs.IDeploymentBranch.property.staticPipelineIdentifier"></a>
@@ -1581,6 +1665,8 @@ public readonly staticPipelineIdentifier: string;
 ```
 
 - *Type:* string
+
+TODO: Update documentation.
 
 ---
 
