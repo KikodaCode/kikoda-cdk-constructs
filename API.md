@@ -1003,6 +1003,42 @@ for the Docker container during bundling. If this is not provided, the `appDir` 
 
 ---
 
+## Classes <a name="Classes" id="Classes"></a>
+
+### LayeredConfig <a name="LayeredConfig" id="@kikoda/constructs.LayeredConfig"></a>
+
+This construct current only wraps the lodash.merge() functionality but is intended to be a placeholder for future logic like: global defaults, type enforcement and error handling, dynamic values (custom compute logic), etc.
+
+#### Initializers <a name="Initializers" id="@kikoda/constructs.LayeredConfig.Initializer"></a>
+
+```typescript
+import { LayeredConfig } from '@kikoda/constructs'
+
+new LayeredConfig(base: any, layers: any)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/constructs.LayeredConfig.Initializer.parameter.base">base</a></code> | <code>any</code> | *No description.* |
+| <code><a href="#@kikoda/constructs.LayeredConfig.Initializer.parameter.layers">layers</a></code> | <code>any</code> | *No description.* |
+
+---
+
+##### `base`<sup>Required</sup> <a name="base" id="@kikoda/constructs.LayeredConfig.Initializer.parameter.base"></a>
+
+- *Type:* any
+
+---
+
+##### `layers`<sup>Required</sup> <a name="layers" id="@kikoda/constructs.LayeredConfig.Initializer.parameter.layers"></a>
+
+- *Type:* any
+
+---
+
+
+
+
 
 
 ## Enums <a name="Enums" id="Enums"></a>
