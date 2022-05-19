@@ -1,0 +1,44 @@
+{
+  "CDK Construct": {
+    "prefix": "cdk-v2-construct",
+    "body": [
+      "import { Construct } from 'constructs';",
+      "",
+      "export interface ${1:ConstructorName}Props {}",
+      "",
+      "export class ${1:ConstructorName} extends Construct {",
+      "  constructor(scope: Construct, id: string, props: ${1:ConstructorName}Props) {",
+      "    super(scope, id);",
+      "  }",
+      "}"
+    ],
+    "description": "Generate a CDK v2 construct scaffold"
+  },
+  "CDK Stack": {
+    "prefix": "cdk-v2-stack",
+    "body": [
+      "import { Construct } from 'constructs';",
+      "import { Stack, StackProps } from 'aws-cdk-lib';",
+      "",
+      "export interface ${1:StackName}Props extends StackProps {}",
+      "",
+      "export class ${1:StackName} extends Stack {",
+      "  constructor(scope: Construct, id: string, props: ${1:StackName}Props) {",
+      "    super(scope, id, props);",
+      "  }",
+      "}"
+    ],
+    "description": "Generate a CDK v2 stack scaffold"
+  },
+  "CDK App": {
+    "prefix": "cdk-v2-app",
+    "body": [
+      "#!/usr/bin/env node",
+      "import 'source-map-support/register';",
+      "import { App } from 'aws-cdk-lib';",
+      "",
+      "const app = new App();",
+    ],
+    "description": "Generate a CDK v2 app scaffold"
+  }
+}
