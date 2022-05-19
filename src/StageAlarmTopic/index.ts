@@ -4,6 +4,9 @@ import { Construct } from 'constructs';
 
 /**
  * The Alarm levels.
+ *
+ * @export
+ * @enum {number}
  */
 export enum AlarmLevels {
   /** For general information these are typically the most verbose. */
@@ -15,25 +18,66 @@ export enum AlarmLevels {
 }
 
 /**
- * @param {AlarmLevel} level The alert level. This is used in the Topic displayName and topicName, and the cfn export name.
- * @param {string} prefix The identifier prefix. This could be a stage name or similar identifier.
- * @param {boolean} createCfnExport If true a CFN export will be created available at: {@link StageAlarmTopic.exportName}.
+ * Configuration for StageAlarmTopic.
+ * @export
+ * @interface StageAlarmTopicProps
+ * @typedef {StageAlarmTopicProps}
  */
 export interface StageAlarmTopicProps {
+  /**
+   * The alert level. This is used in the Topic displayName and topicName, and the cfn export name.
+   *
+   * @readonly
+   * @type {AlarmLevels}
+   */
   readonly level: AlarmLevels;
+  /**
+   * The identifier prefix. This could be a stage name or similar identifier.
+   *
+   * @readonly
+   * @type {?string}
+   */
   readonly prefix?: string;
+  /**
+   * If true a CFN export will be created.
+   *
+   * @readonly
+   * @type {?boolean}
+   */
   readonly createCfnExport?: boolean;
 }
 
 /**
  * An alarm topic and optional cfn export of the topic name.
- * @class
- * @property {CfnOutput} cfnOutput The CFN Export, will be populated if {@link StageAlarmTopicProps.createCfnExport} is true.
- * @property {Topic} topic The SNS Topic.
+ *
+ * @export
+ * @class StageAlarmTopic
+ * @typedef {StageAlarmTopic}
+ * @extends {Construct}
  */
 export class StageAlarmTopic extends Construct {
+  /**
+   * The CFN Export, will be populated if createCfnExport is true.
+   *
+   * @public
+   * @type {?CfnOutput}
+   */
   public cfnOutput?: CfnOutput = undefined;
+  /**
+   * The SNS Topic
+   *
+   * @public
+   * @type {Topic}
+   */
   public topic: Topic;
+  /**
+   * TODO: Creates an instance of StageAlarmTopic.
+   *
+   * @constructor
+   * @param {Construct} scope - The scope of the construct.
+   * @param {string} id - The construct's id.
+   * @param {StageAlarmTopicProps} props - The configuration for the construct.
+   */
   constructor(scope: Construct, id: string, props: StageAlarmTopicProps) {
     super(scope, id);
     const identifierPrefix = props.prefix ? `${props.prefix}-${props.level}` : props.level;
