@@ -14,14 +14,14 @@ GitHub source requrires a preexisting CodeStarConnection.
 ```typescript
 import { CodeSource } from '@kikoda/constructs'
 
-new CodeSource(scope: Construct, branchName: string, config: GitHubSourceConfig | CodeCommitSourceConfig)
+new CodeSource(scope: Construct, branchName: string, config: CodeCommitSourceConfig | GitHubSourceConfig)
 ```
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@kikoda/constructs.CodeSource.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
 | <code><a href="#@kikoda/constructs.CodeSource.Initializer.parameter.branchName">branchName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.CodeSource.Initializer.parameter.config">config</a></code> | <code><a href="#@kikoda/constructs.GitHubSourceConfig">GitHubSourceConfig</a> \| <a href="#@kikoda/constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a></code> | *No description.* |
+| <code><a href="#@kikoda/constructs.CodeSource.Initializer.parameter.config">config</a></code> | <code><a href="#@kikoda/constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a> \| <a href="#@kikoda/constructs.GitHubSourceConfig">GitHubSourceConfig</a></code> | *No description.* |
 
 ---
 
@@ -39,7 +39,7 @@ new CodeSource(scope: Construct, branchName: string, config: GitHubSourceConfig 
 
 ##### `config`<sup>Required</sup> <a name="config" id="@kikoda/constructs.CodeSource.Initializer.parameter.config"></a>
 
-- *Type:* <a href="#@kikoda/constructs.GitHubSourceConfig">GitHubSourceConfig</a> | <a href="#@kikoda/constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a>
+- *Type:* <a href="#@kikoda/constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a> | <a href="#@kikoda/constructs.GitHubSourceConfig">GitHubSourceConfig</a>
 
 ---
 
@@ -792,7 +792,7 @@ const deploymentPipelinesProps: DeploymentPipelinesProps = { ... }
 | <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether to enable termination protection for this stack. |
 | <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.component">component</a></code> | <code>string</code> | TODO: Update documentation. |
 | <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.deploymentBranches">deploymentBranches</a></code> | <code><a href="#@kikoda/constructs.IDeploymentBranch">IDeploymentBranch</a>[]</code> | An interface representing the configutation for each branch and its related stage. |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.repository">repository</a></code> | <code><a href="#@kikoda/constructs.GitHubSourceConfig">GitHubSourceConfig</a> \| <a href="#@kikoda/constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a></code> | Configuration for the source code repository. |
+| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.repository">repository</a></code> | <code><a href="#@kikoda/constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a> \| <a href="#@kikoda/constructs.GitHubSourceConfig">GitHubSourceConfig</a></code> | Configuration for the source code repository. |
 | <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.stageType">stageType</a></code> | <code>aws-cdk-lib.Stage</code> | A class that extends Stage. |
 | <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.additionalBuildRolePolicies">additionalBuildRolePolicies</a></code> | <code>aws-cdk-lib.aws_iam.PolicyStatementProps[]</code> | A list of policies that will be added to the build role. |
 | <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.baseDir">baseDir</a></code> | <code>string</code> | TODO: Update documentation. |
@@ -983,10 +983,10 @@ An interface representing the configutation for each branch and its related stag
 ##### `repository`<sup>Required</sup> <a name="repository" id="@kikoda/constructs.DeploymentPipelinesProps.property.repository"></a>
 
 ```typescript
-public readonly repository: GitHubSourceConfig | CodeCommitSourceConfig;
+public readonly repository: CodeCommitSourceConfig | GitHubSourceConfig;
 ```
 
-- *Type:* <a href="#@kikoda/constructs.GitHubSourceConfig">GitHubSourceConfig</a> | <a href="#@kikoda/constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a>
+- *Type:* <a href="#@kikoda/constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a> | <a href="#@kikoda/constructs.GitHubSourceConfig">GitHubSourceConfig</a>
 
 Configuration for the source code repository.
 
@@ -1608,6 +1608,41 @@ new DeploymentPipelines(app: App, props: DeploymentPipelinesProps)
 ##### `props`<sup>Required</sup> <a name="props" id="@kikoda/constructs.DeploymentPipelines.Initializer.parameter.props"></a>
 
 - *Type:* <a href="#@kikoda/constructs.DeploymentPipelinesProps">DeploymentPipelinesProps</a>
+
+---
+
+
+
+
+
+### LayeredConfig <a name="LayeredConfig" id="@kikoda/constructs.LayeredConfig"></a>
+
+This construct current only wraps the lodash.merge() functionality but is intended to be a placeholder for future logic like: global defaults, type enforcement and error handling, dynamic values (custom compute logic), etc.
+
+#### Initializers <a name="Initializers" id="@kikoda/constructs.LayeredConfig.Initializer"></a>
+
+```typescript
+import { LayeredConfig } from '@kikoda/constructs'
+
+new LayeredConfig(base: any, layers: any)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/constructs.LayeredConfig.Initializer.parameter.base">base</a></code> | <code>any</code> | *No description.* |
+| <code><a href="#@kikoda/constructs.LayeredConfig.Initializer.parameter.layers">layers</a></code> | <code>any</code> | *No description.* |
+
+---
+
+##### `base`<sup>Required</sup> <a name="base" id="@kikoda/constructs.LayeredConfig.Initializer.parameter.base"></a>
+
+- *Type:* any
+
+---
+
+##### `layers`<sup>Required</sup> <a name="layers" id="@kikoda/constructs.LayeredConfig.Initializer.parameter.layers"></a>
+
+- *Type:* any
 
 ---
 
