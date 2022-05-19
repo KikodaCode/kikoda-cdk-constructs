@@ -113,28 +113,28 @@ export interface DeploymentPipelinesProps<
    */
   readonly pruneCloudAssembly?: boolean;
   /**
-   * TODO: Update documentation
+   * A class that extends Stage. This class will be used to create the individual stages for each specified stage configuration.
    *
    * @readonly
    * @type {typeof Stage}
    */
   readonly stageType: typeof Stage;
   /**
-   * TODO: Update documentation
+   * An interface representing the configutation for each branch and its related stage.
    *
    * @readonly
    * @type {TBranch[]}
    */
   readonly deploymentBranches: TBranch[];
   /**
-   * TODO: Update documentation
+   * A SNS Topic arn that when specified will be used to send pipleine notifications.
    *
    * @readonly
    * @type {?string}
    */
   readonly notificationTopicArn?: string;
   /**
-   * TODO: Update documentation
+   * An optional role that can be assumed to perform the build.
    *
    * @readonly
    * @type {?string}
@@ -149,14 +149,13 @@ export interface DeploymentPipelinesProps<
    */
   readonly codeArtifactRepositoryArn?: string;
   /**
-   * TODO: Update documentation
-   *
+   * Configuration for the source code repository. Currently supports GitHub and CodeArtifacts.
    * @readonly
    * @type {RepositoryConfig}
    */
   readonly repository: RepositoryConfig;
   /**
-   * TODO: Update documentation
+   * A list of policies that will be added to the build role.
    *
    * @readonly
    * @type {?PolicyStatementProps[]}

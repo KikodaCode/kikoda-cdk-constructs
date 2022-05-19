@@ -53,6 +53,7 @@ export class PipelineEventNotificationRule extends NotificationRule {
     const {
       events = [
         'codepipeline-pipeline-pipeline-execution-failed',
+        'codepipeline-pipeline-pipeline-execution-succeeded',
         'codepipeline-pipeline-manual-approval-needed',
       ],
       detailType = DetailType.BASIC,
