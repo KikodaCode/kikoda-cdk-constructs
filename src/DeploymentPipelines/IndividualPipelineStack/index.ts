@@ -175,10 +175,6 @@ export class IndividualPipelineStack<
       assetPublishingCodeBuildDefaults,
     });
 
-    for (const statement of additonalPolicyStatements) {
-      pipeline.pipeline.addToRolePolicy(new PolicyStatement(statement));
-    }
-
     // Add defined stages
     branch.stages.forEach(stage => {
       const pre: AddStageOpts['pre'] = [];
@@ -196,6 +192,10 @@ export class IndividualPipelineStack<
 
     pipeline.buildPipeline();
 
+    for (const statement of additonalPolicyStatements) {
+      pipeline.pipeline.addToRolePolicy(new PolicyStatement(statement));
+    }
+
     // TODO: move to an aspect?
     if (props.notificationTopicArn && props.notificationTopicArn !== '') {
       new PipelineEventNotificationRule(pipeline, {
@@ -205,8 +205,7 @@ export class IndividualPipelineStack<
   }
 
   /**
-   * TODO: Update documentation
-   * @author Kikoda
+   * Creates synth commands based on input parameters.
    *
    * @private
    * @param {?string} [synthOutputDir]
