@@ -1,8 +1,8 @@
+import { AssetOptions, Stack } from 'aws-cdk-lib';
 import { OriginRequestPolicy, SecurityPolicyProtocol } from 'aws-cdk-lib/aws-cloudfront';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
-import { AssetOptions, Stack } from 'aws-cdk-lib/core';
 import {
   AwsCustomResource,
   PhysicalResourceId,

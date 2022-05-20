@@ -1,4 +1,5 @@
 import { execSync, ExecSyncOptions } from 'child_process';
+import { DockerImage, FileCopyOptions } from 'aws-cdk-lib';
 import { DnsValidatedCertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import {
   SecurityPolicyProtocol,
@@ -17,7 +18,6 @@ import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { BlockPublicAccess, Bucket, BucketEncryption, CorsRule } from 'aws-cdk-lib/aws-s3';
 import { AssetOptions } from 'aws-cdk-lib/aws-s3-assets';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
-import { DockerImage, FileCopyOptions } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
 
 export interface SinglePageAppProps {
