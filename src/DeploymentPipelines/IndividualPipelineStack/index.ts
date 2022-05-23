@@ -193,7 +193,9 @@ export class IndividualPipelineStack<
     pipeline.buildPipeline();
 
     for (const statement of additonalPolicyStatements) {
-      pipeline.pipeline.addToRolePolicy(new PolicyStatement(statement));
+      pipeline.pipeline.addToRolePolicy(
+        new PolicyStatement({ ...statement, resources: [pipeline.pipeline.role.roleArn] }),
+      );
     }
 
     // TODO: move to an aspect?
