@@ -52,7 +52,7 @@ describe('DeploymentPipelines', () => {
       pipelineConfig: {},
       repository: {
         source: {
-          codeCommitArn: 'arn:codecommit:us-east-1:us-east-1:123456789012:yes',
+          codeCommitArn: 'arn:aws:codecommit::us-east-1:123456789012:yes',
         },
       },
       env: {

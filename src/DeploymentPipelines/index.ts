@@ -43,7 +43,7 @@ export interface IDeploymentBranch<TConfig> {
   readonly stages: StageConfig<TConfig>[];
 }
 /**
- * Configuration for the DelploymentPipelines construct.
+ * Configuration for the DeploymentPipelines construct.
  *
  * @export
  * @interface DeploymentPipelinesProps
