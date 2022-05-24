@@ -2,8 +2,7 @@ import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { CodeBuildStep } from 'aws-cdk-lib/pipelines';
 
 /**
- * TODO: Update documentation
- * @author Kikoda
+ * CodeBuild step for trimming the cloud assembly to reducce the size of the artifact.
  *
  * @export
  * @class TrimCloudAssemblyStep
@@ -12,8 +11,7 @@ import { CodeBuildStep } from 'aws-cdk-lib/pipelines';
  */
 export class TrimCloudAssemblyStep extends CodeBuildStep {
   /**
-   * TODO: Creates an instance of TrimCloudAssemblyStep.
-   * @author Kikoda
+   * Creates an instance of TrimCloudAssemblyStep.
    *
    * @constructor
    * @param {string} stackId
