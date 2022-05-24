@@ -1,8 +1,32 @@
-import { App, StackProps } from 'aws-cdk-lib';
+import { App, StackProps, Stage } from 'aws-cdk-lib';
 import { RepositoryConfig } from '../CodeSource';
 import { IndividualPipelineStack, PipelineConfig, StageConfig } from './IndividualPipelineStack';
 
 export { StageConfig, PipelineConfig } from './IndividualPipelineStack';
+
+/**
+ * Configuration for the component to be deployed.
+ *
+ * @export
+ * @interface ComponentConfig
+ * @typedef {ComponentConfig}
+ */
+export interface ComponentConfig {
+  /**
+   * The name of this component.
+   *
+   * @readonly
+   * @type {string}
+   */
+  readonly componentName: string;
+  /**
+   * A class that extends Stage. This class will be used to create the individual component stages for each specified stage configuration.
+   *
+   * @readonly
+   * @type {typeof Stage}
+   */
+  readonly componentType: typeof Stage;
+}
 
 /**
  * Configuration for the specific deployment
@@ -27,13 +51,6 @@ export interface IDeploymentBranch<TConfig> {
    * @type {string}
    */
   readonly staticPipelineIdentifier?: string;
-  /**
-   * The name of this component.
-   *
-   * @readonly
-   * @type {string}
-   */
-  readonly component: string;
   /**
    * Configuration for the stages represented by this deployment branch.
    *
@@ -70,6 +87,7 @@ export interface DeploymentPipelinesProps<
    * @type {RepositoryConfig}
    */
   readonly repository: RepositoryConfig;
+  readonly component: ComponentConfig;
 }
 
 /**
@@ -94,11 +112,12 @@ export class DeploymentPipelines<
    */
   constructor(app: App, props: DeploymentPipelinesProps<TConfig, TBranch>) {
     props.deploymentBranches.forEach((branch: TBranch) => {
-      const pipelineStackId = `${branch.component}-${branch.staticPipelineIdentifier}-pipeline`;
+      const pipelineStackId = `${props.component.componentName}-${branch.staticPipelineIdentifier}-pipeline`;
       new IndividualPipelineStack(app, pipelineStackId, {
         branch,
         pipelineConfig: props.pipelineConfig,
         repository: props.repository,
+        component: props.component,
         env: props.env,
       });
     });

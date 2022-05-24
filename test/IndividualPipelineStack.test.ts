@@ -14,8 +14,11 @@ describe('IndividualPipelineStack', () => {
       branch: {
         branchName: 'test',
         staticPipelineIdentifier: 'test',
-        stages: [{ stageName: 'test', config: {}, stageType: TestStage }],
-        component: 'test',
+        stages: [{ stageName: 'test', config: {} }],
+      },
+      component: {
+        componentName: 'test',
+        componentType: TestStage,
       },
       pipelineConfig: {},
       repository: {
