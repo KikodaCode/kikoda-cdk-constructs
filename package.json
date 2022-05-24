@@ -1,9 +1,9 @@
 {
-  "name": "@kikoda/constructs",
-  "description": "Collection of useful platform constructs for use with modern applications deployed with AWS",
+  "name": "@kikoda/cdk-constructs",
+  "description": "Collection of useful platform constructs for modern applications deployed with AWS CDK",
   "repository": {
     "type": "git",
-    "url": "https://github.com/KikodaCode/kikoda-constructs.git"
+    "url": "https://github.com/KikodaCode/kikoda-cdk-constructs.git"
   },
   "scripts": {
     "build": "npx projen build",
@@ -43,7 +43,7 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
-    "aws-cdk-lib": "2.22.0",
+    "aws-cdk-lib": "2.25.0",
     "constructs": "10.0.5",
     "eslint": "^8",
     "eslint-config-prettier": "^8.5.0",
@@ -67,7 +67,7 @@
     "typescript": "^4.6.4"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "^2.22.0",
+    "aws-cdk-lib": "^2.25.0",
     "constructs": "^10.0.5"
   },
   "dependencies": {

@@ -3,17 +3,17 @@ import { AwsCdkConstructLibrary } from 'projen/lib/awscdk';
 import { ArrowParens, EndOfLine, TrailingComma } from 'projen/lib/javascript';
 
 const project = new AwsCdkConstructLibrary({
-  name: 'kikoda-constructs',
+  name: 'kikoda-cdk-constructs',
   description:
-    'Collection of useful platform constructs for use with modern applications deployed with AWS',
+    'Collection of useful platform constructs for modern applications deployed with AWS CDK',
   author: 'Kikoda, LLC',
   authorAddress: 'platform@kikoda.com',
-  repositoryUrl: 'https://github.com/KikodaCode/kikoda-constructs.git',
+  repositoryUrl: 'https://github.com/KikodaCode/kikoda-cdk-constructs.git',
   defaultReleaseBranch: 'main',
   keywords: ['cdk', 'awscdk', 'compliance', 'configuration', 'websites', 'scaffolding', 'cicd'],
   stability: 'experimental',
   license: 'Apache-2.0',
-  cdkVersion: '2.22.0',
+  cdkVersion: '2.25.0',
   projenrcTs: true,
   devContainer: true,
   vscode: true,
@@ -36,7 +36,7 @@ const project = new AwsCdkConstructLibrary({
 
   // deps: [],                /* Runtime dependencies of this module. */
   devDeps: ['@types/md5', '@types/uuid', '@types/lodash'] /* Build dependencies for this module. */,
-  packageName: '@kikoda/constructs',
+  packageName: '@kikoda/cdk-constructs',
   gitignore: ['spa_local_build_artifact'],
 });
 
@@ -44,7 +44,7 @@ const project = new AwsCdkConstructLibrary({
 new TextFile(project, 'NOTICE', {
   marker: false,
   lines: [
-    'Kikoda Constructs Library',
+    'Kikoda CDK Constructs Library',
     'Copyright 2022-2022 Kikoda, LLC',
     '',
     'This product includes software developed at Kikoda (https://www.kikoda.com)',

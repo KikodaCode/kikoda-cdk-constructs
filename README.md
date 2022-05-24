@@ -1,18 +1,18 @@
 [<img src="https://kikoda.com/wp-content/uploads/2019/07/Logo_White_bg.svg" width="300"/>](https://kikoda.com)
-# Kikoda Constructs Library
+# Kikoda CDK Constructs Library
 
-[![NPM](https://img.shields.io/npm/v/@kikoda/constructs?color=39a356&label=npm+cdk+v2)](https://www.npmjs.com/package/@kikoda/constructs)
+[![NPM](https://img.shields.io/npm/v/@kikoda/cdk-constructs?color=39a356&label=npm+cdk+v2)](https://www.npmjs.com/package/@kikoda/cdk-constructs)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/KikodaCode/kikoda-constructs/blob/main/LICENSE)
 
-Use this Kikoda Constructs Library to architect and model modern applications deployed with AWS.
+Use this Kikoda CDK Constructs Library to architect and model modern applications deployed with AWS CDK.
 
 ## Install from NPM:
 ```
-yarn add --dev @kikoda/constructs
+yarn add --dev @kikoda/cdk-constructs
 
 # or
 
-npm install @kikoda/constructs --save-dev
+npm install @kikoda/cdk-constructs --save-dev
 ```
 
 ## Usage
@@ -23,7 +23,7 @@ The Kikoda Constructs library currently only supports AWS CDK v2.
 Add this to your CDK stack:
 
 ```typescript
-import { Website } from '@kikoda/constructs';
+import { Website } from '@kikoda/cdk-constructs';
 
 const website = new Website(this, 'Website', {
   stage: <DEPLOYMENT_STAGE_NAME>,
@@ -45,7 +45,7 @@ You can also open an issue for a feature request.
 
 ## Contributing
 
-If you find an issue with this package and have a fix, please feel free to open a pull request following the [procedures](https://github.com/KikodaCode/kikoda-constructs/blob/main/CONTRIBUTING.md).
+If you find an issue with this package and have a fix, please feel free to open a pull request following the [procedures](CONTRIBUTING.md).
 
 ## Testing
 
