@@ -1,4 +1,4 @@
-import { Environment, Stack, StackProps, Stage, StageProps } from 'aws-cdk-lib';
+import { Arn, Stack, StackProps, Stage, StageProps } from 'aws-cdk-lib';
 import { BuildSpec, ComputeType } from 'aws-cdk-lib/aws-codebuild';
 import {
   Effect,
@@ -143,10 +143,8 @@ export class IndividualPipelineStack<
    * @param {string} id
    * @param {IndividualPipelineStackProps<TConfig, TBranch>} props
    */
-  private env?: Environment;
   constructor(scope: Construct, id: string, props: IndividualPipelineStackProps<TConfig, TBranch>) {
     super(scope, id, props);
-    this.env = props.env;
     const {
       component: stackName,
       staticPipelineIdentifier = props.branch.branchName,
@@ -308,7 +306,7 @@ export class IndividualPipelineStack<
   private createAssumeRoleCommands(role: string) {
     return role
       ? [
-          `ASSUME_ROLE_ARN="arn:\${AWS::Partition}:iam::$account_id:role/${role}`,
+          `ASSUME_ROLE_ARN=${Arn.format({ service: 'iam', resource: 'role', resourceName: role })}`,
           'TEMP_ROLE=$(aws sts assume-role --role-arn $ASSUME_ROLE_ARN --role-session-name test)',
           'export TEMP_ROLE',
           'export AWS_ACCESS_KEY_ID=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.AccessKeyId\')',

@@ -1,4 +1,4 @@
-import { App, Stack, StackProps } from 'aws-cdk-lib';
+import { App, Arn, Stack, StackProps } from 'aws-cdk-lib';
 import { Code, Runtime, Tracing, Function } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 import { ConfiguredStage, ConfiguredStageProps, DeploymentPipelines } from '../src';
@@ -52,7 +52,13 @@ describe('DeploymentPipelines', () => {
       pipelineConfig: {},
       repository: {
         source: {
-          codeCommitArn: 'arn:aws:codecommit::us-east-1:123456789012:yes',
+          codeCommitArn: Arn.format({
+            partition: 'aws',
+            region: 'us-east-1',
+            account: '123456789012',
+            service: 'codecommit',
+            resource: 'my-repo',
+          }),
         },
       },
       env: {

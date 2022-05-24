@@ -1,4 +1,4 @@
-import { App, Stack, Stage } from 'aws-cdk-lib';
+import { App, Arn, Stack, Stage } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { IndividualPipelineStack } from '../src/DeploymentPipelines/IndividualPipelineStack';
 
@@ -20,7 +20,13 @@ describe('IndividualPipelineStack', () => {
       pipelineConfig: {},
       repository: {
         source: {
-          codeCommitArn: 'arn:aws:codecommit:us-east-1:123456789012:my-repo',
+          codeCommitArn: Arn.format({
+            partition: 'aws',
+            region: 'us-east-1',
+            account: '123456789012',
+            service: 'codecommit',
+            resource: 'my-repo',
+          }),
         },
       },
       env: {

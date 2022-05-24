@@ -769,7 +769,7 @@ public readonly config: any;
 
 ### DeploymentPipelinesProps <a name="DeploymentPipelinesProps" id="@kikoda/cdk-constructs.DeploymentPipelinesProps"></a>
 
-Configuration for the DelploymentPipelines construct.
+Configuration for the DeploymentPipelines construct.
 
 #### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.Initializer"></a>
 
