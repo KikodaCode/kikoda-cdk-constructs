@@ -783,7 +783,6 @@ const deploymentPipelinesProps: DeploymentPipelinesProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-<<<<<<< HEAD
 | <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.analyticsReporting">analyticsReporting</a></code> | <code>boolean</code> | Include runtime versioning information in this Stack. |
 | <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.description">description</a></code> | <code>string</code> | A description of the stack. |
 | <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.env">env</a></code> | <code>aws-cdk-lib.Environment</code> | The AWS environment (account/region) where this stack will be deployed. |
@@ -791,37 +790,13 @@ const deploymentPipelinesProps: DeploymentPipelinesProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.synthesizer">synthesizer</a></code> | <code>aws-cdk-lib.IStackSynthesizer</code> | Synthesis method to use while deploying this stack. |
 | <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Stack tags that will be applied to all the taggable resources and the stack itself. |
 | <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether to enable termination protection for this stack. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.component">component</a></code> | <code>string</code> | TODO: Update documentation. |
 | <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.deploymentBranches">deploymentBranches</a></code> | <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch">IDeploymentBranch</a>[]</code> | An interface representing the configutation for each branch and its related stage. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.repository">repository</a></code> | <code><a href="#@kikoda/cdk-constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a> \| <a href="#@kikoda/cdk-constructs.GitHubSourceConfig">GitHubSourceConfig</a></code> | Configuration for the source code repository. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.stageType">stageType</a></code> | <code>aws-cdk-lib.Stage</code> | A class that extends Stage. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.additionalBuildRolePolicies">additionalBuildRolePolicies</a></code> | <code>aws-cdk-lib.aws_iam.PolicyStatementProps[]</code> | A list of policies that will be added to the build role. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.baseDir">baseDir</a></code> | <code>string</code> | TODO: Update documentation. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.builderAssumeRole">builderAssumeRole</a></code> | <code>string</code> | An optional role that can be assumed to perform the build. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.codeArtifactRepositoryArn">codeArtifactRepositoryArn</a></code> | <code>string</code> | Specifying a codeartifacts ARN here will enable asset phase of the pipeline to access that codeartifacts repository. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.notificationTopicArn">notificationTopicArn</a></code> | <code>string</code> | A SNS Topic arn that when specified will be used to send pipleine notifications. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.pruneCloudAssembly">pruneCloudAssembly</a></code> | <code>boolean</code> | Add a step to pull down and remove asset zips from the cloud assembly output from the Synth step. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.synthOuputDir">synthOuputDir</a></code> | <code>string</code> | TODO: Update documentation. |
+| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.pipelineConfig">pipelineConfig</a></code> | <code><a href="#@kikoda/cdk-constructs.PipelineConfig">PipelineConfig</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.repository">repository</a></code> | <code><a href="#@kikoda/cdk-constructs.RepositoryConfig">RepositoryConfig</a></code> | Configuration for the source code repository. |
 
 ---
 
 ##### `analyticsReporting`<sup>Optional</sup> <a name="analyticsReporting" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.analyticsReporting"></a>
-=======
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.analyticsReporting">analyticsReporting</a></code> | <code>boolean</code> | Include runtime versioning information in this Stack. |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.description">description</a></code> | <code>string</code> | A description of the stack. |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.env">env</a></code> | <code>aws-cdk-lib.Environment</code> | The AWS environment (account/region) where this stack will be deployed. |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.stackName">stackName</a></code> | <code>string</code> | Name to deploy the stack with. |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.synthesizer">synthesizer</a></code> | <code>aws-cdk-lib.IStackSynthesizer</code> | Synthesis method to use while deploying this stack. |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Stack tags that will be applied to all the taggable resources and the stack itself. |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether to enable termination protection for this stack. |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.deploymentBranches">deploymentBranches</a></code> | <code><a href="#@kikoda/constructs.IDeploymentBranch">IDeploymentBranch</a>[]</code> | An interface representing the configutation for each branch and its related stage. |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.pipelineConfig">pipelineConfig</a></code> | <code><a href="#@kikoda/constructs.PipelineConfig">PipelineConfig</a></code> | *No description.* |
-| <code><a href="#@kikoda/constructs.DeploymentPipelinesProps.property.repository">repository</a></code> | <code><a href="#@kikoda/constructs.RepositoryConfig">RepositoryConfig</a></code> | Configuration for the source code repository. |
-
----
-
-##### `analyticsReporting`<sup>Optional</sup> <a name="analyticsReporting" id="@kikoda/constructs.DeploymentPipelinesProps.property.analyticsReporting"></a>
->>>>>>> 75b3ea2 (Added unit tests)
 
 ```typescript
 public readonly analyticsReporting: boolean;
@@ -973,39 +948,25 @@ Whether to enable termination protection for this stack.
 
 ---
 
-<<<<<<< HEAD
-##### `component`<sup>Required</sup> <a name="component" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.component"></a>
-=======
-##### `deploymentBranches`<sup>Required</sup> <a name="deploymentBranches" id="@kikoda/constructs.DeploymentPipelinesProps.property.deploymentBranches"></a>
->>>>>>> 75b3ea2 (Added unit tests)
+##### `deploymentBranches`<sup>Required</sup> <a name="deploymentBranches" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.deploymentBranches"></a>
 
 ```typescript
 public readonly deploymentBranches: IDeploymentBranch[];
 ```
 
-- *Type:* <a href="#@kikoda/constructs.IDeploymentBranch">IDeploymentBranch</a>[]
+- *Type:* <a href="#@kikoda/cdk-constructs.IDeploymentBranch">IDeploymentBranch</a>[]
 
 An interface representing the configutation for each branch and its related stage.
 
 ---
 
-<<<<<<< HEAD
-##### `deploymentBranches`<sup>Required</sup> <a name="deploymentBranches" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.deploymentBranches"></a>
-=======
-##### `pipelineConfig`<sup>Required</sup> <a name="pipelineConfig" id="@kikoda/constructs.DeploymentPipelinesProps.property.pipelineConfig"></a>
->>>>>>> 75b3ea2 (Added unit tests)
+##### `pipelineConfig`<sup>Required</sup> <a name="pipelineConfig" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.pipelineConfig"></a>
 
 ```typescript
 public readonly pipelineConfig: PipelineConfig;
 ```
 
-<<<<<<< HEAD
-- *Type:* <a href="#@kikoda/cdk-constructs.IDeploymentBranch">IDeploymentBranch</a>[]
-
-An interface representing the configutation for each branch and its related stage.
-=======
-- *Type:* <a href="#@kikoda/constructs.PipelineConfig">PipelineConfig</a>
->>>>>>> 75b3ea2 (Added unit tests)
+- *Type:* <a href="#@kikoda/cdk-constructs.PipelineConfig">PipelineConfig</a>
 
 ---
 
@@ -1015,11 +976,7 @@ An interface representing the configutation for each branch and its related stag
 public readonly repository: RepositoryConfig;
 ```
 
-<<<<<<< HEAD
-- *Type:* <a href="#@kikoda/cdk-constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a> | <a href="#@kikoda/cdk-constructs.GitHubSourceConfig">GitHubSourceConfig</a>
-=======
-- *Type:* <a href="#@kikoda/constructs.RepositoryConfig">RepositoryConfig</a>
->>>>>>> 75b3ea2 (Added unit tests)
+- *Type:* <a href="#@kikoda/cdk-constructs.RepositoryConfig">RepositoryConfig</a>
 
 Configuration for the source code repository.
 
@@ -1027,16 +984,12 @@ Currently supports GitHub and CodeArtifacts.
 
 ---
 
-<<<<<<< HEAD
-##### `stageType`<sup>Required</sup> <a name="stageType" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.stageType"></a>
-=======
-### GenerateWebConfigProps <a name="GenerateWebConfigProps" id="@kikoda/constructs.GenerateWebConfigProps"></a>
+### GenerateWebConfigProps <a name="GenerateWebConfigProps" id="@kikoda/cdk-constructs.GenerateWebConfigProps"></a>
 
-#### Initializer <a name="Initializer" id="@kikoda/constructs.GenerateWebConfigProps.Initializer"></a>
->>>>>>> 75b3ea2 (Added unit tests)
+#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.GenerateWebConfigProps.Initializer"></a>
 
 ```typescript
-import { GenerateWebConfigProps } from '@kikoda/constructs'
+import { GenerateWebConfigProps } from '@kikoda/cdk-constructs'
 
 const generateWebConfigProps: GenerateWebConfigProps = { ... }
 ```
@@ -1045,16 +998,12 @@ const generateWebConfigProps: GenerateWebConfigProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@kikoda/constructs.GenerateWebConfigProps.property.configDir">configDir</a></code> | <code>string</code> | The directory where base (optional) and stage level config (json) files are stored. |
-| <code><a href="#@kikoda/constructs.GenerateWebConfigProps.property.additionalConfig">additionalConfig</a></code> | <code>object</code> | Provide any additional configuration items to add to the generated configuration file. |
+| <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps.property.configDir">configDir</a></code> | <code>string</code> | The directory where base (optional) and stage level config (json) files are stored. |
+| <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps.property.additionalConfig">additionalConfig</a></code> | <code>object</code> | Provide any additional configuration items to add to the generated configuration file. |
 
 ---
 
-<<<<<<< HEAD
-##### `additionalBuildRolePolicies`<sup>Optional</sup> <a name="additionalBuildRolePolicies" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.additionalBuildRolePolicies"></a>
-=======
-##### `configDir`<sup>Required</sup> <a name="configDir" id="@kikoda/constructs.GenerateWebConfigProps.property.configDir"></a>
->>>>>>> 75b3ea2 (Added unit tests)
+##### `configDir`<sup>Required</sup> <a name="configDir" id="@kikoda/cdk-constructs.GenerateWebConfigProps.property.configDir"></a>
 
 ```typescript
 public readonly configDir: string;
@@ -1072,11 +1021,7 @@ in stage level configs if needed).
 
 ---
 
-<<<<<<< HEAD
-##### `baseDir`<sup>Optional</sup> <a name="baseDir" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.baseDir"></a>
-=======
-##### `additionalConfig`<sup>Optional</sup> <a name="additionalConfig" id="@kikoda/constructs.GenerateWebConfigProps.property.additionalConfig"></a>
->>>>>>> 75b3ea2 (Added unit tests)
+##### `additionalConfig`<sup>Optional</sup> <a name="additionalConfig" id="@kikoda/cdk-constructs.GenerateWebConfigProps.property.additionalConfig"></a>
 
 ```typescript
 public readonly additionalConfig: object;
@@ -1091,18 +1036,14 @@ will be added to the config as the `additionalConfig` attribute.
 
 ---
 
-<<<<<<< HEAD
-##### `builderAssumeRole`<sup>Optional</sup> <a name="builderAssumeRole" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.builderAssumeRole"></a>
-=======
-### GitHubSourceConfig <a name="GitHubSourceConfig" id="@kikoda/constructs.GitHubSourceConfig"></a>
+### GitHubSourceConfig <a name="GitHubSourceConfig" id="@kikoda/cdk-constructs.GitHubSourceConfig"></a>
 
 Configuration for specifying a GitHub repository as the source.
 
-#### Initializer <a name="Initializer" id="@kikoda/constructs.GitHubSourceConfig.Initializer"></a>
->>>>>>> 75b3ea2 (Added unit tests)
+#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.GitHubSourceConfig.Initializer"></a>
 
 ```typescript
-import { GitHubSourceConfig } from '@kikoda/constructs'
+import { GitHubSourceConfig } from '@kikoda/cdk-constructs'
 
 const gitHubSourceConfig: GitHubSourceConfig = { ... }
 ```
@@ -1111,16 +1052,12 @@ const gitHubSourceConfig: GitHubSourceConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@kikoda/constructs.GitHubSourceConfig.property.options">options</a></code> | <code>aws-cdk-lib.pipelines.ConnectionSourceOptions</code> | CodeStar connection options. |
-| <code><a href="#@kikoda/constructs.GitHubSourceConfig.property.owner">owner</a></code> | <code>string</code> | The owner of the GitHub repository. |
+| <code><a href="#@kikoda/cdk-constructs.GitHubSourceConfig.property.options">options</a></code> | <code>aws-cdk-lib.pipelines.ConnectionSourceOptions</code> | CodeStar connection options. |
+| <code><a href="#@kikoda/cdk-constructs.GitHubSourceConfig.property.owner">owner</a></code> | <code>string</code> | The owner of the GitHub repository. |
 
 ---
 
-<<<<<<< HEAD
-##### `codeArtifactRepositoryArn`<sup>Optional</sup> <a name="codeArtifactRepositoryArn" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.codeArtifactRepositoryArn"></a>
-=======
-##### `options`<sup>Required</sup> <a name="options" id="@kikoda/constructs.GitHubSourceConfig.property.options"></a>
->>>>>>> 75b3ea2 (Added unit tests)
+##### `options`<sup>Required</sup> <a name="options" id="@kikoda/cdk-constructs.GitHubSourceConfig.property.options"></a>
 
 ```typescript
 public readonly options: ConnectionSourceOptions;
@@ -1134,11 +1071,7 @@ GitHub sources require use of a CodeStar connection.
 
 ---
 
-<<<<<<< HEAD
-##### `notificationTopicArn`<sup>Optional</sup> <a name="notificationTopicArn" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.notificationTopicArn"></a>
-=======
-##### `owner`<sup>Required</sup> <a name="owner" id="@kikoda/constructs.GitHubSourceConfig.property.owner"></a>
->>>>>>> 75b3ea2 (Added unit tests)
+##### `owner`<sup>Required</sup> <a name="owner" id="@kikoda/cdk-constructs.GitHubSourceConfig.property.owner"></a>
 
 ```typescript
 public readonly owner: string;
@@ -1150,16 +1083,12 @@ The owner of the GitHub repository.
 
 ---
 
-<<<<<<< HEAD
-##### `pruneCloudAssembly`<sup>Optional</sup> <a name="pruneCloudAssembly" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.pruneCloudAssembly"></a>
-=======
-### PipelineConfig <a name="PipelineConfig" id="@kikoda/constructs.PipelineConfig"></a>
+### PipelineConfig <a name="PipelineConfig" id="@kikoda/cdk-constructs.PipelineConfig"></a>
 
-#### Initializer <a name="Initializer" id="@kikoda/constructs.PipelineConfig.Initializer"></a>
->>>>>>> 75b3ea2 (Added unit tests)
+#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.PipelineConfig.Initializer"></a>
 
 ```typescript
-import { PipelineConfig } from '@kikoda/constructs'
+import { PipelineConfig } from '@kikoda/cdk-constructs'
 
 const pipelineConfig: PipelineConfig = { ... }
 ```
@@ -1168,18 +1097,14 @@ const pipelineConfig: PipelineConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@kikoda/constructs.PipelineConfig.property.builderAssumeRole">builderAssumeRole</a></code> | <code>string</code> | An optional role that can be assumed to perform the build. |
-| <code><a href="#@kikoda/constructs.PipelineConfig.property.codeArtifactRepositoryArn">codeArtifactRepositoryArn</a></code> | <code>string</code> | Specifying a codeartifacts ARN here will enable asset phase of the pipeline to access that codeartifacts repository. |
-| <code><a href="#@kikoda/constructs.PipelineConfig.property.notificationTopicArn">notificationTopicArn</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@kikoda/constructs.PipelineConfig.property.pruneCloudAssembly">pruneCloudAssembly</a></code> | <code>boolean</code> | Add a step to pull down and remove asset zips from the cloud assembly output from the Synth step. |
+| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.builderAssumeRole">builderAssumeRole</a></code> | <code>string</code> | An optional role that can be assumed to perform the build. |
+| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.codeArtifactRepositoryArn">codeArtifactRepositoryArn</a></code> | <code>string</code> | Specifying a codeartifacts ARN here will enable asset phase of the pipeline to access that codeartifacts repository. |
+| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.notificationTopicArn">notificationTopicArn</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.pruneCloudAssembly">pruneCloudAssembly</a></code> | <code>boolean</code> | Add a step to pull down and remove asset zips from the cloud assembly output from the Synth step. |
 
 ---
 
-<<<<<<< HEAD
-##### `synthOuputDir`<sup>Optional</sup> <a name="synthOuputDir" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.synthOuputDir"></a>
-=======
-##### `builderAssumeRole`<sup>Optional</sup> <a name="builderAssumeRole" id="@kikoda/constructs.PipelineConfig.property.builderAssumeRole"></a>
->>>>>>> 75b3ea2 (Added unit tests)
+##### `builderAssumeRole`<sup>Optional</sup> <a name="builderAssumeRole" id="@kikoda/cdk-constructs.PipelineConfig.property.builderAssumeRole"></a>
 
 ```typescript
 public readonly builderAssumeRole: string;
@@ -1191,43 +1116,21 @@ An optional role that can be assumed to perform the build.
 
 ---
 
-<<<<<<< HEAD
-### GenerateWebConfigProps <a name="GenerateWebConfigProps" id="@kikoda/cdk-constructs.GenerateWebConfigProps"></a>
-
-#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.GenerateWebConfigProps.Initializer"></a>
-
-```typescript
-import { GenerateWebConfigProps } from '@kikoda/cdk-constructs'
-
-const generateWebConfigProps: GenerateWebConfigProps = { ... }
-=======
-##### `codeArtifactRepositoryArn`<sup>Optional</sup> <a name="codeArtifactRepositoryArn" id="@kikoda/constructs.PipelineConfig.property.codeArtifactRepositoryArn"></a>
+##### `codeArtifactRepositoryArn`<sup>Optional</sup> <a name="codeArtifactRepositoryArn" id="@kikoda/cdk-constructs.PipelineConfig.property.codeArtifactRepositoryArn"></a>
 
 ```typescript
 public readonly codeArtifactRepositoryArn: string;
->>>>>>> 75b3ea2 (Added unit tests)
 ```
 
 - *Type:* string
 
-<<<<<<< HEAD
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps.property.configDir">configDir</a></code> | <code>string</code> | The directory where base (optional) and stage level config (json) files are stored. |
-| <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps.property.additionalConfig">additionalConfig</a></code> | <code>object</code> | Provide any additional configuration items to add to the generated configuration file. |
-
----
-
-##### `configDir`<sup>Required</sup> <a name="configDir" id="@kikoda/cdk-constructs.GenerateWebConfigProps.property.configDir"></a>
-=======
 Specifying a codeartifacts ARN here will enable asset phase of the pipeline to access that codeartifacts repository.
 
 This includes adding approprate roles and leveraging an assumed role for the docker build so that the docker build can pull from codeartifacts.
 
 ---
 
-##### `notificationTopicArn`<sup>Optional</sup> <a name="notificationTopicArn" id="@kikoda/constructs.PipelineConfig.property.notificationTopicArn"></a>
->>>>>>> 75b3ea2 (Added unit tests)
+##### `notificationTopicArn`<sup>Optional</sup> <a name="notificationTopicArn" id="@kikoda/cdk-constructs.PipelineConfig.property.notificationTopicArn"></a>
 
 ```typescript
 public readonly notificationTopicArn: string;
@@ -1237,11 +1140,7 @@ public readonly notificationTopicArn: string;
 
 ---
 
-<<<<<<< HEAD
-##### `additionalConfig`<sup>Optional</sup> <a name="additionalConfig" id="@kikoda/cdk-constructs.GenerateWebConfigProps.property.additionalConfig"></a>
-=======
-##### `pruneCloudAssembly`<sup>Optional</sup> <a name="pruneCloudAssembly" id="@kikoda/constructs.PipelineConfig.property.pruneCloudAssembly"></a>
->>>>>>> 75b3ea2 (Added unit tests)
+##### `pruneCloudAssembly`<sup>Optional</sup> <a name="pruneCloudAssembly" id="@kikoda/cdk-constructs.PipelineConfig.property.pruneCloudAssembly"></a>
 
 ```typescript
 public readonly pruneCloudAssembly: boolean;
@@ -1256,25 +1155,14 @@ artifact size.
 
 ---
 
-<<<<<<< HEAD
-### GitHubSourceConfig <a name="GitHubSourceConfig" id="@kikoda/cdk-constructs.GitHubSourceConfig"></a>
-=======
-### RepositoryConfig <a name="RepositoryConfig" id="@kikoda/constructs.RepositoryConfig"></a>
->>>>>>> 75b3ea2 (Added unit tests)
+### RepositoryConfig <a name="RepositoryConfig" id="@kikoda/cdk-constructs.RepositoryConfig"></a>
 
 The configuration for the source of the pipeline.
 
-<<<<<<< HEAD
-#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.GitHubSourceConfig.Initializer"></a>
+#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.RepositoryConfig.Initializer"></a>
 
 ```typescript
-import { GitHubSourceConfig } from '@kikoda/cdk-constructs'
-=======
-#### Initializer <a name="Initializer" id="@kikoda/constructs.RepositoryConfig.Initializer"></a>
-
-```typescript
-import { RepositoryConfig } from '@kikoda/constructs'
->>>>>>> 75b3ea2 (Added unit tests)
+import { RepositoryConfig } from '@kikoda/cdk-constructs'
 
 const repositoryConfig: RepositoryConfig = { ... }
 ```
@@ -1283,32 +1171,23 @@ const repositoryConfig: RepositoryConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-<<<<<<< HEAD
-| <code><a href="#@kikoda/cdk-constructs.GitHubSourceConfig.property.options">options</a></code> | <code>aws-cdk-lib.pipelines.ConnectionSourceOptions</code> | CodeStar connection options. |
-| <code><a href="#@kikoda/cdk-constructs.GitHubSourceConfig.property.owner">owner</a></code> | <code>string</code> | The owner of the GitHub repository. |
+| <code><a href="#@kikoda/cdk-constructs.RepositoryConfig.property.source">source</a></code> | <code><a href="#@kikoda/cdk-constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a> \| <a href="#@kikoda/cdk-constructs.GitHubSourceConfig">GitHubSourceConfig</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.RepositoryConfig.property.baseDir">baseDir</a></code> | <code>string</code> | Base directory for the repository. |
+| <code><a href="#@kikoda/cdk-constructs.RepositoryConfig.property.synthOuputDir">synthOuputDir</a></code> | <code>string</code> | Output directory for the cloudformation synthisis. |
 
 ---
 
-##### `options`<sup>Required</sup> <a name="options" id="@kikoda/cdk-constructs.GitHubSourceConfig.property.options"></a>
-=======
-| <code><a href="#@kikoda/constructs.RepositoryConfig.property.source">source</a></code> | <code><a href="#@kikoda/constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a> \| <a href="#@kikoda/constructs.GitHubSourceConfig">GitHubSourceConfig</a></code> | *No description.* |
-| <code><a href="#@kikoda/constructs.RepositoryConfig.property.baseDir">baseDir</a></code> | <code>string</code> | Base directory for the repository. |
-| <code><a href="#@kikoda/constructs.RepositoryConfig.property.synthOuputDir">synthOuputDir</a></code> | <code>string</code> | Output directory for the cloudformation synthisis. |
-
----
-
-##### `source`<sup>Required</sup> <a name="source" id="@kikoda/constructs.RepositoryConfig.property.source"></a>
->>>>>>> 75b3ea2 (Added unit tests)
+##### `source`<sup>Required</sup> <a name="source" id="@kikoda/cdk-constructs.RepositoryConfig.property.source"></a>
 
 ```typescript
 public readonly source: CodeCommitSourceConfig | GitHubSourceConfig;
 ```
 
-- *Type:* <a href="#@kikoda/constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a> | <a href="#@kikoda/constructs.GitHubSourceConfig">GitHubSourceConfig</a>
+- *Type:* <a href="#@kikoda/cdk-constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a> | <a href="#@kikoda/cdk-constructs.GitHubSourceConfig">GitHubSourceConfig</a>
 
 ---
 
-##### `baseDir`<sup>Optional</sup> <a name="baseDir" id="@kikoda/constructs.RepositoryConfig.property.baseDir"></a>
+##### `baseDir`<sup>Optional</sup> <a name="baseDir" id="@kikoda/cdk-constructs.RepositoryConfig.property.baseDir"></a>
 
 ```typescript
 public readonly baseDir: string;
@@ -1321,11 +1200,7 @@ Base directory for the repository.
 
 ---
 
-<<<<<<< HEAD
-##### `owner`<sup>Required</sup> <a name="owner" id="@kikoda/cdk-constructs.GitHubSourceConfig.property.owner"></a>
-=======
-##### `synthOuputDir`<sup>Optional</sup> <a name="synthOuputDir" id="@kikoda/constructs.RepositoryConfig.property.synthOuputDir"></a>
->>>>>>> 75b3ea2 (Added unit tests)
+##### `synthOuputDir`<sup>Optional</sup> <a name="synthOuputDir" id="@kikoda/cdk-constructs.RepositoryConfig.property.synthOuputDir"></a>
 
 ```typescript
 public readonly synthOuputDir: string;
@@ -1416,20 +1291,12 @@ const stageConfig: StageConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-<<<<<<< HEAD
 | <code><a href="#@kikoda/cdk-constructs.StageConfig.property.env">env</a></code> | <code>aws-cdk-lib.Environment</code> | Default AWS environment (account/region) for `Stack`s in this `Stage`. |
 | <code><a href="#@kikoda/cdk-constructs.StageConfig.property.outdir">outdir</a></code> | <code>string</code> | The output directory into which to emit synthesized artifacts. |
-| <code><a href="#@kikoda/cdk-constructs.StageConfig.property.config">config</a></code> | <code>any</code> | TODO: Update documentation. |
-| <code><a href="#@kikoda/cdk-constructs.StageConfig.property.stageName">stageName</a></code> | <code>string</code> | TODO: Update documentation. |
-| <code><a href="#@kikoda/cdk-constructs.StageConfig.property.manualApproval">manualApproval</a></code> | <code>boolean</code> | TODO: Update documentation. |
-=======
-| <code><a href="#@kikoda/constructs.StageConfig.property.env">env</a></code> | <code>aws-cdk-lib.Environment</code> | Default AWS environment (account/region) for `Stack`s in this `Stage`. |
-| <code><a href="#@kikoda/constructs.StageConfig.property.outdir">outdir</a></code> | <code>string</code> | The output directory into which to emit synthesized artifacts. |
-| <code><a href="#@kikoda/constructs.StageConfig.property.config">config</a></code> | <code>any</code> | The generic config. |
-| <code><a href="#@kikoda/constructs.StageConfig.property.stageName">stageName</a></code> | <code>string</code> | The name of the stage. |
-| <code><a href="#@kikoda/constructs.StageConfig.property.stageType">stageType</a></code> | <code>aws-cdk-lib.Stage</code> | A class that extends Stage. |
-| <code><a href="#@kikoda/constructs.StageConfig.property.manualApproval">manualApproval</a></code> | <code>boolean</code> | Add a manual approval step when deploying this stage. |
->>>>>>> 75b3ea2 (Added unit tests)
+| <code><a href="#@kikoda/cdk-constructs.StageConfig.property.config">config</a></code> | <code>any</code> | The generic config. |
+| <code><a href="#@kikoda/cdk-constructs.StageConfig.property.stageName">stageName</a></code> | <code>string</code> | The name of the stage. |
+| <code><a href="#@kikoda/cdk-constructs.StageConfig.property.stageType">stageType</a></code> | <code>aws-cdk-lib.Stage</code> | A class that extends Stage. |
+| <code><a href="#@kikoda/cdk-constructs.StageConfig.property.manualApproval">manualApproval</a></code> | <code>boolean</code> | Add a manual approval step when deploying this stage. |
 
 ---
 
@@ -1515,7 +1382,7 @@ The name of the stage.
 
 ---
 
-##### `stageType`<sup>Required</sup> <a name="stageType" id="@kikoda/constructs.StageConfig.property.stageType"></a>
+##### `stageType`<sup>Required</sup> <a name="stageType" id="@kikoda/cdk-constructs.StageConfig.property.stageType"></a>
 
 ```typescript
 public readonly stageType: Stage;
@@ -1828,16 +1695,10 @@ Configuration for the specific deployment.
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-<<<<<<< HEAD
-| <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch.property.branchName">branchName</a></code> | <code>string</code> | TODO: Update documentation. |
-| <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch.property.stages">stages</a></code> | <code><a href="#@kikoda/cdk-constructs.StageConfig">StageConfig</a>[]</code> | TODO: Update documentation. |
-| <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch.property.staticPipelineIdentifier">staticPipelineIdentifier</a></code> | <code>string</code> | TODO: Update documentation. |
-=======
-| <code><a href="#@kikoda/constructs.IDeploymentBranch.property.branchName">branchName</a></code> | <code>string</code> | The name of the code branch that this deployment branch represents. |
-| <code><a href="#@kikoda/constructs.IDeploymentBranch.property.component">component</a></code> | <code>string</code> | The name of this component. |
-| <code><a href="#@kikoda/constructs.IDeploymentBranch.property.stages">stages</a></code> | <code><a href="#@kikoda/constructs.StageConfig">StageConfig</a>[]</code> | Configuration for the stages represented by this deployment branch. |
-| <code><a href="#@kikoda/constructs.IDeploymentBranch.property.staticPipelineIdentifier">staticPipelineIdentifier</a></code> | <code>string</code> | The name to be used by the pipeline stack, it is possible to configure this sperately from the branch name so that updating the branch name does not require destroy/recreate. |
->>>>>>> 75b3ea2 (Added unit tests)
+| <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch.property.branchName">branchName</a></code> | <code>string</code> | The name of the code branch that this deployment branch represents. |
+| <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch.property.component">component</a></code> | <code>string</code> | The name of this component. |
+| <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch.property.stages">stages</a></code> | <code><a href="#@kikoda/cdk-constructs.StageConfig">StageConfig</a>[]</code> | Configuration for the stages represented by this deployment branch. |
+| <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch.property.staticPipelineIdentifier">staticPipelineIdentifier</a></code> | <code>string</code> | The name to be used by the pipeline stack, it is possible to configure this sperately from the branch name so that updating the branch name does not require destroy/recreate. |
 
 ---
 
@@ -1853,7 +1714,7 @@ The name of the code branch that this deployment branch represents.
 
 ---
 
-##### `component`<sup>Required</sup> <a name="component" id="@kikoda/constructs.IDeploymentBranch.property.component"></a>
+##### `component`<sup>Required</sup> <a name="component" id="@kikoda/cdk-constructs.IDeploymentBranch.property.component"></a>
 
 ```typescript
 public readonly component: string;
@@ -1877,11 +1738,7 @@ Configuration for the stages represented by this deployment branch.
 
 ---
 
-<<<<<<< HEAD
-##### `staticPipelineIdentifier`<sup>Required</sup> <a name="staticPipelineIdentifier" id="@kikoda/cdk-constructs.IDeploymentBranch.property.staticPipelineIdentifier"></a>
-=======
-##### `staticPipelineIdentifier`<sup>Optional</sup> <a name="staticPipelineIdentifier" id="@kikoda/constructs.IDeploymentBranch.property.staticPipelineIdentifier"></a>
->>>>>>> 75b3ea2 (Added unit tests)
+##### `staticPipelineIdentifier`<sup>Optional</sup> <a name="staticPipelineIdentifier" id="@kikoda/cdk-constructs.IDeploymentBranch.property.staticPipelineIdentifier"></a>
 
 ```typescript
 public readonly staticPipelineIdentifier: string;
