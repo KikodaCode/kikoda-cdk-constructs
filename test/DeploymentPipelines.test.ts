@@ -1,4 +1,4 @@
-import { App, Stack, StackProps } from 'aws-cdk-lib';
+import { App, Arn, Stack, StackProps } from 'aws-cdk-lib';
 import { Code, Runtime, Tracing, Function } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 import { ConfiguredStage, ConfiguredStageProps, DeploymentPipelines } from '../src';
@@ -32,9 +32,9 @@ describe('DeploymentPipelines', () => {
   it('should create without error.', () => {
     const app = new App();
     const statement = new DeploymentPipelines<CoreConfig>(app, {
-      component: 'test',
       deploymentBranches: [
         {
+          component: 'test',
           branchName: 'test',
           staticPipelineIdentifier: 'test',
           stages: [
@@ -44,18 +44,27 @@ describe('DeploymentPipelines', () => {
               config: {
                 activeTracing: Tracing.ACTIVE,
               },
+              stageType: TestStage,
             },
           ],
         },
       ],
+      pipelineConfig: {},
+      repository: {
+        source: {
+          codeCommitArn: Arn.format({
+            partition: 'aws',
+            region: 'us-east-1',
+            account: '123456789012',
+            service: 'codecommit',
+            resource: 'my-repo',
+          }),
+        },
+      },
       env: {
         region: 'us-east-1',
         account: '123456789012',
       },
-      repository: {
-        codeCommitArn: 'arn:codecommit:us-east-1:us-east-1:123456789012:yes',
-      },
-      stageType: TestStage,
     });
     expect(statement).not.toBeNull;
   });

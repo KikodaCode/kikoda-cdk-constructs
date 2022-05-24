@@ -1,4 +1,4 @@
-import { Stack } from 'aws-cdk-lib';
+import { Arn, Stack, StackProps, Stage, StageProps } from 'aws-cdk-lib';
 import { BuildSpec, ComputeType } from 'aws-cdk-lib/aws-codebuild';
 import {
   Effect,
@@ -16,29 +16,88 @@ import {
 } from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
 import { merge } from 'lodash';
-import { IDeploymentBranch } from '..';
-import { CodeSource, DeploymentPipelinesProps } from '../..';
+import { IDeploymentBranch } from '../';
+import { CodeSource, RepositoryConfig } from '../../CodeSource';
 import { PipelineEventNotificationRule } from '../PipelineEventNotificationRule';
 import { TrimCloudAssemblyStep } from './TrimCloudAssemblyStep';
+/**
+ * Configuration for the stage.
+ *
+ * @export
+ * @interface StageConfig
+ * @typedef {StageConfig}
+ * @template TConfig
+ */
+export interface StageConfig<TConfig> extends StageProps {
+  /**
+   * The name of the stage.
+   *
+   * @readonly
+   * @type {string}
+   */
+  readonly stageName: string;
+  /**
+   * A class that extends Stage. This class will be used to create the individual stages for each specified stage configuration.
+   *
+   * @readonly
+   * @type {typeof Stage}
+   */
+  readonly stageType: typeof Stage;
+  /**
+   * Add a manual approval step when deploying this stage.
+   *
+   * @readonly
+   * @type {?boolean}
+   */
+  readonly manualApproval?: boolean;
+  /**
+   * The generic config.
+   *
+   * @readonly
+   * @type {TConfig}
+   */
+  readonly config: TConfig;
+}
 
 /**
- * TODO: Update documentation
- * @author Kikoda
  *
- * @param {?string} [role]
- * @returns {{}}
+ * @export
+ * @interface PipelineConfig
+ * @typedef {PipelineConfig}
  */
-const createAssumeRoleCommands = (role?: string) =>
-  role
-    ? [
-        `ASSUME_ROLE_ARN="arn:aws:iam::$account_id:role/${role}`,
-        'TEMP_ROLE=$(aws sts assume-role --role-arn $ASSUME_ROLE_ARN --role-session-name test)',
-        'export TEMP_ROLE',
-        'export AWS_ACCESS_KEY_ID=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.AccessKeyId\')',
-        'export AWS_SECRET_ACCESS_KEY=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.SecretAccessKey\')',
-        'export AWS_SESSION_TOKEN=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.SessionToken\')',
-      ]
-    : [];
+export interface PipelineConfig {
+  /**
+   * Add a step to pull down and remove asset zips from the cloud assembly output from the Synth
+   * step. This is usefull when you have a lot of resources and are hitting the CFN limit for input
+   * artifact size.
+   *
+   * @readonly
+   * @type {?boolean}
+   */
+  readonly pruneCloudAssembly?: boolean;
+  /**
+   * Specifying a codeartifacts ARN here will enable asset phase of the pipeline to access that codeartifacts repository.
+   * This includes adding approprate roles and leveraging an assumed role for the docker build so that the docker build can pull from codeartifacts.
+   *
+   * @readonly
+   * @type {?string}
+   */
+  readonly codeArtifactRepositoryArn?: string;
+  /**
+   *
+   *
+   * @readonly
+   * @type {?string}
+   */
+  readonly notificationTopicArn?: string;
+  /**
+   * An optional role that can be assumed to perform the build.
+   *
+   * @readonly
+   * @type {?string}
+   */
+  readonly builderAssumeRole?: string;
+}
 
 /**
  * The properties for the IndividualPipelineStack construct.
@@ -51,14 +110,15 @@ const createAssumeRoleCommands = (role?: string) =>
  * @extends {DeploymentPipelinesProps<TConfig, TBranch>}
  */
 export interface IndividualPipelineStackProps<TConfig, TBranch extends IDeploymentBranch<TConfig>>
-  extends DeploymentPipelinesProps<TConfig, TBranch> {
+  extends StackProps {
   /**
    * The deployment branch that this stack represents.
-   * @author Kikoda
    *
    * @type {TBranch}
    */
-  branch: TBranch;
+  readonly branch: TBranch;
+  readonly repository: RepositoryConfig;
+  readonly pipelineConfig: PipelineConfig;
 }
 
 /**
@@ -77,7 +137,6 @@ export class IndividualPipelineStack<
 > extends Stack {
   /**
    * Creates an instance of IndividualPipelineStack.
-   * @author Kikoda
    *
    * @constructor
    * @param {Construct} scope
@@ -86,28 +145,31 @@ export class IndividualPipelineStack<
    */
   constructor(scope: Construct, id: string, props: IndividualPipelineStackProps<TConfig, TBranch>) {
     super(scope, id, props);
-
     const {
       component: stackName,
-      baseDir,
-      synthOuputDir,
-      pruneCloudAssembly = true,
-      stageType,
-      branch,
-    } = props;
+      staticPipelineIdentifier = props.branch.branchName,
+      branchName,
+    } = props.branch;
 
-    const prune = pruneCloudAssembly;
+    const {
+      pruneCloudAssembly = true,
+      codeArtifactRepositoryArn,
+      builderAssumeRole,
+      notificationTopicArn,
+    } = props.pipelineConfig;
+
+    const { source, synthOuputDir = './out', baseDir = '.' } = props.repository;
 
     // Static Pipeline id
-    const pipelineId = `${stackName}-${branch.staticPipelineIdentifier}`;
+    const pipelineId = `${stackName}-${staticPipelineIdentifier}`;
 
     // Branch-based pipeline name
-    const pipelineName = `${stackName}-${branch.branchName.replace('/', '-')}`;
+    const pipelineName = `${stackName}-${branchName.replace('/', '-')}`;
 
     const additonalPolicyStatements: PolicyStatementProps[] = [];
     let assetPublishingCodeBuildDefaults: CodeBuildOptions = {};
 
-    if (props.codeArtifactRepositoryArn) {
+    if (codeArtifactRepositoryArn) {
       additonalPolicyStatements.push({
         effect: Effect.ALLOW,
         actions: ['sts:assumerole'],
@@ -118,8 +180,8 @@ export class IndividualPipelineStack<
       codeArtifactAccessRole.addToPolicy(
         new PolicyStatement({
           effect: Effect.ALLOW,
-          actions: ['codeartifacts:*'], //TODO: probably dont allow absolutely everything....
-          resources: [props.codeArtifactRepositoryArn],
+          actions: ['codeartifacts:GetAuthorizationToken', 'sts:GetServiceBearerToken'],
+          resources: [codeArtifactRepositoryArn],
         }),
       );
       assetPublishingCodeBuildDefaults = merge(assetPublishingCodeBuildDefaults, {
@@ -159,33 +221,24 @@ export class IndividualPipelineStack<
         },
       },
       synth: new ShellStep('Synth', {
-        input: new CodeSource(this, branch.branchName, props.repository).source,
-        commands: this.defineSynthCommands(
-          synthOuputDir,
-          baseDir,
-          props.builderAssumeRole,
-          true,
-          'npm',
-        ),
+        input: new CodeSource(this, props.branch.branchName, source).source,
+        commands: this.defineSynthCommands(synthOuputDir, baseDir, builderAssumeRole, true, 'npm'),
         primaryOutputDirectory: `${baseDir}/${synthOuputDir}`,
       }),
-      codeBuildDefaults: {
-        rolePolicy: props.additionalBuildRolePolicies?.map(x => new PolicyStatement(x)),
-      },
       assetPublishingCodeBuildDefaults,
     });
 
     // Add defined stages
-    branch.stages.forEach(stage => {
+    props.branch.stages.forEach(stage => {
       const pre: AddStageOpts['pre'] = [];
 
       // optional pruning step before CFN deploy to get around 256mb input artifact limit
-      if (prune) pre.push(new TrimCloudAssemblyStep(id, pipelineName));
+      if (pruneCloudAssembly) pre.push(new TrimCloudAssemblyStep(id, pipelineName));
 
       // add manual approval step if applicable
       if (stage.manualApproval) pre.push(new ManualApprovalStep(`Promote To ${stage.stageName}`));
 
-      pipeline.addStage(new stageType(this, stage.stageName, stage), {
+      pipeline.addStage(new stage.stageType(this, stage.stageName, stage), {
         pre,
       });
     });
@@ -193,13 +246,15 @@ export class IndividualPipelineStack<
     pipeline.buildPipeline();
 
     for (const statement of additonalPolicyStatements) {
-      pipeline.pipeline.addToRolePolicy(new PolicyStatement(statement));
+      pipeline.pipeline.addToRolePolicy(
+        new PolicyStatement({ ...statement, resources: [pipeline.pipeline.role.roleArn] }),
+      );
     }
 
     // TODO: move to an aspect?
-    if (props.notificationTopicArn && props.notificationTopicArn !== '') {
+    if (notificationTopicArn && notificationTopicArn !== '') {
       new PipelineEventNotificationRule(pipeline, {
-        notificationTopicArn: props.notificationTopicArn,
+        notificationTopicArn,
       });
     }
   }
@@ -224,7 +279,7 @@ export class IndividualPipelineStack<
   ) {
     let commands: string[] = [];
     if (assumeRole) {
-      commands = [...commands, ...createAssumeRoleCommands(assumeRole)];
+      commands = [...commands, ...this.createAssumeRoleCommands(assumeRole)];
     }
     if (baseDir) {
       commands.push(`cd ${baseDir}`);
@@ -240,5 +295,24 @@ export class IndividualPipelineStack<
     }
     commands.push(synthCommand);
     return commands;
+  }
+  /**
+   * Linux commands for assuming a role.
+   *
+   * @private
+   * @param {string} [role]
+   * @returns {string[]}
+   */
+  private createAssumeRoleCommands(role: string) {
+    return role
+      ? [
+          `ASSUME_ROLE_ARN=${Arn.format({ service: 'iam', resource: 'role', resourceName: role })}`,
+          'TEMP_ROLE=$(aws sts assume-role --role-arn $ASSUME_ROLE_ARN --role-session-name test)',
+          'export TEMP_ROLE',
+          'export AWS_ACCESS_KEY_ID=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.AccessKeyId\')',
+          'export AWS_SECRET_ACCESS_KEY=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.SecretAccessKey\')',
+          'export AWS_SESSION_TOKEN=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.SessionToken\')',
+        ]
+      : [];
   }
 }

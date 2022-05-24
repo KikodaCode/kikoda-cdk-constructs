@@ -49,7 +49,25 @@ export interface GitHubSourceConfig {
  * @export
  * @typedef {RepositoryConfig}
  */
-export type RepositoryConfig = GitHubSourceConfig | CodeCommitSourceConfig;
+export interface RepositoryConfig {
+  /**
+   * Base directory for the repository.
+   *
+   * @readonly
+   * @type {?string}
+   * @default '.'
+   */
+  readonly baseDir?: string;
+  /**
+   * Output directory for the cloudformation synthisis.
+   *
+   * @readonly
+   * @type {?string}
+   * @default './out'
+   */
+  readonly synthOuputDir?: string;
+  readonly source: GitHubSourceConfig | CodeCommitSourceConfig;
+}
 
 /**
  * Configuration properties for the code source repository. Currently supports CodeCommit and GitHub Sources.
@@ -76,7 +94,11 @@ export class CodeSource extends Construct {
    * @param {string} branchName
    * @param {RepositoryConfig} config
    */
-  constructor(scope: Construct, branchName: string, config: RepositoryConfig) {
+  constructor(
+    scope: Construct,
+    branchName: string,
+    config: CodeCommitSourceConfig | GitHubSourceConfig,
+  ) {
     super(scope, 'CodeSource');
     let codeCommitSource = config as CodeCommitSourceConfig;
     let githubSource = config as GitHubSourceConfig;

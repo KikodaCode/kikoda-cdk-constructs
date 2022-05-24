@@ -1,4 +1,4 @@
-import { App, Stack } from 'aws-cdk-lib';
+import { App, Arn, Stack } from 'aws-cdk-lib';
 import { CodePipeline, ShellStep } from 'aws-cdk-lib/pipelines';
 import { CodeSource } from '../src';
 import { PipelineEventNotificationRule } from '../src/DeploymentPipelines/PipelineEventNotificationRule';
@@ -12,7 +12,7 @@ const stack = new Stack(new App(), 'TestStack', {
 const codePipeline = new CodePipeline(stack, 'TestPipeline', {
   synth: new ShellStep('Synth', {
     input: new CodeSource(stack, 'test', {
-      codeCommitArn: 'arn:codecommit:us-east-1:us-east-1:123456789012:yes',
+      codeCommitArn: Arn.format({ service: 'codecommit', resource: 'my-repo' }, stack),
     }).source,
     commands: [`cd someDir`, `npm run cdk synth -o outDir`],
     primaryOutputDirectory: `someDir/outDir`,
@@ -22,7 +22,7 @@ codePipeline.buildPipeline();
 describe('PipelineEventNotificationRule', () => {
   it('should create without error.', () => {
     const rule = new PipelineEventNotificationRule(codePipeline, {
-      notificationTopicArn: 'arn:sns:us-east-1:us-east-1:123456789012:yes',
+      notificationTopicArn: Arn.format({ service: 'sns', resource: 'my-topic' }, stack),
     });
     expect(rule).not.toBeNull;
   });
