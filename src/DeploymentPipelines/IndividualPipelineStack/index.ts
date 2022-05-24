@@ -1,4 +1,4 @@
-import { Arn, Stack, StackProps, Stage, StageProps } from 'aws-cdk-lib';
+import { Arn, Stack, StackProps, StageProps } from 'aws-cdk-lib';
 import { BuildSpec, ComputeType } from 'aws-cdk-lib/aws-codebuild';
 import {
   Effect,
@@ -16,7 +16,7 @@ import {
 } from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
 import { merge } from 'lodash';
-import { IDeploymentBranch } from '../';
+import { ComponentConfig, IDeploymentBranch } from '../';
 import { CodeSource, RepositoryConfig } from '../../CodeSource';
 import { PipelineEventNotificationRule } from '../PipelineEventNotificationRule';
 import { TrimCloudAssemblyStep } from './TrimCloudAssemblyStep';
@@ -36,13 +36,6 @@ export interface StageConfig<TConfig> extends StageProps {
    * @type {string}
    */
   readonly stageName: string;
-  /**
-   * A class that extends Stage. This class will be used to create the individual stages for each specified stage configuration.
-   *
-   * @readonly
-   * @type {typeof Stage}
-   */
-  readonly stageType: typeof Stage;
   /**
    * Add a manual approval step when deploying this stage.
    *
@@ -119,6 +112,7 @@ export interface IndividualPipelineStackProps<TConfig, TBranch extends IDeployme
   readonly branch: TBranch;
   readonly repository: RepositoryConfig;
   readonly pipelineConfig: PipelineConfig;
+  readonly component: ComponentConfig;
 }
 
 /**
@@ -145,12 +139,8 @@ export class IndividualPipelineStack<
    */
   constructor(scope: Construct, id: string, props: IndividualPipelineStackProps<TConfig, TBranch>) {
     super(scope, id, props);
-    const {
-      component: stackName,
-      staticPipelineIdentifier = props.branch.branchName,
-      branchName,
-    } = props.branch;
-
+    const { staticPipelineIdentifier = props.branch.branchName, branchName } = props.branch;
+    const { componentName, componentType } = props.component;
     const {
       pruneCloudAssembly = true,
       codeArtifactRepositoryArn,
@@ -161,10 +151,10 @@ export class IndividualPipelineStack<
     const { source, synthOuputDir = './out', baseDir = '.' } = props.repository;
 
     // Static Pipeline id
-    const pipelineId = `${stackName}-${staticPipelineIdentifier}`;
+    const pipelineId = `${componentName}-${staticPipelineIdentifier}`;
 
     // Branch-based pipeline name
-    const pipelineName = `${stackName}-${branchName.replace('/', '-')}`;
+    const pipelineName = `${componentName}-${branchName.replace('/', '-')}`;
 
     const additonalPolicyStatements: PolicyStatementProps[] = [];
     let assetPublishingCodeBuildDefaults: CodeBuildOptions = {};
@@ -238,7 +228,7 @@ export class IndividualPipelineStack<
       // add manual approval step if applicable
       if (stage.manualApproval) pre.push(new ManualApprovalStep(`Promote To ${stage.stageName}`));
 
-      pipeline.addStage(new stage.stageType(this, stage.stageName, stage), {
+      pipeline.addStage(new componentType(this, stage.stageName, stage), {
         pre,
       });
     });

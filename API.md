@@ -677,6 +677,53 @@ ARN of the CodeCommit repository to use.
 
 ---
 
+### ComponentConfig <a name="ComponentConfig" id="@kikoda/cdk-constructs.ComponentConfig"></a>
+
+Configuration for the component to be deployed.
+
+#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.ComponentConfig.Initializer"></a>
+
+```typescript
+import { ComponentConfig } from '@kikoda/cdk-constructs'
+
+const componentConfig: ComponentConfig = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.ComponentConfig.property.componentName">componentName</a></code> | <code>string</code> | The name of this component. |
+| <code><a href="#@kikoda/cdk-constructs.ComponentConfig.property.componentType">componentType</a></code> | <code>aws-cdk-lib.Stage</code> | A class that extends Stage. |
+
+---
+
+##### `componentName`<sup>Required</sup> <a name="componentName" id="@kikoda/cdk-constructs.ComponentConfig.property.componentName"></a>
+
+```typescript
+public readonly componentName: string;
+```
+
+- *Type:* string
+
+The name of this component.
+
+---
+
+##### `componentType`<sup>Required</sup> <a name="componentType" id="@kikoda/cdk-constructs.ComponentConfig.property.componentType"></a>
+
+```typescript
+public readonly componentType: Stage;
+```
+
+- *Type:* aws-cdk-lib.Stage
+
+A class that extends Stage.
+
+This class will be used to create the individual component stages for each specified stage configuration.
+
+---
+
 ### ConfiguredStageProps <a name="ConfiguredStageProps" id="@kikoda/cdk-constructs.ConfiguredStageProps"></a>
 
 Configured Stage Properties.
@@ -790,6 +837,7 @@ const deploymentPipelinesProps: DeploymentPipelinesProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.synthesizer">synthesizer</a></code> | <code>aws-cdk-lib.IStackSynthesizer</code> | Synthesis method to use while deploying this stack. |
 | <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Stack tags that will be applied to all the taggable resources and the stack itself. |
 | <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether to enable termination protection for this stack. |
+| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.component">component</a></code> | <code><a href="#@kikoda/cdk-constructs.ComponentConfig">ComponentConfig</a></code> | *No description.* |
 | <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.deploymentBranches">deploymentBranches</a></code> | <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch">IDeploymentBranch</a>[]</code> | An interface representing the configutation for each branch and its related stage. |
 | <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.pipelineConfig">pipelineConfig</a></code> | <code><a href="#@kikoda/cdk-constructs.PipelineConfig">PipelineConfig</a></code> | *No description.* |
 | <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.repository">repository</a></code> | <code><a href="#@kikoda/cdk-constructs.RepositoryConfig">RepositoryConfig</a></code> | Configuration for the source code repository. |
@@ -945,6 +993,16 @@ public readonly terminationProtection: boolean;
 - *Default:* false
 
 Whether to enable termination protection for this stack.
+
+---
+
+##### `component`<sup>Required</sup> <a name="component" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.component"></a>
+
+```typescript
+public readonly component: ComponentConfig;
+```
+
+- *Type:* <a href="#@kikoda/cdk-constructs.ComponentConfig">ComponentConfig</a>
 
 ---
 
@@ -1295,7 +1353,6 @@ const stageConfig: StageConfig = { ... }
 | <code><a href="#@kikoda/cdk-constructs.StageConfig.property.outdir">outdir</a></code> | <code>string</code> | The output directory into which to emit synthesized artifacts. |
 | <code><a href="#@kikoda/cdk-constructs.StageConfig.property.config">config</a></code> | <code>any</code> | The generic config. |
 | <code><a href="#@kikoda/cdk-constructs.StageConfig.property.stageName">stageName</a></code> | <code>string</code> | The name of the stage. |
-| <code><a href="#@kikoda/cdk-constructs.StageConfig.property.stageType">stageType</a></code> | <code>aws-cdk-lib.Stage</code> | A class that extends Stage. |
 | <code><a href="#@kikoda/cdk-constructs.StageConfig.property.manualApproval">manualApproval</a></code> | <code>boolean</code> | Add a manual approval step when deploying this stage. |
 
 ---
@@ -1379,20 +1436,6 @@ public readonly stageName: string;
 - *Type:* string
 
 The name of the stage.
-
----
-
-##### `stageType`<sup>Required</sup> <a name="stageType" id="@kikoda/cdk-constructs.StageConfig.property.stageType"></a>
-
-```typescript
-public readonly stageType: Stage;
-```
-
-- *Type:* aws-cdk-lib.Stage
-
-A class that extends Stage.
-
-This class will be used to create the individual stages for each specified stage configuration.
 
 ---
 
@@ -1696,7 +1739,6 @@ Configuration for the specific deployment.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch.property.branchName">branchName</a></code> | <code>string</code> | The name of the code branch that this deployment branch represents. |
-| <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch.property.component">component</a></code> | <code>string</code> | The name of this component. |
 | <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch.property.stages">stages</a></code> | <code><a href="#@kikoda/cdk-constructs.StageConfig">StageConfig</a>[]</code> | Configuration for the stages represented by this deployment branch. |
 | <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch.property.staticPipelineIdentifier">staticPipelineIdentifier</a></code> | <code>string</code> | The name to be used by the pipeline stack, it is possible to configure this sperately from the branch name so that updating the branch name does not require destroy/recreate. |
 
@@ -1711,18 +1753,6 @@ public readonly branchName: string;
 - *Type:* string
 
 The name of the code branch that this deployment branch represents.
-
----
-
-##### `component`<sup>Required</sup> <a name="component" id="@kikoda/cdk-constructs.IDeploymentBranch.property.component"></a>
-
-```typescript
-public readonly component: string;
-```
-
-- *Type:* string
-
-The name of this component.
 
 ---
 

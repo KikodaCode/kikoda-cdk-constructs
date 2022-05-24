@@ -32,19 +32,19 @@ describe('DeploymentPipelines', () => {
   it('should create without error.', () => {
     const app = new App();
     const statement = new DeploymentPipelines<CoreConfig>(app, {
+      component: {
+        componentName: 'test',
+        componentType: TestStage,
+      },
       deploymentBranches: [
         {
-          component: 'test',
           branchName: 'test',
-          staticPipelineIdentifier: 'test',
           stages: [
             {
               stageName: 'dev',
-              manualApproval: false,
               config: {
                 activeTracing: Tracing.ACTIVE,
               },
-              stageType: TestStage,
             },
           ],
         },
