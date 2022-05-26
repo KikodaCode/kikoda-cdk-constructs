@@ -278,10 +278,8 @@ export class IndividualPipelineStack<
       commands.push(`${pkgManager} install`);
     }
     let synthCommand = `${pkgManager}${pkgManager === 'npm' ? ' run' : ''} cdk synth`;
-    if (synthOutputDir) {
-      if (synthOutputDir === '') {
-        synthCommand += `-o ${synthOutputDir}`;
-      }
+    if (synthOutputDir && synthOutputDir !== '') {
+      synthCommand += `-o ${synthOutputDir}`;
     }
     commands.push(synthCommand);
     return commands;
