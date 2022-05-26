@@ -1,4 +1,4 @@
-import { Arn, Stack, StackProps, StageProps } from 'aws-cdk-lib';
+import { Stack, StackProps, StageProps } from 'aws-cdk-lib';
 import { BuildSpec, ComputeType } from 'aws-cdk-lib/aws-codebuild';
 import {
   Effect,
@@ -18,6 +18,7 @@ import { Construct } from 'constructs';
 import { merge } from 'lodash';
 import { ComponentConfig, IDeploymentBranch } from '../';
 import { CodeSource, RepositoryConfig } from '../../CodeSource';
+import { defineSynthCommands } from '../../utils/cliCommandUtils';
 import { PipelineEventNotificationRule } from '../PipelineEventNotificationRule';
 import { TrimCloudAssemblyStep } from './TrimCloudAssemblyStep';
 /**
@@ -148,7 +149,7 @@ export class IndividualPipelineStack<
       notificationTopicArn,
     } = props.pipelineConfig;
 
-    const { source, synthOuputDir = './out', baseDir = '.' } = props.repository;
+    const { source, synthOuputDir = 'out', baseDir = '.' } = props.repository;
 
     // Static Pipeline id
     const pipelineId = `${componentName}-${staticPipelineIdentifier}`;
@@ -212,7 +213,7 @@ export class IndividualPipelineStack<
       },
       synth: new ShellStep('Synth', {
         input: new CodeSource(this, props.branch.branchName, source).source,
-        commands: this.defineSynthCommands(synthOuputDir, baseDir, builderAssumeRole, true, 'npm'),
+        commands: defineSynthCommands('npm', baseDir, synthOuputDir, builderAssumeRole),
         primaryOutputDirectory: `${baseDir}/${synthOuputDir}`,
       }),
       assetPublishingCodeBuildDefaults,
@@ -247,60 +248,5 @@ export class IndividualPipelineStack<
         notificationTopicArn,
       });
     }
-  }
-
-  /**
-   * Creates synth commands based on input parameters.
-   *
-   * @private
-   * @param {?string} [synthOutputDir]
-   * @param {?string} [baseDir]
-   * @param {?string} [assumeRole]
-   * @param {boolean} [installRequired=true]
-   * @param {string} [pkgManager='yarn']
-   * @returns {{}}
-   */
-  private defineSynthCommands(
-    synthOutputDir?: string,
-    baseDir?: string,
-    assumeRole?: string,
-    installRequired: boolean = true,
-    pkgManager: string = 'yarn',
-  ) {
-    let commands: string[] = [];
-    if (assumeRole) {
-      commands = [...commands, ...this.createAssumeRoleCommands(assumeRole)];
-    }
-    if (baseDir) {
-      commands.push(`cd ${baseDir}`);
-    }
-    if (installRequired) {
-      commands.push(`${pkgManager} install`);
-    }
-    let synthCommand = `${pkgManager}${pkgManager === 'npm' ? ' run' : ''} cdk synth`;
-    if (synthOutputDir && synthOutputDir !== '') {
-      synthCommand += `-o ${synthOutputDir}`;
-    }
-    commands.push(synthCommand);
-    return commands;
-  }
-  /**
-   * Linux commands for assuming a role.
-   *
-   * @private
-   * @param {string} [role]
-   * @returns {string[]}
-   */
-  private createAssumeRoleCommands(role: string) {
-    return role
-      ? [
-          `ASSUME_ROLE_ARN=${Arn.format({ service: 'iam', resource: 'role', resourceName: role })}`,
-          'TEMP_ROLE=$(aws sts assume-role --role-arn $ASSUME_ROLE_ARN --role-session-name test)',
-          'export TEMP_ROLE',
-          'export AWS_ACCESS_KEY_ID=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.AccessKeyId\')',
-          'export AWS_SECRET_ACCESS_KEY=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.SecretAccessKey\')',
-          'export AWS_SESSION_TOKEN=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.SessionToken\')',
-        ]
-      : [];
   }
 }
