@@ -1,6 +1,10 @@
 {
   "dependencies": [
     {
+      "name": "@kikoda/projen-templates",
+      "type": "build"
+    },
+    {
       "name": "@types/jest",
       "type": "build"
     },
@@ -121,7 +125,6 @@
     },
     {
       "name": "ts-node",
-      "version": "^9",
       "type": "build"
     },
     {
