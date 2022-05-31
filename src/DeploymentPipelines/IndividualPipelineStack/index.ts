@@ -161,12 +161,13 @@ export class IndividualPipelineStack<
     let assetPublishingCodeBuildDefaults: CodeBuildOptions = {};
 
     if (codeArtifactRepositoryArn) {
+      const codeArtifactAccessRole = new Role(this, 'CodeArtifactsAccessRole', {
+        assumedBy: new ServicePrincipal('codepipeline.amazonaws.com'),
+      });
       additonalPolicyStatements.push({
         effect: Effect.ALLOW,
         actions: ['sts:assumerole'],
-      });
-      const codeArtifactAccessRole = new Role(this, 'CodeArtifactsAccessRole', {
-        assumedBy: new ServicePrincipal('codepipeline.amazonaws.com'),
+        resources: [codeArtifactAccessRole.roleArn],
       });
       codeArtifactAccessRole.addToPolicy(
         new PolicyStatement({
@@ -237,9 +238,7 @@ export class IndividualPipelineStack<
     pipeline.buildPipeline();
 
     for (const statement of additonalPolicyStatements) {
-      pipeline.pipeline.addToRolePolicy(
-        new PolicyStatement({ ...statement, resources: [pipeline.pipeline.role.roleArn] }),
-      );
+      pipeline.pipeline.addToRolePolicy(new PolicyStatement({ ...statement }));
     }
 
     // TODO: move to an aspect?
