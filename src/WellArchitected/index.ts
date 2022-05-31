@@ -1,5 +1,5 @@
-import { IAspect, Aspects } from "aws-cdk-lib";
-import { IConstruct } from "constructs";
+import { IAspect, Aspects } from 'aws-cdk-lib';
+import { IConstruct } from 'constructs';
 
 import {
   CostOptimizationAspects,
@@ -8,7 +8,7 @@ import {
   ReliabilityAspects,
   SecurityAspects,
   SustainabilityAspects,
-} from "./aspects";
+} from './aspects';
 
 export interface KikodaCompliantProps {}
 
