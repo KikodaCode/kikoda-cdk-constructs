@@ -6,7 +6,6 @@ import {
   PolicyStatement,
   PolicyStatementProps,
   Role,
-  ServicePrincipal,
 } from 'aws-cdk-lib/aws-iam';
 import {
   ShellStep,
