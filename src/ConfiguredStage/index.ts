@@ -1,49 +1,47 @@
-import { Stage, StageProps } from "aws-cdk-lib";
-import { IVpc, Vpc } from "aws-cdk-lib/aws-ec2";
-import { Construct } from "constructs";
+import { Stage, StageProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 
 /**
- * Configuration for the stage.
+ * Configured Stage Properties.
+ * @author Kikoda
+ *
+ * @export
+ * @interface ConfiguredStageProps
+ * @typedef {ConfiguredStageProps}
+ * @template T
+ * @extends {StageProps}
  */
-export interface StageConfig<T> {
-  /** The subdomain for the stage. */
-  readonly subDomain?: string;
-  /** The vpcId of a prexisting vpc. */
-  readonly vpcId: string;
-  /** The name of this stage. */
-  readonly stageName: string;
-  /** Enable stage level alarms. */
-  readonly enableAlarms: boolean;
-  /** Stack specific configs. */
-  readonly stackConfigs: T;
-}
-
 export interface ConfiguredStageProps<T> extends StageProps {
-  readonly config: StageConfig<T>;
+  readonly config: T;
 }
 
 /**
- * A {@link Stage} with resolved constructs for prexisting infrastructure.
- * @class
+ * A Stage that has a specific configuration.
+ *
+ * @export
+ * @class ConfiguredStage
+ * @typedef {ConfiguredStage}
+ * @template TConfig - a generic type that represents the configuration for the stage.
+ * @extends {Stage}
  */
-export class ConfiguredStage<T> extends Stage {
-  /**
-   * The vpc as configured via {@link StageConfig.vpcId} this vpc must be created as a predicate for the application.
-   * @public
-   */
-  readonly vpc: IVpc;
+export class ConfiguredStage<TConfig> extends Stage {
   /**
    * The configuration for the stage.
-   * @public
-   * @see {@link StageConfig}
+   *
+   * @readonly
    */
-  readonly config: StageConfig<T>;
-
-  constructor(scope: Construct, id: string, props: ConfiguredStageProps<T>) {
+  readonly config: TConfig;
+  /**
+   * Configured Stage construct to be used with the Deployment Piplelines construct.
+   * This stage allows for use of the specified generic type to be made available as the config property.
+   *
+   * @constructor
+   * @param {Construct} scope - The scope of the construct.
+   * @param {string} id - The construct's id.
+   * @param {ConfiguredStageProps<TConfig>} props - The configuration based upon a generic type.
+   */
+  constructor(scope: Construct, id: string, props: ConfiguredStageProps<TConfig>) {
     super(scope, id, props);
     this.config = props.config;
-    this.vpc = Vpc.fromLookup(scope, `${this.config.stageName}Vpc`, {
-      vpcId: this.config.vpcId,
-    });
   }
 }

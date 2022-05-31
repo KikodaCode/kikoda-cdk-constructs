@@ -1,12 +1,28 @@
 {
   "dependencies": [
     {
+      "name": "@kikoda/projen-templates",
+      "type": "build"
+    },
+    {
       "name": "@types/jest",
       "type": "build"
     },
     {
+      "name": "@types/lodash",
+      "type": "build"
+    },
+    {
+      "name": "@types/md5",
+      "type": "build"
+    },
+    {
       "name": "@types/node",
-      "version": "^12",
+      "version": "^14",
+      "type": "build"
+    },
+    {
+      "name": "@types/uuid",
       "type": "build"
     },
     {
@@ -21,7 +37,7 @@
     },
     {
       "name": "aws-cdk-lib",
-      "version": "2.22.0",
+      "version": "2.25.0",
       "type": "build"
     },
     {
@@ -109,7 +125,6 @@
     },
     {
       "name": "ts-node",
-      "version": "^9",
       "type": "build"
     },
     {
@@ -117,8 +132,20 @@
       "type": "build"
     },
     {
+      "name": "lodash",
+      "type": "bundled"
+    },
+    {
+      "name": "md5",
+      "type": "bundled"
+    },
+    {
+      "name": "uuid",
+      "type": "bundled"
+    },
+    {
       "name": "aws-cdk-lib",
-      "version": "^2.22.0",
+      "version": "^2.25.0",
       "type": "peer"
     },
     {
