@@ -48,6 +48,7 @@ const project = new AwsCdkConstructLibrary({
     projenCredentials: GithubCredentials.fromApp(),
   },
   pullRequestTemplate: false,
+  codeCov: true,
 });
 
 new KikodaOpenSourceProject(project, {
