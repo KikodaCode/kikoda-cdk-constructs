@@ -4,3 +4,4 @@ export * from './DeploymentPipelines';
 export * from './LayeredConfig';
 export * from './StageAlarmTopic';
 export * from './Website';
+export * from './WellArchitected';

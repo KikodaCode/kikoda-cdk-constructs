@@ -1141,6 +1141,17 @@ The owner of the GitHub repository.
 
 ---
 
+### KikodaCompliantProps <a name="KikodaCompliantProps" id="@kikoda/cdk-constructs.KikodaCompliantProps"></a>
+
+#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.KikodaCompliantProps.Initializer"></a>
+
+```typescript
+import { KikodaCompliantProps } from '@kikoda/cdk-constructs'
+
+const kikodaCompliantProps: KikodaCompliantProps = { ... }
+```
+
+
 ### PipelineConfig <a name="PipelineConfig" id="@kikoda/cdk-constructs.PipelineConfig"></a>
 
 #### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.PipelineConfig.Initializer"></a>
@@ -1721,6 +1732,50 @@ new LayeredConfig(base: any, layers: any)
 
 ---
 
+
+
+
+
+### WellArchitected <a name="WellArchitected" id="@kikoda/cdk-constructs.WellArchitected"></a>
+
+- *Implements:* aws-cdk-lib.IAspect
+
+An app construct that complies with AWS well-architected standards.
+
+#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.WellArchitected.Initializer"></a>
+
+```typescript
+import { WellArchitected } from '@kikoda/cdk-constructs'
+
+new WellArchitected()
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.WellArchitected.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="@kikoda/cdk-constructs.WellArchitected.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+All aspects can visit an IConstruct.
+
+###### `node`<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.WellArchitected.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
 
 
 
