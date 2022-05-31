@@ -188,7 +188,7 @@ export class IndividualPipelineStack<
                 'export AWS_SESSION_TOKEN=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.SessionToken\')',
               ],
             },
-            preBuild: {
+            pre_build: {
               commands: [
                 "echo Build started on 'date'",
                 'echo Building the Docker image...',
