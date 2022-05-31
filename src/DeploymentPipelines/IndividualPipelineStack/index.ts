@@ -1,11 +1,11 @@
 import { Stack, StackProps, StageProps } from 'aws-cdk-lib';
 import { BuildSpec, ComputeType } from 'aws-cdk-lib/aws-codebuild';
 import {
+  AccountPrincipal,
   Effect,
   PolicyStatement,
   PolicyStatementProps,
   Role,
-  ServicePrincipal,
 } from 'aws-cdk-lib/aws-iam';
 import {
   ShellStep,
@@ -162,7 +162,7 @@ export class IndividualPipelineStack<
 
     if (codeArtifactRepositoryArn) {
       const codeArtifactAccessRole = new Role(this, 'CodeArtifactsAccessRole', {
-        assumedBy: new ServicePrincipal('codepipeline.amazonaws.com'),
+        assumedBy: new AccountPrincipal(props.env?.account),
       });
       additonalPolicyStatements.push({
         effect: Effect.ALLOW,
