@@ -1,12 +1,6 @@
 import { Stack, StackProps, StageProps } from 'aws-cdk-lib';
 import { BuildSpec, ComputeType } from 'aws-cdk-lib/aws-codebuild';
-import {
-  AccountPrincipal,
-  Effect,
-  PolicyStatement,
-  PolicyStatementProps,
-  Role,
-} from 'aws-cdk-lib/aws-iam';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import {
   ShellStep,
   AddStageOpts,
@@ -145,7 +139,6 @@ export class IndividualPipelineStack<
     const {
       pruneCloudAssembly = true,
       codeArtifactRepositoryArn,
-      builderAssumeRole,
       notificationTopicArn,
     } = props.pipelineConfig;
 
@@ -157,19 +150,11 @@ export class IndividualPipelineStack<
     // Branch-based pipeline name
     const pipelineName = `${componentName}-${branchName.replace('/', '-')}`;
 
-    const additonalPolicyStatements: PolicyStatementProps[] = [];
+    const additonalPolicyStatements: PolicyStatement[] = [];
     let assetPublishingCodeBuildDefaults: CodeBuildOptions = {};
 
     if (codeArtifactRepositoryArn) {
-      const codeArtifactAccessRole = new Role(this, 'CodeArtifactsAccessRole', {
-        assumedBy: new AccountPrincipal(props.env?.account),
-      });
-      additonalPolicyStatements.push({
-        effect: Effect.ALLOW,
-        actions: ['sts:assumerole'],
-        resources: [codeArtifactAccessRole.roleArn],
-      });
-      codeArtifactAccessRole.addToPolicy(
+      additonalPolicyStatements.push(
         new PolicyStatement({
           effect: Effect.ALLOW,
           actions: ['codeartifacts:GetAuthorizationToken', 'sts:GetServiceBearerToken'],
@@ -181,8 +166,7 @@ export class IndividualPipelineStack<
           phases: {
             install: {
               commands: [
-                `ASSUME_ROLE_ARN=${codeArtifactAccessRole.roleArn}`,
-                'TEMP_ROLE=$(aws sts assume-role --role-arn $ASSUME_ROLE_ARN --role-session-name test)',
+                'TEMP_ROLE=$(aws sts get-session-token)',
                 'export TEMP_ROLE',
                 'export AWS_ACCESS_KEY_ID=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.AccessKeyId\')', // TODO: JQ dependency
                 'export AWS_SECRET_ACCESS_KEY=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.SecretAccessKey\')',
@@ -214,7 +198,7 @@ export class IndividualPipelineStack<
       },
       synth: new ShellStep('Synth', {
         input: new CodeSource(this, props.branch.branchName, source).source,
-        commands: defineSynthCommands('npm', baseDir, synthOuputDir, builderAssumeRole),
+        commands: defineSynthCommands('npm', baseDir, synthOuputDir),
         primaryOutputDirectory: `${baseDir}/${synthOuputDir}`,
       }),
       assetPublishingCodeBuildDefaults,
@@ -238,7 +222,7 @@ export class IndividualPipelineStack<
     pipeline.buildPipeline();
 
     for (const statement of additonalPolicyStatements) {
-      pipeline.pipeline.addToRolePolicy(new PolicyStatement({ ...statement }));
+      pipeline.pipeline.addToRolePolicy(statement);
     }
 
     // TODO: move to an aspect?
