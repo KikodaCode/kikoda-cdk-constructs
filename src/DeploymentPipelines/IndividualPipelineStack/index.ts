@@ -139,7 +139,6 @@ export class IndividualPipelineStack<
     const {
       pruneCloudAssembly = true,
       codeArtifactRepositoryArn,
-      builderAssumeRole,
       notificationTopicArn,
     } = props.pipelineConfig;
 
@@ -151,15 +150,17 @@ export class IndividualPipelineStack<
     // Branch-based pipeline name
     const pipelineName = `${componentName}-${branchName.replace('/', '-')}`;
 
-    const additonalPolicyStatements: PolicyStatementProps[] = [];
+    const additonalPolicyStatements: PolicyStatement[] = [];
     let assetPublishingCodeBuildDefaults: CodeBuildOptions = {};
 
     if (codeArtifactRepositoryArn) {
-      additonalPolicyStatements.push({
-        effect: Effect.ALLOW,
-        actions: ['codeartifacts:GetAuthorizationToken', 'sts:GetServiceBearerToken'],
-        resources: [codeArtifactRepositoryArn],
-      });
+      additonalPolicyStatements.push(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['codeartifacts:GetAuthorizationToken', 'sts:GetServiceBearerToken'],
+          resources: [codeArtifactRepositoryArn],
+        }),
+      );
       assetPublishingCodeBuildDefaults = merge(assetPublishingCodeBuildDefaults, {
         partialBuildSpec: BuildSpec.fromObject({
           phases: {
@@ -197,7 +198,7 @@ export class IndividualPipelineStack<
       },
       synth: new ShellStep('Synth', {
         input: new CodeSource(this, props.branch.branchName, source).source,
-        commands: defineSynthCommands('npm', baseDir, synthOuputDir, builderAssumeRole),
+        commands: defineSynthCommands('npm', baseDir, synthOuputDir),
         primaryOutputDirectory: `${baseDir}/${synthOuputDir}`,
       }),
       assetPublishingCodeBuildDefaults,
@@ -221,7 +222,7 @@ export class IndividualPipelineStack<
     pipeline.buildPipeline();
 
     for (const statement of additonalPolicyStatements) {
-      pipeline.pipeline.addToRolePolicy(new PolicyStatement(statement));
+      pipeline.pipeline.addToRolePolicy(statement);
     }
 
     // TODO: move to an aspect?

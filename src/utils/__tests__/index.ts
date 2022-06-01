@@ -1,5 +1,5 @@
 import { validateArn } from '../arnValidators';
-import { createAssumeRoleCommands, defineSynthCommands } from '../cliCommandUtils';
+import { defineSynthCommands } from '../cliCommandUtils';
 
 describe('defineSynthCommands', () => {
   it('properly handles npm manager', () => {
@@ -10,27 +10,14 @@ describe('defineSynthCommands', () => {
     const commands = defineSynthCommands(undefined, undefined, 'test');
     expect(commands.join(', ')).toMatch('-o test');
   });
-  it('assumeRole', () => {
-    const roleArn = 'arn:aws:iam::123456789012:role/my-role';
-    const commands = defineSynthCommands(undefined, undefined, undefined, roleArn);
-    expect(commands.join(', ')).toMatch(roleArn);
-  });
   it('baseDir', () => {
     const commands = defineSynthCommands(undefined, 'test');
     expect(commands.join(', ')).toMatch('cd test');
   });
 
   it('no install required', () => {
-    const commands = defineSynthCommands(undefined, undefined, undefined, undefined, false);
+    const commands = defineSynthCommands(undefined, undefined, undefined, false);
     expect(commands.join(', ')).not.toMatch('install');
-  });
-});
-
-describe('createAssumeRoleCommands', () => {
-  it('works', () => {
-    const roleArn = 'arn:aws:iam::123456789012:role/my-role';
-    const commands = createAssumeRoleCommands(roleArn);
-    expect(commands.join(', ')).toMatch(roleArn);
   });
 });
 
