@@ -1,6 +1,6 @@
 import { Stack, StackProps, StageProps } from 'aws-cdk-lib';
 import { BuildSpec, ComputeType } from 'aws-cdk-lib/aws-codebuild';
-import { Effect, PolicyStatement, PolicyStatementProps } from 'aws-cdk-lib/aws-iam';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import {
   ShellStep,
   AddStageOpts,
