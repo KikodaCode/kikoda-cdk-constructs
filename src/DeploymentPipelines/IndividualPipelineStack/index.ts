@@ -1,12 +1,6 @@
 import { Stack, StackProps, StageProps } from 'aws-cdk-lib';
 import { BuildSpec, ComputeType } from 'aws-cdk-lib/aws-codebuild';
-import {
-  AccountPrincipal,
-  Effect,
-  PolicyStatement,
-  PolicyStatementProps,
-  Role,
-} from 'aws-cdk-lib/aws-iam';
+import { Effect, PolicyStatement, PolicyStatementProps } from 'aws-cdk-lib/aws-iam';
 import {
   ShellStep,
   AddStageOpts,
@@ -161,28 +155,17 @@ export class IndividualPipelineStack<
     let assetPublishingCodeBuildDefaults: CodeBuildOptions = {};
 
     if (codeArtifactRepositoryArn) {
-      const codeArtifactAccessRole = new Role(this, 'CodeArtifactsAccessRole', {
-        assumedBy: new AccountPrincipal(props.env?.account),
-      });
       additonalPolicyStatements.push({
         effect: Effect.ALLOW,
-        actions: ['sts:assumerole'],
-        resources: [codeArtifactAccessRole.roleArn],
+        actions: ['codeartifacts:GetAuthorizationToken', 'sts:GetServiceBearerToken'],
+        resources: [codeArtifactRepositoryArn],
       });
-      codeArtifactAccessRole.addToPolicy(
-        new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: ['codeartifacts:GetAuthorizationToken', 'sts:GetServiceBearerToken'],
-          resources: [codeArtifactRepositoryArn],
-        }),
-      );
       assetPublishingCodeBuildDefaults = merge(assetPublishingCodeBuildDefaults, {
         partialBuildSpec: BuildSpec.fromObject({
           phases: {
             install: {
               commands: [
-                `ASSUME_ROLE_ARN=${codeArtifactAccessRole.roleArn}`,
-                'TEMP_ROLE=$(aws sts assume-role --role-arn $ASSUME_ROLE_ARN --role-session-name test)',
+                'TEMP_ROLE=$(aws sts get-session-token)',
                 'export TEMP_ROLE',
                 'export AWS_ACCESS_KEY_ID=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.AccessKeyId\')', // TODO: JQ dependency
                 'export AWS_SECRET_ACCESS_KEY=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.SecretAccessKey\')',
@@ -238,7 +221,7 @@ export class IndividualPipelineStack<
     pipeline.buildPipeline();
 
     for (const statement of additonalPolicyStatements) {
-      pipeline.pipeline.addToRolePolicy(new PolicyStatement({ ...statement }));
+      pipeline.pipeline.addToRolePolicy(new PolicyStatement(statement));
     }
 
     // TODO: move to an aspect?

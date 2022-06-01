@@ -1,4 +1,4 @@
-import { Arn, ArnFormat } from 'aws-cdk-lib';
+import { validateArn } from './arnValidators';
 
 /**
  * Creates synth commands based on input parameters.
@@ -44,15 +44,9 @@ export function defineSynthCommands(
  * @returns {string[]}
  */
 export function createAssumeRoleCommands(roleArn: string) {
-  const arnParts = Arn.split(roleArn, ArnFormat.SLASH_RESOURCE_NAME);
-  if (arnParts.service !== 'iam') {
-    throw new Error(`Invalid assumeRoleArn: ${roleArn} Only IAM ARNs are supported.`);
-  } else if (arnParts.resource !== 'role') {
-    throw new Error(`Invalid assumeRoleArn: ${roleArn} Only IAM role ARNs are supported.`);
-  }
-  const roleArnValidated = Arn.format(arnParts);
+  validateArn(roleArn, { service: 'iam', resource: 'role' });
   return [
-    `ASSUME_ROLE_ARN=${roleArnValidated}`,
+    `ASSUME_ROLE_ARN=${roleArn}`,
     'TEMP_ROLE=$(aws sts assume-role --role-arn $ASSUME_ROLE_ARN --role-session-name test)',
     'export TEMP_ROLE',
     'export AWS_ACCESS_KEY_ID=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.AccessKeyId\')',
