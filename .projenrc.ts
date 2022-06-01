@@ -1,4 +1,5 @@
 import { KikodaOpenSourceProject } from '@kikoda/projen-templates';
+import { YamlFile } from 'projen';
 import { AwsCdkConstructLibrary } from 'projen/lib/awscdk';
 import { GithubCredentials } from 'projen/lib/github';
 import { ArrowParens, EndOfLine, TrailingComma } from 'projen/lib/javascript';
@@ -49,6 +50,16 @@ const project = new AwsCdkConstructLibrary({
   },
   pullRequestTemplate: false,
   codeCov: true,
+});
+
+new YamlFile(project, 'codecov.yml', {
+  obj: {
+    coverage: {
+      status: {
+        patch: true,
+      },
+    },
+  },
 });
 
 new KikodaOpenSourceProject(project, {

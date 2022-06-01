@@ -53,6 +53,7 @@ junit.xml
 .jsii
 tsconfig.json
 !/API.md
+!/codecov.yml
 !/NOTICE
 !/.github/pull_request_template.md
 !/CONTRIBUTING.md
