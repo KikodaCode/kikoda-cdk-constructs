@@ -41,7 +41,7 @@ describe('Given simple Single Page App', () => {
     },
   ];
   const spaStack = new SPAStack({
-    appDir: 'test',
+    appDir: __dirname,
     zoneName: givenZoneName,
     indexDoc: 'indexDoc',
     bucketCorsRules: corsRules,
@@ -82,7 +82,7 @@ describe('Given simple Single Page App', () => {
 
   const subDomain: string = 'subDomain';
   const subDomainSpaStack = new SPAStack({
-    appDir: 'test',
+    appDir: __dirname,
     zoneName: givenZoneName,
     subdomain: subDomain,
     indexDoc: 'indexDoc',
@@ -98,7 +98,7 @@ describe('Given simple Single Page App', () => {
   });
 
   new SPAStack({
-    appDir: 'test',
+    appDir: __dirname,
     zoneName: givenZoneName,
     indexDoc: 'indexDoc',
     buildCommand: 'touch spa_local_build_artifact',

@@ -43,7 +43,7 @@ describe('Given a Website', () => {
 
   const webStack = new WebStack({
     stage: 'test',
-    appDir: 'test',
+    appDir: __dirname,
     subdomain: subDomain,
     baseDomain: baseDomain,
     enableCors: true,
