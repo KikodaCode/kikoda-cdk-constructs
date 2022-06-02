@@ -645,6 +645,234 @@ Full website endpoint w/protocol.
 
 ## Structs <a name="Structs" id="Structs"></a>
 
+### BranchPipelinesProps <a name="BranchPipelinesProps" id="@kikoda/cdk-constructs.BranchPipelinesProps"></a>
+
+Configuration for the BranchPipelines construct.
+
+#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.BranchPipelinesProps.Initializer"></a>
+
+```typescript
+import { BranchPipelinesProps } from '@kikoda/cdk-constructs'
+
+const branchPipelinesProps: BranchPipelinesProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.analyticsReporting">analyticsReporting</a></code> | <code>boolean</code> | Include runtime versioning information in this Stack. |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.description">description</a></code> | <code>string</code> | A description of the stack. |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.env">env</a></code> | <code>aws-cdk-lib.Environment</code> | The AWS environment (account/region) where this stack will be deployed. |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.stackName">stackName</a></code> | <code>string</code> | Name to deploy the stack with. |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.synthesizer">synthesizer</a></code> | <code>aws-cdk-lib.IStackSynthesizer</code> | Synthesis method to use while deploying this stack. |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Stack tags that will be applied to all the taggable resources and the stack itself. |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether to enable termination protection for this stack. |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.component">component</a></code> | <code><a href="#@kikoda/cdk-constructs.ComponentConfig">ComponentConfig</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.deploymentBranches">deploymentBranches</a></code> | <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch">IDeploymentBranch</a>[]</code> | An interface representing the configutation for each branch and its related stage. |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.pipelineConfig">pipelineConfig</a></code> | <code><a href="#@kikoda/cdk-constructs.PipelineConfig">PipelineConfig</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.repository">repository</a></code> | <code><a href="#@kikoda/cdk-constructs.RepositoryConfig">RepositoryConfig</a></code> | Configuration for the source code repository. |
+
+---
+
+##### `analyticsReporting`<sup>Optional</sup> <a name="analyticsReporting" id="@kikoda/cdk-constructs.BranchPipelinesProps.property.analyticsReporting"></a>
+
+```typescript
+public readonly analyticsReporting: boolean;
+```
+
+- *Type:* boolean
+- *Default:* `analyticsReporting` setting of containing `App`, or value of 'aws:cdk:version-reporting' context key
+
+Include runtime versioning information in this Stack.
+
+---
+
+##### `description`<sup>Optional</sup> <a name="description" id="@kikoda/cdk-constructs.BranchPipelinesProps.property.description"></a>
+
+```typescript
+public readonly description: string;
+```
+
+- *Type:* string
+- *Default:* No description.
+
+A description of the stack.
+
+---
+
+##### `env`<sup>Optional</sup> <a name="env" id="@kikoda/cdk-constructs.BranchPipelinesProps.property.env"></a>
+
+```typescript
+public readonly env: Environment;
+```
+
+- *Type:* aws-cdk-lib.Environment
+- *Default:* The environment of the containing `Stage` if available, otherwise create the stack will be environment-agnostic.
+
+The AWS environment (account/region) where this stack will be deployed.
+
+Set the `region`/`account` fields of `env` to either a concrete value to
+select the indicated environment (recommended for production stacks), or to
+the values of environment variables
+`CDK_DEFAULT_REGION`/`CDK_DEFAULT_ACCOUNT` to let the target environment
+depend on the AWS credentials/configuration that the CDK CLI is executed
+under (recommended for development stacks).
+
+If the `Stack` is instantiated inside a `Stage`, any undefined
+`region`/`account` fields from `env` will default to the same field on the
+encompassing `Stage`, if configured there.
+
+If either `region` or `account` are not set nor inherited from `Stage`, the
+Stack will be considered "*environment-agnostic*"". Environment-agnostic
+stacks can be deployed to any environment but may not be able to take
+advantage of all features of the CDK. For example, they will not be able to
+use environmental context lookups such as `ec2.Vpc.fromLookup` and will not
+automatically translate Service Principals to the right format based on the
+environment's AWS partition, and other such enhancements.
+
+---
+
+*Example*
+
+```typescript
+// Use a concrete account and region to deploy this stack to:
+// `.account` and `.region` will simply return these values.
+new Stack(app, 'Stack1', {
+  env: {
+    account: '123456789012',
+    region: 'us-east-1'
+  },
+});
+
+// Use the CLI's current credentials to determine the target environment:
+// `.account` and `.region` will reflect the account+region the CLI
+// is configured to use (based on the user CLI credentials)
+new Stack(app, 'Stack2', {
+  env: {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION
+  },
+});
+
+// Define multiple stacks stage associated with an environment
+const myStage = new Stage(app, 'MyStage', {
+  env: {
+    account: '123456789012',
+    region: 'us-east-1'
+  }
+});
+
+// both of these stacks will use the stage's account/region:
+// `.account` and `.region` will resolve to the concrete values as above
+new MyStack(myStage, 'Stack1');
+new YourStack(myStage, 'Stack2');
+
+// Define an environment-agnostic stack:
+// `.account` and `.region` will resolve to `{ "Ref": "AWS::AccountId" }` and `{ "Ref": "AWS::Region" }` respectively.
+// which will only resolve to actual values by CloudFormation during deployment.
+new MyStack(app, 'Stack1');
+```
+
+
+##### `stackName`<sup>Optional</sup> <a name="stackName" id="@kikoda/cdk-constructs.BranchPipelinesProps.property.stackName"></a>
+
+```typescript
+public readonly stackName: string;
+```
+
+- *Type:* string
+- *Default:* Derived from construct path.
+
+Name to deploy the stack with.
+
+---
+
+##### `synthesizer`<sup>Optional</sup> <a name="synthesizer" id="@kikoda/cdk-constructs.BranchPipelinesProps.property.synthesizer"></a>
+
+```typescript
+public readonly synthesizer: IStackSynthesizer;
+```
+
+- *Type:* aws-cdk-lib.IStackSynthesizer
+- *Default:* `DefaultStackSynthesizer` if the `@aws-cdk/core:newStyleStackSynthesis` feature flag is set, `LegacyStackSynthesizer` otherwise.
+
+Synthesis method to use while deploying this stack.
+
+---
+
+##### `tags`<sup>Optional</sup> <a name="tags" id="@kikoda/cdk-constructs.BranchPipelinesProps.property.tags"></a>
+
+```typescript
+public readonly tags: {[ key: string ]: string};
+```
+
+- *Type:* {[ key: string ]: string}
+- *Default:* {}
+
+Stack tags that will be applied to all the taggable resources and the stack itself.
+
+---
+
+##### `terminationProtection`<sup>Optional</sup> <a name="terminationProtection" id="@kikoda/cdk-constructs.BranchPipelinesProps.property.terminationProtection"></a>
+
+```typescript
+public readonly terminationProtection: boolean;
+```
+
+- *Type:* boolean
+- *Default:* false
+
+Whether to enable termination protection for this stack.
+
+---
+
+##### `component`<sup>Required</sup> <a name="component" id="@kikoda/cdk-constructs.BranchPipelinesProps.property.component"></a>
+
+```typescript
+public readonly component: ComponentConfig;
+```
+
+- *Type:* <a href="#@kikoda/cdk-constructs.ComponentConfig">ComponentConfig</a>
+
+---
+
+##### `deploymentBranches`<sup>Required</sup> <a name="deploymentBranches" id="@kikoda/cdk-constructs.BranchPipelinesProps.property.deploymentBranches"></a>
+
+```typescript
+public readonly deploymentBranches: IDeploymentBranch[];
+```
+
+- *Type:* <a href="#@kikoda/cdk-constructs.IDeploymentBranch">IDeploymentBranch</a>[]
+
+An interface representing the configutation for each branch and its related stage.
+
+---
+
+##### `pipelineConfig`<sup>Required</sup> <a name="pipelineConfig" id="@kikoda/cdk-constructs.BranchPipelinesProps.property.pipelineConfig"></a>
+
+```typescript
+public readonly pipelineConfig: PipelineConfig;
+```
+
+- *Type:* <a href="#@kikoda/cdk-constructs.PipelineConfig">PipelineConfig</a>
+
+---
+
+##### `repository`<sup>Required</sup> <a name="repository" id="@kikoda/cdk-constructs.BranchPipelinesProps.property.repository"></a>
+
+```typescript
+public readonly repository: RepositoryConfig;
+```
+
+- *Type:* <a href="#@kikoda/cdk-constructs.RepositoryConfig">RepositoryConfig</a>
+
+Configuration for the source code repository.
+
+Currently supports GitHub and CodeArtifacts.
+
+---
+
 ### CodeCommitSourceConfig <a name="CodeCommitSourceConfig" id="@kikoda/cdk-constructs.CodeCommitSourceConfig"></a>
 
 Configuration for specifying a codecommit repository as the source.
@@ -811,234 +1039,6 @@ public readonly config: any;
 ```
 
 - *Type:* any
-
----
-
-### DeploymentPipelinesProps <a name="DeploymentPipelinesProps" id="@kikoda/cdk-constructs.DeploymentPipelinesProps"></a>
-
-Configuration for the DeploymentPipelines construct.
-
-#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.Initializer"></a>
-
-```typescript
-import { DeploymentPipelinesProps } from '@kikoda/cdk-constructs'
-
-const deploymentPipelinesProps: DeploymentPipelinesProps = { ... }
-```
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.analyticsReporting">analyticsReporting</a></code> | <code>boolean</code> | Include runtime versioning information in this Stack. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.description">description</a></code> | <code>string</code> | A description of the stack. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.env">env</a></code> | <code>aws-cdk-lib.Environment</code> | The AWS environment (account/region) where this stack will be deployed. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.stackName">stackName</a></code> | <code>string</code> | Name to deploy the stack with. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.synthesizer">synthesizer</a></code> | <code>aws-cdk-lib.IStackSynthesizer</code> | Synthesis method to use while deploying this stack. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Stack tags that will be applied to all the taggable resources and the stack itself. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether to enable termination protection for this stack. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.component">component</a></code> | <code><a href="#@kikoda/cdk-constructs.ComponentConfig">ComponentConfig</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.deploymentBranches">deploymentBranches</a></code> | <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch">IDeploymentBranch</a>[]</code> | An interface representing the configutation for each branch and its related stage. |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.pipelineConfig">pipelineConfig</a></code> | <code><a href="#@kikoda/cdk-constructs.PipelineConfig">PipelineConfig</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps.property.repository">repository</a></code> | <code><a href="#@kikoda/cdk-constructs.RepositoryConfig">RepositoryConfig</a></code> | Configuration for the source code repository. |
-
----
-
-##### `analyticsReporting`<sup>Optional</sup> <a name="analyticsReporting" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.analyticsReporting"></a>
-
-```typescript
-public readonly analyticsReporting: boolean;
-```
-
-- *Type:* boolean
-- *Default:* `analyticsReporting` setting of containing `App`, or value of 'aws:cdk:version-reporting' context key
-
-Include runtime versioning information in this Stack.
-
----
-
-##### `description`<sup>Optional</sup> <a name="description" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.description"></a>
-
-```typescript
-public readonly description: string;
-```
-
-- *Type:* string
-- *Default:* No description.
-
-A description of the stack.
-
----
-
-##### `env`<sup>Optional</sup> <a name="env" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.env"></a>
-
-```typescript
-public readonly env: Environment;
-```
-
-- *Type:* aws-cdk-lib.Environment
-- *Default:* The environment of the containing `Stage` if available, otherwise create the stack will be environment-agnostic.
-
-The AWS environment (account/region) where this stack will be deployed.
-
-Set the `region`/`account` fields of `env` to either a concrete value to
-select the indicated environment (recommended for production stacks), or to
-the values of environment variables
-`CDK_DEFAULT_REGION`/`CDK_DEFAULT_ACCOUNT` to let the target environment
-depend on the AWS credentials/configuration that the CDK CLI is executed
-under (recommended for development stacks).
-
-If the `Stack` is instantiated inside a `Stage`, any undefined
-`region`/`account` fields from `env` will default to the same field on the
-encompassing `Stage`, if configured there.
-
-If either `region` or `account` are not set nor inherited from `Stage`, the
-Stack will be considered "*environment-agnostic*"". Environment-agnostic
-stacks can be deployed to any environment but may not be able to take
-advantage of all features of the CDK. For example, they will not be able to
-use environmental context lookups such as `ec2.Vpc.fromLookup` and will not
-automatically translate Service Principals to the right format based on the
-environment's AWS partition, and other such enhancements.
-
----
-
-*Example*
-
-```typescript
-// Use a concrete account and region to deploy this stack to:
-// `.account` and `.region` will simply return these values.
-new Stack(app, 'Stack1', {
-  env: {
-    account: '123456789012',
-    region: 'us-east-1'
-  },
-});
-
-// Use the CLI's current credentials to determine the target environment:
-// `.account` and `.region` will reflect the account+region the CLI
-// is configured to use (based on the user CLI credentials)
-new Stack(app, 'Stack2', {
-  env: {
-    account: process.env.CDK_DEFAULT_ACCOUNT,
-    region: process.env.CDK_DEFAULT_REGION
-  },
-});
-
-// Define multiple stacks stage associated with an environment
-const myStage = new Stage(app, 'MyStage', {
-  env: {
-    account: '123456789012',
-    region: 'us-east-1'
-  }
-});
-
-// both of these stacks will use the stage's account/region:
-// `.account` and `.region` will resolve to the concrete values as above
-new MyStack(myStage, 'Stack1');
-new YourStack(myStage, 'Stack2');
-
-// Define an environment-agnostic stack:
-// `.account` and `.region` will resolve to `{ "Ref": "AWS::AccountId" }` and `{ "Ref": "AWS::Region" }` respectively.
-// which will only resolve to actual values by CloudFormation during deployment.
-new MyStack(app, 'Stack1');
-```
-
-
-##### `stackName`<sup>Optional</sup> <a name="stackName" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.stackName"></a>
-
-```typescript
-public readonly stackName: string;
-```
-
-- *Type:* string
-- *Default:* Derived from construct path.
-
-Name to deploy the stack with.
-
----
-
-##### `synthesizer`<sup>Optional</sup> <a name="synthesizer" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.synthesizer"></a>
-
-```typescript
-public readonly synthesizer: IStackSynthesizer;
-```
-
-- *Type:* aws-cdk-lib.IStackSynthesizer
-- *Default:* `DefaultStackSynthesizer` if the `@aws-cdk/core:newStyleStackSynthesis` feature flag is set, `LegacyStackSynthesizer` otherwise.
-
-Synthesis method to use while deploying this stack.
-
----
-
-##### `tags`<sup>Optional</sup> <a name="tags" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.tags"></a>
-
-```typescript
-public readonly tags: {[ key: string ]: string};
-```
-
-- *Type:* {[ key: string ]: string}
-- *Default:* {}
-
-Stack tags that will be applied to all the taggable resources and the stack itself.
-
----
-
-##### `terminationProtection`<sup>Optional</sup> <a name="terminationProtection" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.terminationProtection"></a>
-
-```typescript
-public readonly terminationProtection: boolean;
-```
-
-- *Type:* boolean
-- *Default:* false
-
-Whether to enable termination protection for this stack.
-
----
-
-##### `component`<sup>Required</sup> <a name="component" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.component"></a>
-
-```typescript
-public readonly component: ComponentConfig;
-```
-
-- *Type:* <a href="#@kikoda/cdk-constructs.ComponentConfig">ComponentConfig</a>
-
----
-
-##### `deploymentBranches`<sup>Required</sup> <a name="deploymentBranches" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.deploymentBranches"></a>
-
-```typescript
-public readonly deploymentBranches: IDeploymentBranch[];
-```
-
-- *Type:* <a href="#@kikoda/cdk-constructs.IDeploymentBranch">IDeploymentBranch</a>[]
-
-An interface representing the configutation for each branch and its related stage.
-
----
-
-##### `pipelineConfig`<sup>Required</sup> <a name="pipelineConfig" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.pipelineConfig"></a>
-
-```typescript
-public readonly pipelineConfig: PipelineConfig;
-```
-
-- *Type:* <a href="#@kikoda/cdk-constructs.PipelineConfig">PipelineConfig</a>
-
----
-
-##### `repository`<sup>Required</sup> <a name="repository" id="@kikoda/cdk-constructs.DeploymentPipelinesProps.property.repository"></a>
-
-```typescript
-public readonly repository: RepositoryConfig;
-```
-
-- *Type:* <a href="#@kikoda/cdk-constructs.RepositoryConfig">RepositoryConfig</a>
-
-Configuration for the source code repository.
-
-Currently supports GitHub and CodeArtifacts.
 
 ---
 
@@ -1666,34 +1666,34 @@ for the Docker container during bundling. If this is not provided, the `appDir` 
 
 ## Classes <a name="Classes" id="Classes"></a>
 
-### DeploymentPipelines <a name="DeploymentPipelines" id="@kikoda/cdk-constructs.DeploymentPipelines"></a>
+### BranchPipelines <a name="BranchPipelines" id="@kikoda/cdk-constructs.BranchPipelines"></a>
 
-Deployment pipelines creates an individual deployment pipeline stack for each branch.
+Branch  pipelines creates an individual component deployment pipeline stack for each branch.
 
-#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.DeploymentPipelines.Initializer"></a>
+#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.BranchPipelines.Initializer"></a>
 
 ```typescript
-import { DeploymentPipelines } from '@kikoda/cdk-constructs'
+import { BranchPipelines } from '@kikoda/cdk-constructs'
 
-new DeploymentPipelines(app: App, props: DeploymentPipelinesProps)
+new BranchPipelines(app: App, props: BranchPipelinesProps)
 ```
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelines.Initializer.parameter.app">app</a></code> | <code>aws-cdk-lib.App</code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DeploymentPipelines.Initializer.parameter.props">props</a></code> | <code><a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps">DeploymentPipelinesProps</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelines.Initializer.parameter.app">app</a></code> | <code>aws-cdk-lib.App</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelines.Initializer.parameter.props">props</a></code> | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps">BranchPipelinesProps</a></code> | *No description.* |
 
 ---
 
-##### `app`<sup>Required</sup> <a name="app" id="@kikoda/cdk-constructs.DeploymentPipelines.Initializer.parameter.app"></a>
+##### `app`<sup>Required</sup> <a name="app" id="@kikoda/cdk-constructs.BranchPipelines.Initializer.parameter.app"></a>
 
 - *Type:* aws-cdk-lib.App
 
 ---
 
-##### `props`<sup>Required</sup> <a name="props" id="@kikoda/cdk-constructs.DeploymentPipelines.Initializer.parameter.props"></a>
+##### `props`<sup>Required</sup> <a name="props" id="@kikoda/cdk-constructs.BranchPipelines.Initializer.parameter.props"></a>
 
-- *Type:* <a href="#@kikoda/cdk-constructs.DeploymentPipelinesProps">DeploymentPipelinesProps</a>
+- *Type:* <a href="#@kikoda/cdk-constructs.BranchPipelinesProps">BranchPipelinesProps</a>
 
 ---
 
