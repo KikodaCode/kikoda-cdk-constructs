@@ -1,5 +1,5 @@
 import { Arn } from 'aws-cdk-lib';
-import AllowCodeStarSnsPublishStatement from '../src/DeploymentPipelines/AllowCodeStarSnsPublishStatement';
+import AllowCodeStarSnsPublishStatement from '../';
 
 describe('AllowCodeStarSnsPublishStatement', () => {
   it('should create without error.', () => {

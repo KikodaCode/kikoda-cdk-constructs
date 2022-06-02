@@ -1,5 +1,5 @@
 import { Stack } from 'aws-cdk-lib';
-import { ConfiguredStage, ConfiguredStageProps } from '../src';
+import { ConfiguredStage, ConfiguredStageProps } from '../..';
 
 describe('Configured Stage', () => {
   class TestStack<T> extends Stack {

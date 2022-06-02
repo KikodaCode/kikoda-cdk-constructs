@@ -1,4 +1,4 @@
-import { WellArchitected } from '../../src';
+import { WellArchitected } from '../..';
 
 test('CompliantApp, no errors.', () => {
   expect(new WellArchitected()).toBeDefined;

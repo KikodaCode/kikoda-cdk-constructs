@@ -1,6 +1,6 @@
 import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
-import { AlarmLevels, StageAlarmTopic, StageAlarmTopicProps } from '../src';
+import { AlarmLevels, StageAlarmTopic, StageAlarmTopicProps } from '../..';
 
 describe('StageAlarmTopic', () => {
   class TopicStack extends Stack {

@@ -4,7 +4,7 @@ import { Match, Template } from 'aws-cdk-lib/assertions';
 import { HostedZoneProviderProps } from 'aws-cdk-lib/aws-route53';
 import { CorsRule, HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
-import { SinglePageApp, SinglePageAppProps } from '../src/Website/SinglePageApp';
+import { SinglePageApp, SinglePageAppProps } from '../SinglePageApp';
 
 jest.mock('aws-cdk-lib/aws-route53', () => {
   const original = jest.requireActual('aws-cdk-lib/aws-route53');

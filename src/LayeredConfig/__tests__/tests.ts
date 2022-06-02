@@ -1,5 +1,5 @@
 import { Stack } from 'aws-cdk-lib';
-import { LayeredConfig } from '../src';
+import { LayeredConfig } from '../..';
 
 describe('Layered Config', () => {
   class TestStack extends Stack {

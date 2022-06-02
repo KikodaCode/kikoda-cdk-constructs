@@ -1,9 +1,9 @@
 import { App, Arn, Stack, StackProps } from 'aws-cdk-lib';
 import { Code, Runtime, Tracing, Function } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
-import { ConfiguredStage, ConfiguredStageProps, DeploymentPipelines } from '../src';
+import { ConfiguredStage, ConfiguredStageProps, BranchPipelines } from '../..';
 
-describe('DeploymentPipelines', () => {
+describe('BranchPipelines', () => {
   interface CoreConfig {
     activeTracing: Tracing;
   }
@@ -31,7 +31,7 @@ describe('DeploymentPipelines', () => {
 
   it('should create without error.', () => {
     const app = new App();
-    const statement = new DeploymentPipelines<CoreConfig>(app, {
+    const statement = new BranchPipelines<CoreConfig>(app, {
       component: {
         componentName: 'test',
         componentType: TestStage,

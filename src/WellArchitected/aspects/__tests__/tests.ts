@@ -10,7 +10,7 @@ import {
   PerformanceEfficiencyAspects,
   FlagBasedAnnotator,
   WellArchitectedAspectsFeatureFlags,
-} from '../../src/WellArchitected/aspects';
+} from '../';
 
 describe('CostOptimizationAspects', () => {
   test('not yet implemented', () => {
