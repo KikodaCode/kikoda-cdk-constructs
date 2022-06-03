@@ -1,5 +1,5 @@
 import { Arn, Stack } from 'aws-cdk-lib';
-import { CodeSource } from '../src';
+import { CodeSource } from '../..';
 
 describe('CodeSource', () => {
   it('should set up CodeCommit source when arn supplied.', () => {

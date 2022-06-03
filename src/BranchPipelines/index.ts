@@ -1,8 +1,8 @@
 import { App, StackProps, Stage } from 'aws-cdk-lib';
 import { RepositoryConfig } from '../CodeSource';
-import { IndividualPipelineStack, PipelineConfig, StageConfig } from './IndividualPipelineStack';
+import { ComponentPipelineStack, PipelineConfig, StageConfig } from './ComponentPipeline';
 
-export { StageConfig, PipelineConfig } from './IndividualPipelineStack';
+export { StageConfig, PipelineConfig } from './ComponentPipeline';
 
 /**
  * Configuration for the component to be deployed.
@@ -60,16 +60,16 @@ export interface IDeploymentBranch<TConfig> {
   readonly stages: StageConfig<TConfig>[];
 }
 /**
- * Configuration for the DeploymentPipelines construct.
+ * Configuration for the BranchPipelines construct.
  *
  * @export
- * @interface DeploymentPipelinesProps
- * @typedef {DeploymentPipelinesProps}
+ * @interface BranchPipelinesProps
+ * @typedef {BranchPipelinesProps}
  * @template TConfig
  * @template TBranch extends IDeploymentBranch<TConfig> = IDeploymentBranch<TConfig>
  * @extends {StackProps}
  */
-export interface DeploymentPipelinesProps<
+export interface BranchPipelinesProps<
   TConfig,
   TBranch extends IDeploymentBranch<TConfig> = IDeploymentBranch<TConfig>,
 > extends StackProps {
@@ -91,15 +91,15 @@ export interface DeploymentPipelinesProps<
 }
 
 /**
- * Deployment pipelines creates an individual deployment pipeline stack for each branch.
+ * Branch  pipelines creates an individual component deployment pipeline stack for each branch.
  *
  * @export
- * @class DeploymentPipelines
- * @typedef {DeploymentPipelines}
+ * @class BranchPipelines
+ * @typedef {BranchPipelines}
  * @template TConfig
  * @template TBranch extends IDeploymentBranch<TConfig> = IDeploymentBranch<TConfig>
  */
-export class DeploymentPipelines<
+export class BranchPipelines<
   TConfig,
   TBranch extends IDeploymentBranch<TConfig> = IDeploymentBranch<TConfig>,
 > {
@@ -108,12 +108,12 @@ export class DeploymentPipelines<
    *
    * @constructor
    * @param {App} app
-   * @param {DeploymentPipelinesProps<TConfig, TBranch>} props
+   * @param {BranchPipelinesProps<TConfig, TBranch>} props
    */
-  constructor(app: App, props: DeploymentPipelinesProps<TConfig, TBranch>) {
+  constructor(app: App, props: BranchPipelinesProps<TConfig, TBranch>) {
     props.deploymentBranches.forEach((branch: TBranch) => {
       const pipelineStackId = `${props.component.componentName}-${branch.staticPipelineIdentifier}-pipeline`;
-      new IndividualPipelineStack(app, pipelineStackId, {
+      new ComponentPipelineStack(app, pipelineStackId, {
         branch,
         pipelineConfig: props.pipelineConfig,
         repository: props.repository,

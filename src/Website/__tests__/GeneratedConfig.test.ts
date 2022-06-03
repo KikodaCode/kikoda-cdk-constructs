@@ -1,7 +1,8 @@
 import { existsSync } from 'fs';
 import { tmpdir } from 'os';
+import { resolve } from 'path';
 import { v4 as uuid } from 'uuid';
-import { GeneratedConfig } from '../src/Website/GeneratedConfig';
+import { GeneratedConfig } from '../GeneratedConfig';
 
 describe('GeneratedConfig', () => {
   test('config writes to file when outDir provided', () => {
@@ -25,7 +26,7 @@ describe('GeneratedConfig', () => {
     test('json files', () => {
       const inheritedJSONConfig = new GeneratedConfig<InheritedConfig>({
         stage: 'unitTestInheritedJson',
-        servicePath: __dirname,
+        servicePath: resolve(__dirname, '../'),
         configDir: 'test_configs',
         baseConfigFileName: 'base.config.json',
         additionalConfig: {
@@ -41,7 +42,7 @@ describe('GeneratedConfig', () => {
     test('JS files', () => {
       const inheritedJSConfig = new GeneratedConfig<InheritedConfig>({
         stage: 'unitTestInheritedJs',
-        servicePath: __dirname,
+        servicePath: resolve(__dirname, '../'),
         configDir: 'test_configs',
         baseConfigFileName: 'base.config.js',
         additionalConfig: {
@@ -57,7 +58,7 @@ describe('GeneratedConfig', () => {
     test('TS files', () => {
       const inheritedTSConfig = new GeneratedConfig<InheritedConfig>({
         stage: 'unitTestInheritedTs',
-        servicePath: __dirname,
+        servicePath: resolve(__dirname, '../'),
         configDir: 'test_configs',
         baseConfigFileName: 'base.config.ts',
         additionalConfig: {
@@ -81,7 +82,7 @@ describe('GeneratedConfig', () => {
 
     const nonExistentStageConfig = new GeneratedConfig<OnlyBaseConfig>({
       stage: 'nonExistentStage',
-      servicePath: __dirname,
+      servicePath: resolve(__dirname, '../'),
       configDir: 'test_configs',
       baseConfigFileName: 'base.config.ts',
       additionalConfig: {

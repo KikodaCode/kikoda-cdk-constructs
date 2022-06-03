@@ -1,6 +1,6 @@
 import { Stack, StackProps, StageProps } from 'aws-cdk-lib';
-import { BuildSpec, ComputeType } from 'aws-cdk-lib/aws-codebuild';
-import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { ComputeType } from 'aws-cdk-lib/aws-codebuild';
+import { IRole } from 'aws-cdk-lib/aws-iam';
 import {
   ShellStep,
   AddStageOpts,
@@ -10,10 +10,12 @@ import {
 } from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
 import { merge } from 'lodash';
-import { ComponentConfig, IDeploymentBranch } from '../';
+import { ComponentConfig, IDeploymentBranch } from '..';
 import { CodeSource, RepositoryConfig } from '../../CodeSource';
 import { defineSynthCommands } from '../../utils/cliCommandUtils';
 import { PipelineEventNotificationRule } from '../PipelineEventNotificationRule';
+import { AssumeRolePartialBuildSpecSpec as AssumeRolePartialBuildSpec } from './AssumeRolePartialBuildSpec';
+import { CodeArtifactsAuthTokenAccessRole } from './CodeArtifactsAuthTokenAccessRole';
 import { TrimCloudAssemblyStep } from './TrimCloudAssemblyStep';
 /**
  * Configuration for the stage.
@@ -88,16 +90,16 @@ export interface PipelineConfig {
 }
 
 /**
- * The properties for the IndividualPipelineStack construct.
+ * The properties for the ComponentPipelineStack construct.
  *
  * @export
- * @interface IndividualPipelineStackProps
- * @typedef {IndividualPipelineStackProps}
+ * @interface ComponentPipelineStackProps
+ * @typedef {ComponentPipelineStackProps}
  * @template TConfig
  * @template TBranch extends IDeploymentBranch<TConfig>
  * @extends {DeploymentPipelinesProps<TConfig, TBranch>}
  */
-export interface IndividualPipelineStackProps<TConfig, TBranch extends IDeploymentBranch<TConfig>>
+export interface ComponentPipelineStackProps<TConfig, TBranch extends IDeploymentBranch<TConfig>>
   extends StackProps {
   /**
    * The deployment branch that this stack represents.
@@ -111,16 +113,16 @@ export interface IndividualPipelineStackProps<TConfig, TBranch extends IDeployme
 }
 
 /**
- * An individual deployment pipeline stack.
+ * An individual component deployment pipeline stack.
  *
  * @export
- * @class IndividualPipelineStack
- * @typedef {IndividualPipelineStack}
+ * @class ComponentPipelineStack
+ * @typedef {ComponentPipelineStack}
  * @template TConfig
  * @template TBranch extends IDeploymentBranch<TConfig>
  * @extends {Stack}
  */
-export class IndividualPipelineStack<
+export class ComponentPipelineStack<
   TConfig,
   TBranch extends IDeploymentBranch<TConfig>,
 > extends Stack {
@@ -130,9 +132,9 @@ export class IndividualPipelineStack<
    * @constructor
    * @param {Construct} scope
    * @param {string} id
-   * @param {IndividualPipelineStackProps<TConfig, TBranch>} props
+   * @param {ComponentPipelineStackProps<TConfig, TBranch>} props
    */
-  constructor(scope: Construct, id: string, props: IndividualPipelineStackProps<TConfig, TBranch>) {
+  constructor(scope: Construct, id: string, props: ComponentPipelineStackProps<TConfig, TBranch>) {
     super(scope, id, props);
     const { staticPipelineIdentifier = props.branch.branchName, branchName } = props.branch;
     const { componentName, componentType } = props.component;
@@ -150,44 +152,21 @@ export class IndividualPipelineStack<
     // Branch-based pipeline name
     const pipelineName = `${componentName}-${branchName.replace('/', '-')}`;
 
-    const additonalPolicyStatements: PolicyStatement[] = [];
+    const builderAssumeRoles: IRole[] = [];
     let assetPublishingCodeBuildDefaults: CodeBuildOptions = {};
 
     if (codeArtifactRepositoryArn) {
-      additonalPolicyStatements.push(
-        new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: ['codeartifacts:GetAuthorizationToken', 'sts:GetServiceBearerToken'],
-          resources: [codeArtifactRepositoryArn],
-        }),
+      const codeArtifactAccessRole = new CodeArtifactsAuthTokenAccessRole(
+        this,
+        'CodeArtifactsAccessRole',
+        { codeArtifactRepositoryArn },
       );
+      builderAssumeRoles.push(codeArtifactAccessRole);
       assetPublishingCodeBuildDefaults = merge(assetPublishingCodeBuildDefaults, {
-        partialBuildSpec: BuildSpec.fromObject({
-          phases: {
-            install: {
-              commands: [
-                'TEMP_ROLE=$(aws sts get-session-token)',
-                'export TEMP_ROLE',
-                'export AWS_ACCESS_KEY_ID=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.AccessKeyId\')', // TODO: JQ dependency
-                'export AWS_SECRET_ACCESS_KEY=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.SecretAccessKey\')',
-                'export AWS_SESSION_TOKEN=$(echo "${TEMP_ROLE}" | jq -r \'.Credentials.SessionToken\')',
-              ],
-            },
-            pre_build: {
-              commands: [
-                "echo Build started on 'date'",
-                'echo Building the Docker image...',
-                'docker build --build-arg AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID --build-arg AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --build-arg AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN',
-              ],
-            },
-          },
-        }),
-        buildEnvironment: {
-          environmentVariables: {},
-        },
+        partialBuildSpec: new AssumeRolePartialBuildSpec(codeArtifactAccessRole.roleArn)
+          .partialBuildSpec,
       });
     }
-
     const pipeline = new CodePipeline(this, pipelineId, {
       pipelineName,
       dockerEnabledForSynth: true,
@@ -221,8 +200,8 @@ export class IndividualPipelineStack<
 
     pipeline.buildPipeline();
 
-    for (const statement of additonalPolicyStatements) {
-      pipeline.pipeline.addToRolePolicy(statement);
+    for (const role of builderAssumeRoles) {
+      role.grantAssumeRole(pipeline.pipeline.role);
     }
 
     // TODO: move to an aspect?

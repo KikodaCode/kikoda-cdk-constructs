@@ -4,7 +4,7 @@ import { Match, Template } from 'aws-cdk-lib/assertions';
 import { HostedZoneProviderProps } from 'aws-cdk-lib/aws-route53';
 import { CorsRule, HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
-import { SinglePageApp, SinglePageAppProps } from '../src/Website/SinglePageApp';
+import { SinglePageApp, SinglePageAppProps } from '../SinglePageApp';
 
 jest.mock('aws-cdk-lib/aws-route53', () => {
   const original = jest.requireActual('aws-cdk-lib/aws-route53');
@@ -41,7 +41,7 @@ describe('Given simple Single Page App', () => {
     },
   ];
   const spaStack = new SPAStack({
-    appDir: 'test',
+    appDir: __dirname,
     zoneName: givenZoneName,
     indexDoc: 'indexDoc',
     bucketCorsRules: corsRules,
@@ -82,7 +82,7 @@ describe('Given simple Single Page App', () => {
 
   const subDomain: string = 'subDomain';
   const subDomainSpaStack = new SPAStack({
-    appDir: 'test',
+    appDir: __dirname,
     zoneName: givenZoneName,
     subdomain: subDomain,
     indexDoc: 'indexDoc',
@@ -98,7 +98,7 @@ describe('Given simple Single Page App', () => {
   });
 
   new SPAStack({
-    appDir: 'test',
+    appDir: __dirname,
     zoneName: givenZoneName,
     indexDoc: 'indexDoc',
     buildCommand: 'touch spa_local_build_artifact',

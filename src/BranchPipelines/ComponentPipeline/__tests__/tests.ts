@@ -1,8 +1,8 @@
 import { App, Arn, Stack, Stage } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
-import { IndividualPipelineStack } from '../src/DeploymentPipelines/IndividualPipelineStack';
+import { ComponentPipelineStack } from '../';
 
-describe('IndividualPipelineStack', () => {
+describe('ComponentPipelineStack', () => {
   class TestStage extends Stage {
     public constructor() {
       super(new App(), 'TestStage');
@@ -10,7 +10,7 @@ describe('IndividualPipelineStack', () => {
     }
   }
   it('should synth without error.', () => {
-    const pipeline = new IndividualPipelineStack(new App(), 'test', {
+    const pipeline = new ComponentPipelineStack(new App(), 'test', {
       branch: {
         branchName: 'test',
         staticPipelineIdentifier: 'test',
