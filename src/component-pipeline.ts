@@ -1,6 +1,5 @@
 import { Stack, StackProps, StageProps } from 'aws-cdk-lib';
 import { ComputeType } from 'aws-cdk-lib/aws-codebuild';
-import { IRole } from 'aws-cdk-lib/aws-iam';
 import {
   ShellStep,
   AddStageOpts,
@@ -81,13 +80,6 @@ export interface PipelineConfig {
    * @type {?string}
    */
   readonly notificationTopicArn?: string;
-  /**
-   * An optional role that can be assumed to perform the build.
-   *
-   * @readonly
-   * @type {?string}
-   */
-  readonly builderAssumeRole?: string;
 }
 
 /**
@@ -152,8 +144,6 @@ export class ComponentPipelineStack<
 
     // Branch-based pipeline name
     const pipelineName = `${componentName}-${branchName.replace('/', '-')}`;
-
-    const builderAssumeRoles: IRole[] = [];
     let assetPublishingCodeBuildDefaults: CodeBuildOptions = {};
 
     if (codeArtifactRepositoryArn) {

@@ -1155,22 +1155,9 @@ const pipelineConfig: PipelineConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.builderAssumeRole">builderAssumeRole</a></code> | <code>string</code> | An optional role that can be assumed to perform the build. |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.codeArtifactRepositoryArn">codeArtifactRepositoryArn</a></code> | <code>string</code> | Specifying a codeartifact ARN here will enable asset phase of the pipeline to access that codeartifact repository. |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.notificationTopicArn">notificationTopicArn</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.pruneCloudAssembly">pruneCloudAssembly</a></code> | <code>boolean</code> | Add a step to pull down and remove asset zips from the cloud assembly output from the Synth step. |
-
----
-
-##### `builderAssumeRole`<sup>Optional</sup> <a name="builderAssumeRole" id="@kikoda/cdk-constructs.PipelineConfig.property.builderAssumeRole"></a>
-
-```typescript
-public readonly builderAssumeRole: string;
-```
-
-- *Type:* string
-
-An optional role that can be assumed to perform the build.
 
 ---
 
