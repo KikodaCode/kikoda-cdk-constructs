@@ -1,8 +1,8 @@
 import { Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
-import { TypescriptFunction } from '../../src';
+import { TypescriptSingletonFunction } from '../../src';
 
-describe('TypescriptFunction', () => {
+describe('TypescriptSingletonFunction', () => {
   class TestStack extends Stack {
     constructor() {
       super();
@@ -11,7 +11,9 @@ describe('TypescriptFunction', () => {
 
   test('contains Lambda Functions', () => {
     const stack = new TestStack();
-    new TypescriptFunction(stack, 'RegularFunction', {
+
+    new TypescriptSingletonFunction(stack, 'TypescriptSingletonFunction', {
+      uuid: 'singleton-function',
       handler: 'test/functions/hello.handler.main',
       bundle: {
         copyFiles: [{ from: 'test/functions/hello.handler.ts', to: '../' }],
@@ -27,7 +29,8 @@ describe('TypescriptFunction', () => {
 
     expect(
       () =>
-        new TypescriptFunction(stack, 'TypescriptFunctionNoBundle', {
+        new TypescriptSingletonFunction(stack, 'TypescriptSingletonFunctionNoBundle', {
+          uuid: 'singleton-function',
           handler: 'test/functions/hello.handler.main',
           bundle: false,
         }),
@@ -39,7 +42,8 @@ describe('TypescriptFunction', () => {
 
     expect(
       () =>
-        new TypescriptFunction(stack, 'TypescriptFunctionInvalidCopy', {
+        new TypescriptSingletonFunction(stack, 'TypescriptSingletonFunctionInvalidCopy', {
+          uuid: 'singleton-function',
           handler: 'test/functions/hello.handler.main',
           bundle: {
             copyFiles: [{ from: '/tmp/does/not/exist', to: '../' }],

@@ -9,8 +9,7 @@ import { basename, join, resolve } from 'path';
 import { AssetCode, Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Loader, BuildOptions } from 'esbuild';
 import { copySync, ensureFileSync, existsSync, readJsonSync, writeJsonSync } from 'fs-extra';
-
-import { FunctionBundleProps } from './typescript-function';
+import { FunctionBundleProps } from './types';
 
 const addExtensionToHandler = (handler: string, extension: string): string =>
   handler.replace(/\.[\w\d]+$/, extension);
