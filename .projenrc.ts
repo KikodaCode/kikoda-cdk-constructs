@@ -52,7 +52,7 @@ const project = new AwsCdkConstructLibrary({
     '@kikoda/projen-templates',
   ] /* Build dependencies for this module. */,
   packageName: '@kikoda/cdk-constructs',
-  gitignore: ['spa_local_build_artifact'],
+  gitignore: ['spa_local_build_artifact', '.build/'],
   githubOptions: {
     projenCredentials: GithubCredentials.fromApp(),
   },

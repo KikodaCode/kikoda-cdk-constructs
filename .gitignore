@@ -32,6 +32,7 @@ jspm_packages/
 .yarn-integrity
 .cache
 spa_local_build_artifact
+.build/
 !/.projenrc.js
 /test-reports/
 junit.xml

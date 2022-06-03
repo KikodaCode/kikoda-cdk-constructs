@@ -45,13 +45,14 @@ describe('TypescriptFunction', () => {
     template.resourceCountIs('AWS::Lambda::Function', 2);
   });
 
-  test('contains Lambda Function', () => {
+  test('No bundling when srcPath is root should throw and error', () => {
     const stack = new TestStack();
     expect(
-      new TypescriptFunction(stack, 'TypescriptFunctionNoBundle', {
-        handler: 'test/functions/hello.handler.main',
-        bundle: false,
-      }),
-    ).toThrow();
+      () =>
+        new TypescriptFunction(stack, 'TypescriptFunctionNoBundle', {
+          handler: 'test/functions/hello.handler.main',
+          bundle: false,
+        }),
+    ).toThrowError();
   });
 });
