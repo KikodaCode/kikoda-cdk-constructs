@@ -162,10 +162,15 @@ export class ComponentPipelineStack<
         'CodeArtifactAccessRole',
         { codeArtifactRepositoryArn },
       );
-      builderAssumeRoles.push(codeArtifactAccessRole);
       assetPublishingCodeBuildDefaults = merge(assetPublishingCodeBuildDefaults, {
         partialBuildSpec: new AssumeRolePartialBuildSpec(codeArtifactAccessRole.roleArn)
           .partialBuildSpec,
+        rolePolicy: [
+          {
+            actions: ['sts:AssumeRole'],
+            resources: [codeArtifactAccessRole.roleArn],
+          },
+        ],
       });
     }
     const pipeline = new CodePipeline(this, pipelineId, {
@@ -200,10 +205,6 @@ export class ComponentPipelineStack<
     });
 
     pipeline.buildPipeline();
-
-    for (const role of builderAssumeRoles) {
-      role.grantAssumeRole(pipeline.pipeline.role);
-    }
 
     // TODO: move to an aspect?
     if (notificationTopicArn && notificationTopicArn !== '') {
