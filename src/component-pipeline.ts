@@ -1,5 +1,6 @@
 import { Stack, StackProps, StageProps } from 'aws-cdk-lib';
 import { ComputeType } from 'aws-cdk-lib/aws-codebuild';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import {
   ShellStep,
   AddStageOpts,
@@ -156,10 +157,11 @@ export class ComponentPipelineStack<
         partialBuildSpec: new AssumeRolePartialBuildSpec(codeArtifactAccessRole.roleArn)
           .partialBuildSpec,
         rolePolicy: [
-          {
+          new PolicyStatement({
+            effect: Effect.ALLOW,
             actions: ['sts:AssumeRole'],
             resources: [codeArtifactAccessRole.roleArn],
-          },
+          }),
         ],
       });
     }
