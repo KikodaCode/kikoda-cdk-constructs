@@ -66,7 +66,7 @@ export class SecurityAspects implements IAspect {
        */
       const { annotate, flagLevel } = new FlagBasedAnnotator(
         node,
-        WellArchitectedAspectsFeatureFlags.BlockPublicBuckets,
+        WellArchitectedAspectsFeatureFlags.BLOCK_PUBLIC_BUCKETS,
       );
       const config =
         node.publicAccessBlockConfiguration as CfnBucket.PublicAccessBlockConfigurationProperty;

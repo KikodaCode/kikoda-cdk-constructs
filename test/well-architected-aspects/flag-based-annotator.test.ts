@@ -6,7 +6,8 @@ import {
 
 describe('FlagBasedAnnotator', () => {
   test('FlagBasedAnnotator, no errors.', () => {
-    expect(new FlagBasedAnnotator(new App(), WellArchitectedAspectsFeatureFlags.BlockPublicBuckets))
-      .toBeDefined;
+    expect(
+      new FlagBasedAnnotator(new App(), WellArchitectedAspectsFeatureFlags.BLOCK_PUBLIC_BUCKETS),
+    ).toBeDefined;
   });
 });

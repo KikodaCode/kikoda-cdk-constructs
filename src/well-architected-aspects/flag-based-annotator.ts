@@ -3,10 +3,10 @@ import { IConstruct } from 'constructs';
 
 export enum WellArchitectedAspectsFeatureFlags {
   /** Enable X-Ray Tracing for Lambda functions */
-  EnableXRayTracing = 'well-architected-aspects:enableActiveXRayTracing',
+  ENABLE_X_RAY_TRACING = 'well-architected-aspects:enableActiveXRayTracing',
 
   /** Define the behavior for regarding public access policies on S3 Buckets */
-  BlockPublicBuckets = 'well-architected-aspects:blockPublicBuckets',
+  BLOCK_PUBLIC_BUCKETS = 'well-architected-aspects:blockPublicBuckets',
 }
 
 export enum FlagLevel {
@@ -26,7 +26,7 @@ export class FlagBasedAnnotator {
     this.flagLevel = scope.node.tryGetContext(featureFlag);
   }
 
-  public annotate = (message: string) => {
+  annotate(message: string) {
     switch (this.flagLevel) {
       case FlagLevel.INFO:
         Annotations.of(this.scope).addInfo(message);
@@ -41,5 +41,5 @@ export class FlagBasedAnnotator {
         Annotations.of(this.scope).addWarning(`[AUTOFIX] ${message}`);
         break;
     }
-  };
+  }
 }

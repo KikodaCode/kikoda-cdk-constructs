@@ -18,7 +18,7 @@ export class OperationalExcellenceAspects implements IAspect {
       if (!node.tracingConfig) {
         const { annotate, flagLevel } = new FlagBasedAnnotator(
           node,
-          WellArchitectedAspectsFeatureFlags.EnableXRayTracing,
+          WellArchitectedAspectsFeatureFlags.ENABLE_X_RAY_TRACING,
         );
         let message = 'X-Ray Tracing is not enabled for this function';
 
