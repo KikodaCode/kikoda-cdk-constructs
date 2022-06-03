@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../test/functions/hello.handler.ts"],
+  "sourcesContent": ["interface HelloWorld {\n  hello: string;\n}\n\nexport const main = (): HelloWorld => {\n  return { hello: 'world' };\n};\n"],
+  "mappings": ";;;;;;;;;AAAA;AAAA;AAAA;AAIO,IAAM,OAAO,MAAkB;AACpC,SAAO,EAAE,OAAO;AAAA;",
+  "names": []
+}

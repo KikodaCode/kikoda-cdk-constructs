@@ -33,7 +33,14 @@ const project = new AwsCdkConstructLibrary({
       endOfLine: EndOfLine.LF,
     },
   },
-  bundledDeps: ['md5', 'uuid', 'lodash'],
+  bundledDeps: [
+    'md5',
+    'uuid',
+    'lodash',
+    'esbuild@~0.13',
+    'fs-extra',
+    '@yarnpkg/esbuild-plugin-pnp',
+  ],
   tsconfig: { compilerOptions: { esModuleInterop: true } },
 
   // deps: [],                /* Runtime dependencies of this module. */
@@ -41,6 +48,7 @@ const project = new AwsCdkConstructLibrary({
     '@types/md5',
     '@types/uuid',
     '@types/lodash',
+    '@types/fs-extra',
     '@kikoda/projen-templates',
   ] /* Build dependencies for this module. */,
   packageName: '@kikoda/cdk-constructs',
