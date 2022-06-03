@@ -1,5 +1,4 @@
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { validateArn } from './validate-arn';
 
 /**
  * A PolicyStatement that grants permissions to access the CodeArtifact repository authorization token.
@@ -20,7 +19,6 @@ export class CodeArtifactAuthTokenAccessStatement extends PolicyStatement {
    * @param {?CodeArtifactAuthTokenAccessStatementProps} [props]
    */
   constructor(codeArtifactRepositoryArn: string) {
-    validateArn(codeArtifactRepositoryArn, { service: 'codeartifact', resource: 'repository' });
     super({
       effect: Effect.ALLOW,
       actions: ['codeartifact:GetAuthorizationToken', 'sts:GetServiceBearerToken'],

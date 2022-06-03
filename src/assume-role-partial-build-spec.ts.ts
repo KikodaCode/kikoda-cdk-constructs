@@ -1,5 +1,4 @@
 import { BuildSpec } from 'aws-cdk-lib/aws-codebuild';
-import { validateArn } from './validate-arn';
 
 /**
  * The partial buildspec that includes commands to assume a role and pass credentials to a docker build call.
@@ -24,7 +23,6 @@ export class AssumeRolePartialBuildSpec {
    * @param {string} roleArn
    */
   constructor(roleArn: string) {
-    validateArn(roleArn, { service: 'iam', resource: 'role' });
     this.partialBuildSpec = BuildSpec.fromObject({
       phases: {
         install: {

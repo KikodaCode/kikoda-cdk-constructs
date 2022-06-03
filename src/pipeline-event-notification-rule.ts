@@ -2,7 +2,6 @@ import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotificati
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import { CodePipeline } from 'aws-cdk-lib/pipelines';
 import AllowCodeStarSnsPublishStatement from './codestar-sns-publish-access-statement';
-import { validateArn } from './validate-arn';
 
 /**
  * TODO: Update documentation
@@ -49,7 +48,6 @@ export class PipelineEventNotificationRule extends NotificationRule {
    * @param {string} notificationTopicArn
    */
   constructor(scope: CodePipeline, props: PipelineEventNotificationRuleProps) {
-    validateArn(props.notificationTopicArn, { service: 'sns' });
     const targetTopic = Topic.fromTopicArn(scope, 'NotificationTopic', props.notificationTopicArn);
 
     const {
