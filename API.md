@@ -1141,17 +1141,6 @@ The owner of the GitHub repository.
 
 ---
 
-### KikodaCompliantProps <a name="KikodaCompliantProps" id="@kikoda/cdk-constructs.KikodaCompliantProps"></a>
-
-#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.KikodaCompliantProps.Initializer"></a>
-
-```typescript
-import { KikodaCompliantProps } from '@kikoda/cdk-constructs'
-
-const kikodaCompliantProps: KikodaCompliantProps = { ... }
-```
-
-
 ### PipelineConfig <a name="PipelineConfig" id="@kikoda/cdk-constructs.PipelineConfig"></a>
 
 #### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.PipelineConfig.Initializer"></a>
@@ -1167,7 +1156,7 @@ const pipelineConfig: PipelineConfig = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.builderAssumeRole">builderAssumeRole</a></code> | <code>string</code> | An optional role that can be assumed to perform the build. |
-| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.codeArtifactRepositoryArn">codeArtifactRepositoryArn</a></code> | <code>string</code> | Specifying a codeartifacts ARN here will enable asset phase of the pipeline to access that codeartifacts repository. |
+| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.codeArtifactRepositoryArn">codeArtifactRepositoryArn</a></code> | <code>string</code> | Specifying a codeartifact ARN here will enable asset phase of the pipeline to access that codeartifact repository. |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.notificationTopicArn">notificationTopicArn</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.pruneCloudAssembly">pruneCloudAssembly</a></code> | <code>boolean</code> | Add a step to pull down and remove asset zips from the cloud assembly output from the Synth step. |
 
@@ -1193,9 +1182,9 @@ public readonly codeArtifactRepositoryArn: string;
 
 - *Type:* string
 
-Specifying a codeartifacts ARN here will enable asset phase of the pipeline to access that codeartifacts repository.
+Specifying a codeartifact ARN here will enable asset phase of the pipeline to access that codeartifact repository.
 
-This includes adding approprate roles and leveraging an assumed role for the docker build so that the docker build can pull from codeartifacts.
+This includes adding approprate roles and leveraging an assumed role for the docker build so that the docker build can pull from codeartifact.
 
 ---
 
@@ -1701,6 +1690,75 @@ new BranchPipelines(app: App, props: BranchPipelinesProps)
 
 
 
+### FlagBasedAnnotator <a name="FlagBasedAnnotator" id="@kikoda/cdk-constructs.FlagBasedAnnotator"></a>
+
+#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.FlagBasedAnnotator.Initializer"></a>
+
+```typescript
+import { FlagBasedAnnotator } from '@kikoda/cdk-constructs'
+
+new FlagBasedAnnotator(scope: IConstruct, featureFlag: WellArchitectedAspectsFeatureFlags)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.FlagBasedAnnotator.Initializer.parameter.scope">scope</a></code> | <code>constructs.IConstruct</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.FlagBasedAnnotator.Initializer.parameter.featureFlag">featureFlag</a></code> | <code><a href="#@kikoda/cdk-constructs.WellArchitectedAspectsFeatureFlags">WellArchitectedAspectsFeatureFlags</a></code> | *No description.* |
+
+---
+
+##### `scope`<sup>Required</sup> <a name="scope" id="@kikoda/cdk-constructs.FlagBasedAnnotator.Initializer.parameter.scope"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+##### `featureFlag`<sup>Required</sup> <a name="featureFlag" id="@kikoda/cdk-constructs.FlagBasedAnnotator.Initializer.parameter.featureFlag"></a>
+
+- *Type:* <a href="#@kikoda/cdk-constructs.WellArchitectedAspectsFeatureFlags">WellArchitectedAspectsFeatureFlags</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.FlagBasedAnnotator.annotate">annotate</a></code> | *No description.* |
+
+---
+
+##### `annotate` <a name="annotate" id="@kikoda/cdk-constructs.FlagBasedAnnotator.annotate"></a>
+
+```typescript
+public annotate(message: string): void
+```
+
+###### `message`<sup>Required</sup> <a name="message" id="@kikoda/cdk-constructs.FlagBasedAnnotator.annotate.parameter.message"></a>
+
+- *Type:* string
+
+---
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.FlagBasedAnnotator.property.flagLevel">flagLevel</a></code> | <code><a href="#@kikoda/cdk-constructs.FlagLevel">FlagLevel</a></code> | *No description.* |
+
+---
+
+##### `flagLevel`<sup>Required</sup> <a name="flagLevel" id="@kikoda/cdk-constructs.FlagBasedAnnotator.property.flagLevel"></a>
+
+```typescript
+public readonly flagLevel: FlagLevel;
+```
+
+- *Type:* <a href="#@kikoda/cdk-constructs.FlagLevel">FlagLevel</a>
+
+---
+
+
 ### LayeredConfig <a name="LayeredConfig" id="@kikoda/cdk-constructs.LayeredConfig"></a>
 
 This construct current only wraps the lodash.merge() functionality but is intended to be a placeholder for future logic like: global defaults, type enforcement and error handling, dynamic values (custom compute logic), etc.
@@ -1736,18 +1794,18 @@ new LayeredConfig(base: any, layers: any)
 
 
 
-### WellArchitected <a name="WellArchitected" id="@kikoda/cdk-constructs.WellArchitected"></a>
+### WellArchitectedAspects <a name="WellArchitectedAspects" id="@kikoda/cdk-constructs.WellArchitectedAspects"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
 
 An app construct that complies with AWS well-architected standards.
 
-#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.WellArchitected.Initializer"></a>
+#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.WellArchitectedAspects.Initializer"></a>
 
 ```typescript
-import { WellArchitected } from '@kikoda/cdk-constructs'
+import { WellArchitectedAspects } from '@kikoda/cdk-constructs'
 
-new WellArchitected()
+new WellArchitectedAspects()
 ```
 
 | **Name** | **Type** | **Description** |
@@ -1759,11 +1817,11 @@ new WellArchitected()
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.WellArchitected.visit">visit</a></code> | All aspects can visit an IConstruct. |
+| <code><a href="#@kikoda/cdk-constructs.WellArchitectedAspects.visit">visit</a></code> | All aspects can visit an IConstruct. |
 
 ---
 
-##### `visit` <a name="visit" id="@kikoda/cdk-constructs.WellArchitected.visit"></a>
+##### `visit` <a name="visit" id="@kikoda/cdk-constructs.WellArchitectedAspects.visit"></a>
 
 ```typescript
 public visit(node: IConstruct): void
@@ -1771,7 +1829,7 @@ public visit(node: IConstruct): void
 
 All aspects can visit an IConstruct.
 
-###### `node`<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.WellArchitected.visit.parameter.node"></a>
+###### `node`<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.WellArchitectedAspects.visit.parameter.node"></a>
 
 - *Type:* constructs.IConstruct
 
@@ -1868,6 +1926,64 @@ Events that indicate service degredation, inefficency, and/or non blocking error
 ##### `CRITICAL` <a name="CRITICAL" id="@kikoda/cdk-constructs.AlarmLevels.CRITICAL"></a>
 
 Events that indicate system failures, data loss, and/or blocking errors.
+
+---
+
+
+### FlagLevel <a name="FlagLevel" id="@kikoda/cdk-constructs.FlagLevel"></a>
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.FlagLevel.INFO">INFO</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.FlagLevel.WARN">WARN</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.FlagLevel.ERROR">ERROR</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.FlagLevel.FIX">FIX</a></code> | *No description.* |
+
+---
+
+##### `INFO` <a name="INFO" id="@kikoda/cdk-constructs.FlagLevel.INFO"></a>
+
+---
+
+
+##### `WARN` <a name="WARN" id="@kikoda/cdk-constructs.FlagLevel.WARN"></a>
+
+---
+
+
+##### `ERROR` <a name="ERROR" id="@kikoda/cdk-constructs.FlagLevel.ERROR"></a>
+
+---
+
+
+##### `FIX` <a name="FIX" id="@kikoda/cdk-constructs.FlagLevel.FIX"></a>
+
+---
+
+
+### WellArchitectedAspectsFeatureFlags <a name="WellArchitectedAspectsFeatureFlags" id="@kikoda/cdk-constructs.WellArchitectedAspectsFeatureFlags"></a>
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.WellArchitectedAspectsFeatureFlags.ENABLE_X_RAY_TRACING">ENABLE_X_RAY_TRACING</a></code> | Enable X-Ray Tracing for Lambda functions. |
+| <code><a href="#@kikoda/cdk-constructs.WellArchitectedAspectsFeatureFlags.BLOCK_PUBLIC_BUCKETS">BLOCK_PUBLIC_BUCKETS</a></code> | Define the behavior for regarding public access policies on S3 Buckets. |
+
+---
+
+##### `ENABLE_X_RAY_TRACING` <a name="ENABLE_X_RAY_TRACING" id="@kikoda/cdk-constructs.WellArchitectedAspectsFeatureFlags.ENABLE_X_RAY_TRACING"></a>
+
+Enable X-Ray Tracing for Lambda functions.
+
+---
+
+
+##### `BLOCK_PUBLIC_BUCKETS` <a name="BLOCK_PUBLIC_BUCKETS" id="@kikoda/cdk-constructs.WellArchitectedAspectsFeatureFlags.BLOCK_PUBLIC_BUCKETS"></a>
+
+Define the behavior for regarding public access policies on S3 Buckets.
 
 ---
 
