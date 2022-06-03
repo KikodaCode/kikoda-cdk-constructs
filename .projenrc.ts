@@ -21,7 +21,6 @@ const project = new AwsCdkConstructLibrary({
   vscode: true,
   docgen: true,
   prettier: true,
-  sampleCode: false,
   prettierOptions: {
     settings: {
       printWidth: 100,
