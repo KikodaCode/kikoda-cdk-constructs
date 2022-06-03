@@ -153,7 +153,7 @@ export class ComponentPipelineStack<
         'CodeArtifactAccessRole',
         { codeArtifactRepositoryArn },
       );
-      assetPublishingCodeBuildDefaults = merge(assetPublishingCodeBuildDefaults, {
+      const partialDefaults: CodeBuildOptions = {
         partialBuildSpec: new AssumeRolePartialBuildSpec(codeArtifactAccessRole.roleArn)
           .partialBuildSpec,
         rolePolicy: [
@@ -163,7 +163,8 @@ export class ComponentPipelineStack<
             resources: [codeArtifactAccessRole.roleArn],
           }),
         ],
-      });
+      };
+      assetPublishingCodeBuildDefaults = merge(assetPublishingCodeBuildDefaults, partialDefaults);
     }
     const pipeline = new CodePipeline(this, pipelineId, {
       pipelineName,
