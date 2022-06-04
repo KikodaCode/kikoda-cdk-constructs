@@ -1,5 +1,6 @@
 import { Stack, StackProps, StageProps } from 'aws-cdk-lib';
 import { ComputeType } from 'aws-cdk-lib/aws-codebuild';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import {
   ShellStep,
   AddStageOpts,
@@ -152,16 +153,18 @@ export class ComponentPipelineStack<
         'CodeArtifactAccessRole',
         { codeArtifactRepositoryArn },
       );
-      assetPublishingCodeBuildDefaults = merge(assetPublishingCodeBuildDefaults, {
+      const partialDefaults: CodeBuildOptions = {
         partialBuildSpec: new AssumeRolePartialBuildSpec(codeArtifactAccessRole.roleArn)
           .partialBuildSpec,
         rolePolicy: [
-          {
+          new PolicyStatement({
+            effect: Effect.ALLOW,
             actions: ['sts:AssumeRole'],
             resources: [codeArtifactAccessRole.roleArn],
-          },
+          }),
         ],
-      });
+      };
+      assetPublishingCodeBuildDefaults = merge(assetPublishingCodeBuildDefaults, partialDefaults);
     }
     const pipeline = new CodePipeline(this, pipelineId, {
       pipelineName,
