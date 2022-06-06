@@ -1,9 +1,8 @@
-import { isAbsolute, resolve } from 'path';
+import { isAbsolute, resolve, join } from 'path';
 import { existsSync, copySync } from 'fs-extra';
-import { join } from 'lodash';
 import { BundleProp } from './types';
 
-export const copyFiles = (bundle: BundleProp | undefined, srcPath: string, buildPath: string) => {
+export function copyFiles(bundle: BundleProp | undefined, srcPath: string, buildPath: string) {
   if (!bundle) return;
   if (typeof bundle === 'boolean') return;
   if (!bundle.copyFiles) return;
@@ -21,11 +20,13 @@ export const copyFiles = (bundle: BundleProp | undefined, srcPath: string, build
     const toPath = join(buildPath, to);
     copySync(fromPath, toPath);
   });
-};
+}
 
-export const normalizeSrcPath = (srcPath: string): string => srcPath.replace(/\/+$/, '');
+export function normalizeSrcPath(srcPath: string): string {
+  return srcPath.replace(/\/+$/, '');
+}
 
-export const validateBundle = (id: string, srcPath: string, bundle?: BundleProp): BundleProp => {
+export function validateBundle(id: string, srcPath: string, bundle?: BundleProp): BundleProp {
   const retBundle = bundle === undefined ? true : bundle;
   if (!retBundle && srcPath === '.') {
     throw new Error(
@@ -34,4 +35,4 @@ export const validateBundle = (id: string, srcPath: string, bundle?: BundleProp)
   }
 
   return retBundle;
-};
+}

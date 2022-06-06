@@ -16,7 +16,7 @@ describe('TypescriptSingletonFunction', () => {
       uuid: 'singleton-function',
       handler: 'test/functions/hello.handler.main',
       bundle: {
-        copyFiles: [{ from: 'test/functions/hello.handler.ts', to: '../' }],
+        copyFiles: [{ from: 'test/functions/', to: '../cp' }],
       },
     });
 
@@ -46,7 +46,7 @@ describe('TypescriptSingletonFunction', () => {
           uuid: 'singleton-function',
           handler: 'test/functions/hello.handler.main',
           bundle: {
-            copyFiles: [{ from: '/tmp/does/not/exist', to: '../' }],
+            copyFiles: [{ from: '/tmp/does/not/exist', to: '../cp' }],
           },
         }),
     ).toThrowError();
