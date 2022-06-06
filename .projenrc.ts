@@ -42,6 +42,18 @@ const project = new AwsCdkConstructLibrary({
     '@yarnpkg/esbuild-plugin-pnp',
   ],
   tsconfig: { compilerOptions: { esModuleInterop: true } },
+  eslintOptions: {
+    dirs: ['./'],
+    ignorePatterns: [
+      '*.js',
+      '!.projenrc.ts',
+      '*.d.ts',
+      'node_modules/',
+      '*.generated.ts',
+      'coverage',
+      'bad.handler.ts',
+    ],
+  },
 
   // deps: [],                /* Runtime dependencies of this module. */
   devDeps: [

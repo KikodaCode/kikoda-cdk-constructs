@@ -12,6 +12,11 @@ const esbuildTargetMap = {
   [Runtime.NODEJS_16_X.toString()]: 'node16',
 };
 
+export class NonExistentHandlerError extends Error {}
+export class NonExistentPackageJsonError extends Error {}
+export class AmbiguousPackageManagerError extends Error {}
+export class HandlerTransipilationError extends Error {}
+
 export interface BuilderProps {
   readonly srcPath: string;
   readonly handler: string;
@@ -54,55 +59,57 @@ export class Builder {
     });
 
     if (!entryPathExists) {
-      throw new Error(`Cannot find a handler file for "${handlerPosixPath}".`);
+      throw new NonExistentHandlerError(`Cannot find a handler file for "${handlerPosixPath}".`);
     }
 
-    // Four cases:
-    //  1. BUNDLE + this.srcPath ROOT
-    //      src       : path/to/file.method
-    //      buildPath : .build/hash-$ts
-    //      outCode   : .build/hash-$ts
-    //      outHandler: file.method
-    //
-    //  2. BUNDLE + this.srcPath NON-ROOT
-    //      src       : this.srcPath/path/to/file.method
-    //      buildPath : this.srcPath/.build/hash-$ts
-    //      outCode   : this.srcPath/.build/hash-$ts
-    //      outHandler: file.method
-    //
-    //  3. non-BUNDLE + this.srcPath ROOT
-    //      src       : path/to/file.method
-    //      buildPath : .build/handlerDir
-    //      outCode   : .
-    //
-    //     Note: This case is NOT SUPPORTED because we need to zip the app root for each
-    //           handler. So after a Lambda's zip is generated, the next Lambda's zip will
-    //           contain the previous Lambda's zip inside .build, and the previous Lambda's
-    //           zip inside cdk.out.
-    //
-    //           One solution would be to cherry pick what to zip. For example, zip should
-    //           only include the esbuid's output (ie. .js and .js.map files) from the
-    //           .build folder.
-    //
-    //           Also need to clear all .build folders generated from Lambda functions that
-    //           has this.srcPath.
-    //
-    //  4. non-BUNDLE + this.srcPath NON-ROOT
-    //      src       : this.srcPath/path/to/file.method
-    //      buildPath : this.srcPath/.build/hash-$ts
-    //      zipInput  : this.srcPath
-    //      zipOutput : .build/hash-$ts.zip
-    //      outCode   : .build/hash-$ts.zip
-    //      outHandler: .build/hash-$ts/file.method
-    //
-    //     Note:
-    //       If `bundle` is disabled, we need to zip manually. Because the same
-    //       `this.srcPath` is zipped for each handler, and CDK asset would only zip
-    //       it once. So the rest of Lambda zips do not contain the output handler file.
-    //
-    //       Place outZip at the app root's .build because entire this.srcPath is zipped up.
-    //       If outZip is this.srcPath's .build, a Lambda's zip would include zip files from
-    //       all the previous Lambdas.
+    /*
+     * Four cases:
+     *  1. BUNDLE + this.srcPath ROOT
+     *      src       : path/to/file.method
+     *      buildPath : .build/hash-$ts
+     *      outCode   : .build/hash-$ts
+     *      outHandler: file.method
+     *
+     *  2. BUNDLE + this.srcPath NON-ROOT
+     *      src       : this.srcPath/path/to/file.method
+     *      buildPath : this.srcPath/.build/hash-$ts
+     *      outCode   : this.srcPath/.build/hash-$ts
+     *      outHandler: file.method
+     *
+     *  3. non-BUNDLE + this.srcPath ROOT
+     *      src       : path/to/file.method
+     *      buildPath : .build/handlerDir
+     *      outCode   : .
+     *
+     *     Note: This case is NOT SUPPORTED because we need to zip the app root for each
+     *           handler. So after a Lambda's zip is generated, the next Lambda's zip will
+     *           contain the previous Lambda's zip inside .build, and the previous Lambda's
+     *           zip inside cdk.out.
+     *
+     *           One solution would be to cherry pick what to zip. For example, zip should
+     *           only include the esbuid's output (ie. .js and .js.map files) from the
+     *           .build folder.
+     *
+     *           Also need to clear all .build folders generated from Lambda functions that
+     *           have this.srcPath.
+     *
+     *  4. non-BUNDLE + this.srcPath NON-ROOT
+     *      src       : this.srcPath/path/to/file.method
+     *      buildPath : this.srcPath/.build/hash-$ts
+     *      zipInput  : this.srcPath
+     *      zipOutput : .build/hash-$ts.zip
+     *      outCode   : .build/hash-$ts.zip
+     *      outHandler: .build/hash-$ts/file.method
+     *
+     *     Note:
+     *       If `bundle` is disabled, we need to zip manually. Because the same
+     *       `this.srcPath` is zipped for each handler, and CDK asset would only zip
+     *       it once. So the rest of Lambda zips do not contain the output handler file.
+     *
+     *       Place outZip at the app root's .build because entire this.srcPath is zipped up.
+     *       If outZip is this.srcPath's .build, a Lambda's zip would include zip files from
+     *       all the previous Lambdas.
+     */
 
     this.appPath = process.cwd();
     const handlerHash = this.getHandlerHash(handlerPosixPath);
@@ -151,8 +158,11 @@ export class Builder {
     // Note: probably could pass JSON string also, but this felt safer.
     const esbuildScript = join(__dirname, './esbuild.js');
     const configBuffer = Buffer.from(JSON.stringify(defaultConfig));
+    const { packageManager } = this.getPackageManager();
+
     const cmd = [
-      'yarn node',
+      packageManager === 'yarn' ? packageManager : 'npx',
+      'node',
       esbuildScript,
       '--config',
       configBuffer.toString('base64'),
@@ -161,8 +171,6 @@ export class Builder {
       '--pnp true',
     ].join(' ');
 
-    // const cmd = `yarn node ${resolve(__dirname)}/esbuild.js ${handler}`;
-
     // Run esbuild
     try {
       execSync(cmd, {
@@ -170,7 +178,8 @@ export class Builder {
         stdio: 'inherit',
       });
     } catch (e) {
-      throw new Error('There was a problem transpiling the Lambda handler.');
+      console.error(e);
+      throw new HandlerTransipilationError('There was a problem transpiling the Lambda handler.');
     }
   }
 
@@ -184,22 +193,14 @@ export class Builder {
     // Find 'package.json' at handler's srcPath.
     const pkgPath = join(this.srcPath, 'package.json');
     if (!existsSync(pkgPath)) {
-      throw new Error(
+      throw new NonExistentPackageJsonError(
         `Cannot find a "package.json" in the function's srcPath: ${resolve(this.srcPath)}`,
       );
     }
 
-    // Determine dependencies versions, lock file and installer
+    // Determine dependencies versions, lock file and packageManager
     const dependencies = this.extractDependencies(pkgPath, this.bundle.nodeModules);
-    let installer = 'npm';
-    let lockFile;
-    if (existsSync(join(this.srcPath, 'package-lock.json'))) {
-      installer = 'npm';
-      lockFile = 'package-lock.json';
-    } else if (existsSync(join(this.srcPath, 'yarn.lock'))) {
-      installer = 'yarn';
-      lockFile = 'yarn.lock';
-    }
+    const { packageManager, lockFile } = this.getPackageManager();
 
     // Create dummy package.json, copy lock file if any and then install
     const outputPath = join(this.buildPath, 'package.json');
@@ -210,12 +211,12 @@ export class Builder {
     }
 
     try {
-      execSync(`${installer} install`, {
+      execSync(`${packageManager} install`, {
         cwd: this.buildPath,
         stdio: 'pipe',
       });
     } catch (e) {
-      console.log('There was a problem installing nodeModules.');
+      console.error('There was a problem installing nodeModules.');
       throw e;
     }
   }
@@ -359,5 +360,26 @@ export class Builder {
   private getEsbuildMetafileName(handler: string): string {
     const key = handler.replace(/[/.]/g, '-');
     return `.esbuild.${key}.json`;
+  }
+
+  private getPackageManager(): { packageManager?: string; lockFile?: string } {
+    let packageManager;
+    let lockFile;
+
+    if (existsSync(join(this.srcPath, 'package-lock.json'))) {
+      packageManager = 'npm';
+      lockFile = 'package-lock.json';
+    } else if (existsSync(join(this.srcPath, 'yarn.lock'))) {
+      packageManager = 'yarn';
+      lockFile = 'yarn.lock';
+    }
+
+    if (!packageManager) {
+      throw new AmbiguousPackageManagerError(
+        `Could not determine package manager.. a lockfile should existing in ${this.srcPath}`,
+      );
+    }
+
+    return { packageManager, lockFile };
   }
 }

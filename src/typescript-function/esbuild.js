@@ -1,7 +1,7 @@
-/* eslint-disable */
-
 'use strict';
+
 const { pnpPlugin } = require('@yarnpkg/esbuild-plugin-pnp');
+const esbuild = require('esbuild');
 
 // Makes the script crash on unhandled rejections instead of silently
 // ignoring them. In the future, promise rejections that are not handled will
@@ -9,8 +9,6 @@ const { pnpPlugin } = require('@yarnpkg/esbuild-plugin-pnp');
 process.on('unhandledRejection', (err) => {
   throw err;
 });
-
-const esbuild = require('esbuild');
 
 const parsedArgs = parseArgs(process.argv);
 
@@ -34,7 +32,8 @@ esbuild
   .then((result) =>
     require('fs').writeFileSync(parsedArgs['--metafile'], JSON.stringify(result.metafile)),
   )
-  .catch(() => {
+  .catch((e) => {
+    console.error(e);
     process.exit(1);
   });
 
