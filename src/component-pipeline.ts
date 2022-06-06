@@ -1,4 +1,4 @@
-import { Stack, StackProps, StageProps } from 'aws-cdk-lib';
+import { Arn, Stack, StackProps, StageProps } from 'aws-cdk-lib';
 import { ComputeType } from 'aws-cdk-lib/aws-codebuild';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import {
@@ -148,10 +148,11 @@ export class ComponentPipelineStack<
     let assetPublishingCodeBuildDefaults: CodeBuildOptions = {};
 
     if (codeArtifactRepositoryArn) {
+      const roleName = 'code-artifacts-access-role';
       const codeArtifactAccessRole = new CodeArtifactAuthTokenAccessRole(
         this,
         'CodeArtifactAccessRole',
-        { codeArtifactRepositoryArn },
+        { codeArtifactRepositoryArn, roleName },
       );
       const partialDefaults: CodeBuildOptions = {
         partialBuildSpec: new AssumeRolePartialBuildSpec(codeArtifactAccessRole.roleArn)
@@ -160,7 +161,16 @@ export class ComponentPipelineStack<
           new PolicyStatement({
             effect: Effect.ALLOW,
             actions: ['sts:AssumeRole'],
-            resources: [codeArtifactAccessRole.roleArn],
+            resources: [
+              Arn.format(
+                {
+                  service: 'iam',
+                  resource: 'role',
+                  resourceName: roleName,
+                },
+                this,
+              ),
+            ],
           }),
         ],
       };
