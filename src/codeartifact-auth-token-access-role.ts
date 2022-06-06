@@ -2,7 +2,6 @@ import { AccountRootPrincipal, PolicyDocument, Role, RoleProps } from 'aws-cdk-l
 import { Construct } from 'constructs';
 import { merge } from 'lodash';
 import { CodeArtifactAuthTokenAccessStatement } from './codeartifact-auth-token-access-statement';
-import { validateArn } from './validate-arn';
 
 export interface CodeArtifactAuthTokenAccessRoleProps {
   /**
@@ -42,10 +41,6 @@ export class CodeArtifactAuthTokenAccessRole extends Role {
    * @param {CodeArtifactAuthTokenAccessRoleProps} props
    */
   constructor(scope: Construct, id: string, props: CodeArtifactAuthTokenAccessRoleProps) {
-    validateArn(props.codeArtifactRepositoryArn, {
-      service: 'codeartifact',
-      resource: 'repository',
-    });
     const { assumedBy = new AccountRootPrincipal(), inlinePolicies } = props ?? {};
     super(scope, id, {
       ...props,

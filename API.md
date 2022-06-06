@@ -2575,6 +2575,78 @@ Currently supports GitHub and CodeArtifacts.
 
 ---
 
+### BuilderProps <a name="BuilderProps" id="@kikoda/cdk-constructs.BuilderProps"></a>
+
+#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.BuilderProps.Initializer"></a>
+
+```typescript
+import { BuilderProps } from '@kikoda/cdk-constructs'
+
+const builderProps: BuilderProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.BuilderProps.property.buildDir">buildDir</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.BuilderProps.property.bundle">bundle</a></code> | <code>boolean \| <a href="#@kikoda/cdk-constructs.FunctionBundleProps">FunctionBundleProps</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.BuilderProps.property.handler">handler</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.BuilderProps.property.runtime">runtime</a></code> | <code>aws-cdk-lib.aws_lambda.Runtime</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.BuilderProps.property.srcPath">srcPath</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `buildDir`<sup>Required</sup> <a name="buildDir" id="@kikoda/cdk-constructs.BuilderProps.property.buildDir"></a>
+
+```typescript
+public readonly buildDir: string;
+```
+
+- *Type:* string
+
+---
+
+##### `bundle`<sup>Required</sup> <a name="bundle" id="@kikoda/cdk-constructs.BuilderProps.property.bundle"></a>
+
+```typescript
+public readonly bundle: boolean | FunctionBundleProps;
+```
+
+- *Type:* boolean | <a href="#@kikoda/cdk-constructs.FunctionBundleProps">FunctionBundleProps</a>
+
+---
+
+##### `handler`<sup>Required</sup> <a name="handler" id="@kikoda/cdk-constructs.BuilderProps.property.handler"></a>
+
+```typescript
+public readonly handler: string;
+```
+
+- *Type:* string
+
+---
+
+##### `runtime`<sup>Required</sup> <a name="runtime" id="@kikoda/cdk-constructs.BuilderProps.property.runtime"></a>
+
+```typescript
+public readonly runtime: Runtime;
+```
+
+- *Type:* aws-cdk-lib.aws_lambda.Runtime
+
+---
+
+##### `srcPath`<sup>Required</sup> <a name="srcPath" id="@kikoda/cdk-constructs.BuilderProps.property.srcPath"></a>
+
+```typescript
+public readonly srcPath: string;
+```
+
+- *Type:* string
+
+---
+
 ### CodeCommitSourceConfig <a name="CodeCommitSourceConfig" id="@kikoda/cdk-constructs.CodeCommitSourceConfig"></a>
 
 Configuration for specifying a codecommit repository as the source.
@@ -2968,22 +3040,9 @@ const pipelineConfig: PipelineConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.builderAssumeRole">builderAssumeRole</a></code> | <code>string</code> | An optional role that can be assumed to perform the build. |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.codeArtifactRepositoryArn">codeArtifactRepositoryArn</a></code> | <code>string</code> | Specifying a codeartifact ARN here will enable asset phase of the pipeline to access that codeartifact repository. |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.notificationTopicArn">notificationTopicArn</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.pruneCloudAssembly">pruneCloudAssembly</a></code> | <code>boolean</code> | Add a step to pull down and remove asset zips from the cloud assembly output from the Synth step. |
-
----
-
-##### `builderAssumeRole`<sup>Optional</sup> <a name="builderAssumeRole" id="@kikoda/cdk-constructs.PipelineConfig.property.builderAssumeRole"></a>
-
-```typescript
-public readonly builderAssumeRole: string;
-```
-
-- *Type:* string
-
-An optional role that can be assumed to perform the build.
 
 ---
 
@@ -4809,6 +4868,200 @@ new BranchPipelines(app: App, props: BranchPipelinesProps)
 
 
 
+
+
+### Builder <a name="Builder" id="@kikoda/cdk-constructs.Builder"></a>
+
+#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.Builder.Initializer"></a>
+
+```typescript
+import { Builder } from '@kikoda/cdk-constructs'
+
+new Builder(props: BuilderProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.Builder.Initializer.parameter.props">props</a></code> | <code><a href="#@kikoda/cdk-constructs.BuilderProps">BuilderProps</a></code> | *No description.* |
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@kikoda/cdk-constructs.Builder.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@kikoda/cdk-constructs.BuilderProps">BuilderProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.Builder.installNodeModules">installNodeModules</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.Builder.runAfterBundling">runAfterBundling</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.Builder.runBeforeBundling">runBeforeBundling</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.Builder.runBeforeInstall">runBeforeInstall</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.Builder.transpile">transpile</a></code> | *No description.* |
+
+---
+
+##### `installNodeModules` <a name="installNodeModules" id="@kikoda/cdk-constructs.Builder.installNodeModules"></a>
+
+```typescript
+public installNodeModules(): void
+```
+
+##### `runAfterBundling` <a name="runAfterBundling" id="@kikoda/cdk-constructs.Builder.runAfterBundling"></a>
+
+```typescript
+public runAfterBundling(): void
+```
+
+##### `runBeforeBundling` <a name="runBeforeBundling" id="@kikoda/cdk-constructs.Builder.runBeforeBundling"></a>
+
+```typescript
+public runBeforeBundling(): void
+```
+
+##### `runBeforeInstall` <a name="runBeforeInstall" id="@kikoda/cdk-constructs.Builder.runBeforeInstall"></a>
+
+```typescript
+public runBeforeInstall(): void
+```
+
+##### `transpile` <a name="transpile" id="@kikoda/cdk-constructs.Builder.transpile"></a>
+
+```typescript
+public transpile(): void
+```
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.Builder.property.appPath">appPath</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.Builder.property.buildPath">buildPath</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.Builder.property.hasTsconfig">hasTsconfig</a></code> | <code>boolean</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.Builder.property.metafile">metafile</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.Builder.property.outCode">outCode</a></code> | <code>aws-cdk-lib.aws_lambda.AssetCode</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.Builder.property.outHandler">outHandler</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.Builder.property.runtime">runtime</a></code> | <code>aws-cdk-lib.aws_lambda.Runtime</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.Builder.property.srcPath">srcPath</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.Builder.property.tsconfig">tsconfig</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.Builder.property.bundle">bundle</a></code> | <code>boolean \| <a href="#@kikoda/cdk-constructs.FunctionBundleProps">FunctionBundleProps</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.Builder.property.entryPath">entryPath</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `appPath`<sup>Required</sup> <a name="appPath" id="@kikoda/cdk-constructs.Builder.property.appPath"></a>
+
+```typescript
+public readonly appPath: string;
+```
+
+- *Type:* string
+
+---
+
+##### `buildPath`<sup>Required</sup> <a name="buildPath" id="@kikoda/cdk-constructs.Builder.property.buildPath"></a>
+
+```typescript
+public readonly buildPath: string;
+```
+
+- *Type:* string
+
+---
+
+##### `hasTsconfig`<sup>Required</sup> <a name="hasTsconfig" id="@kikoda/cdk-constructs.Builder.property.hasTsconfig"></a>
+
+```typescript
+public readonly hasTsconfig: boolean;
+```
+
+- *Type:* boolean
+
+---
+
+##### `metafile`<sup>Required</sup> <a name="metafile" id="@kikoda/cdk-constructs.Builder.property.metafile"></a>
+
+```typescript
+public readonly metafile: string;
+```
+
+- *Type:* string
+
+---
+
+##### `outCode`<sup>Required</sup> <a name="outCode" id="@kikoda/cdk-constructs.Builder.property.outCode"></a>
+
+```typescript
+public readonly outCode: AssetCode;
+```
+
+- *Type:* aws-cdk-lib.aws_lambda.AssetCode
+
+---
+
+##### `outHandler`<sup>Required</sup> <a name="outHandler" id="@kikoda/cdk-constructs.Builder.property.outHandler"></a>
+
+```typescript
+public readonly outHandler: string;
+```
+
+- *Type:* string
+
+---
+
+##### `runtime`<sup>Required</sup> <a name="runtime" id="@kikoda/cdk-constructs.Builder.property.runtime"></a>
+
+```typescript
+public readonly runtime: Runtime;
+```
+
+- *Type:* aws-cdk-lib.aws_lambda.Runtime
+
+---
+
+##### `srcPath`<sup>Required</sup> <a name="srcPath" id="@kikoda/cdk-constructs.Builder.property.srcPath"></a>
+
+```typescript
+public readonly srcPath: string;
+```
+
+- *Type:* string
+
+---
+
+##### `tsconfig`<sup>Required</sup> <a name="tsconfig" id="@kikoda/cdk-constructs.Builder.property.tsconfig"></a>
+
+```typescript
+public readonly tsconfig: string;
+```
+
+- *Type:* string
+
+---
+
+##### `bundle`<sup>Required</sup> <a name="bundle" id="@kikoda/cdk-constructs.Builder.property.bundle"></a>
+
+```typescript
+public readonly bundle: boolean | FunctionBundleProps;
+```
+
+- *Type:* boolean | <a href="#@kikoda/cdk-constructs.FunctionBundleProps">FunctionBundleProps</a>
+
+---
+
+##### `entryPath`<sup>Required</sup> <a name="entryPath" id="@kikoda/cdk-constructs.Builder.property.entryPath"></a>
+
+```typescript
+public readonly entryPath: string;
+```
+
+- *Type:* string
+
+---
 
 
 ### FlagBasedAnnotator <a name="FlagBasedAnnotator" id="@kikoda/cdk-constructs.FlagBasedAnnotator"></a>

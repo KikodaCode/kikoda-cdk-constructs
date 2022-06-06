@@ -1,6 +1,6 @@
 import { Stack, StackProps, StageProps } from 'aws-cdk-lib';
 import { ComputeType } from 'aws-cdk-lib/aws-codebuild';
-import { IRole } from 'aws-cdk-lib/aws-iam';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import {
   ShellStep,
   AddStageOpts,
@@ -81,13 +81,6 @@ export interface PipelineConfig {
    * @type {?string}
    */
   readonly notificationTopicArn?: string;
-  /**
-   * An optional role that can be assumed to perform the build.
-   *
-   * @readonly
-   * @type {?string}
-   */
-  readonly builderAssumeRole?: string;
 }
 
 /**
@@ -152,8 +145,6 @@ export class ComponentPipelineStack<
 
     // Branch-based pipeline name
     const pipelineName = `${componentName}-${branchName.replace('/', '-')}`;
-
-    const builderAssumeRoles: IRole[] = [];
     let assetPublishingCodeBuildDefaults: CodeBuildOptions = {};
 
     if (codeArtifactRepositoryArn) {
@@ -162,11 +153,18 @@ export class ComponentPipelineStack<
         'CodeArtifactAccessRole',
         { codeArtifactRepositoryArn },
       );
-      builderAssumeRoles.push(codeArtifactAccessRole);
-      assetPublishingCodeBuildDefaults = merge(assetPublishingCodeBuildDefaults, {
+      const partialDefaults: CodeBuildOptions = {
         partialBuildSpec: new AssumeRolePartialBuildSpec(codeArtifactAccessRole.roleArn)
           .partialBuildSpec,
-      });
+        rolePolicy: [
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: ['sts:AssumeRole'],
+            resources: [codeArtifactAccessRole.roleArn],
+          }),
+        ],
+      };
+      assetPublishingCodeBuildDefaults = merge(assetPublishingCodeBuildDefaults, partialDefaults);
     }
     const pipeline = new CodePipeline(this, pipelineId, {
       pipelineName,
@@ -200,10 +198,6 @@ export class ComponentPipelineStack<
     });
 
     pipeline.buildPipeline();
-
-    for (const role of builderAssumeRoles) {
-      role.grantAssumeRole(pipeline.pipeline.role);
-    }
 
     // TODO: move to an aspect?
     if (notificationTopicArn && notificationTopicArn !== '') {
