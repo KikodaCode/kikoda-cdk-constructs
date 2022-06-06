@@ -1,7 +1,7 @@
 import { Runtime, SingletonFunction, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
-import { builder } from './builder';
+import { Builder } from './builder';
 import { FunctionBundleProps } from './types';
 import { TypescriptFunctionProps } from './typescript-function';
 import { normalizeSrcPath, copyFiles, validateBundle } from './util';
@@ -34,7 +34,7 @@ export class TypescriptSingletonFunction extends SingletonFunction {
 
     const bundle = validateBundle(id, srcPath, props.bundle);
 
-    const ret = builder({
+    const builder = new Builder({
       bundle: bundle as boolean | FunctionBundleProps,
       srcPath,
       handler: props.handler,
@@ -42,7 +42,7 @@ export class TypescriptSingletonFunction extends SingletonFunction {
       buildDir: '.build',
     });
 
-    const { outCode, outHandler } = ret;
+    const { outCode, outHandler } = builder;
 
     copyFiles(bundle, srcPath, outCode.path);
 

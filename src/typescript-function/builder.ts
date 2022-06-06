@@ -1,36 +1,18 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable @typescript-eslint/no-shadow */
-/* eslint-disable no-console */
-/* eslint-disable no-param-reassign */
-
 import { execSync } from 'child_process';
 import { basename, join, resolve } from 'path';
-
 import { AssetCode, Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Loader, BuildOptions } from 'esbuild';
 import { copySync, ensureFileSync, existsSync, readJsonSync, writeJsonSync } from 'fs-extra';
 import { FunctionBundleProps } from './types';
 
-const addExtensionToHandler = (handler: string, extension: string): string =>
-  handler.replace(/\.[\w\d]+$/, extension);
-const getHandlerFullPosixPath = (srcPath: string, handler: string): string =>
-  srcPath === '.' ? handler : `${srcPath}/${handler}`;
-const getHandlerHash = (posixPath: string): string =>
-  `${posixPath.replace(/[/.]/g, '-')}-${Date.now()}`;
-
 // A map of supported runtimes and esbuild targets
 const esbuildTargetMap = {
-  [Runtime.NODEJS.toString()]: 'node12',
-  [Runtime.NODEJS_4_3.toString()]: 'node4',
-  [Runtime.NODEJS_6_10.toString()]: 'node6',
-  [Runtime.NODEJS_8_10.toString()]: 'node8',
-  [Runtime.NODEJS_10_X.toString()]: 'node10',
   [Runtime.NODEJS_12_X.toString()]: 'node12',
   [Runtime.NODEJS_14_X.toString()]: 'node14',
   [Runtime.NODEJS_16_X.toString()]: 'node16',
 };
 
-interface BuilderProps {
+export interface BuilderProps {
   readonly srcPath: string;
   readonly handler: string;
   readonly buildDir: string;
@@ -38,198 +20,130 @@ interface BuilderProps {
   readonly bundle: boolean | FunctionBundleProps;
 }
 
-interface BuilderOutput {
-  readonly outCode: AssetCode;
-  readonly outHandler: string;
-}
+export class Builder {
+  public readonly outCode: AssetCode;
+  public readonly outHandler: string;
+  readonly appPath: string;
+  readonly metafile: string;
+  readonly runtime: Runtime;
+  readonly hasTsconfig: Boolean;
+  readonly tsconfig: string;
+  readonly buildPath: string;
+  readonly srcPath: string;
+  bundle: boolean | FunctionBundleProps;
+  entryPath: string;
 
-export function getEsbuildMetafileName(handler: string): string {
-  const key = handler.replace(/[/.]/g, '-');
-  return `.esbuild.${key}.json`;
-}
+  constructor(props: BuilderProps) {
+    const { handler, buildDir } = props;
+    this.srcPath = props.srcPath;
+    this.bundle = props.bundle;
+    this.runtime = props.runtime;
+    const handlerPosixPath = this.getHandlerFullPosixPath(this.srcPath, handler);
 
-function getEsbuildExternal(srcPath: string, bundle: boolean | FunctionBundleProps): Array<string> {
-  let externals = ['aws-sdk'];
+    console.log(`Building Lambda function ${handlerPosixPath}`);
 
-  if (bundle) {
-    return [
-      ...externals,
-      ...((bundle as FunctionBundleProps).externalModules || []),
-      ...((bundle as FunctionBundleProps).nodeModules || []),
-    ];
-  }
+    // Check has tsconfig
+    this.tsconfig = join(this.srcPath, 'tsconfig.json');
+    this.hasTsconfig = existsSync(this.tsconfig);
 
-  try {
-    const packageJson = readJsonSync(join(srcPath, 'package.json'));
-    externals = Object.keys({
-      ...(packageJson.dependencies || {}),
-      ...(packageJson.devDependencies || {}),
-      ...(packageJson.peerDependencies || {}),
+    // Check entry path exists
+    this.entryPath = '';
+    const entryPathExists = ['.ts', '.tsx', '.js', '.jsx'].some(ext => {
+      this.entryPath = join(this.srcPath, this.addExtensionToHandler(handler, ext));
+      return existsSync(this.entryPath);
     });
-  } catch (e) {
-    console.log(`No package.json found in ${srcPath}`);
-  }
 
-  return externals;
-}
-
-function getEsbuildLoader(
-  bundle: boolean | FunctionBundleProps,
-): { [ext: string]: Loader } | undefined {
-  if (bundle) {
-    return (bundle as FunctionBundleProps).loader || {};
-  }
-  return undefined;
-}
-
-/**
- * Extract versions for a list of modules.
- *
- * First lookup the version in the package.json and then fallback to requiring
- * the module's package.json. The fallback is needed for transitive dependencies.
- */
-function extractDependencies(pkgPath: string, modules: string[]): { [key: string]: string } {
-  const dependencies: { [key: string]: string } = {};
-
-  const pkgJson = readJsonSync(pkgPath);
-
-  const pkgDependencies: { [k: string]: string } = {
-    ...(pkgJson.dependencies ?? {}),
-    ...(pkgJson.devDependencies ?? {}),
-    ...(pkgJson.peerDependencies ?? {}),
-  };
-
-  modules.forEach(async mod => {
-    try {
-      if (pkgDependencies[mod]) {
-        dependencies[mod] = pkgDependencies[mod];
-      } else {
-        const module = await import(`${mod}/package.json`);
-        dependencies[mod] = module.version;
-      }
-    } catch (err) {
-      throw new Error(
-        `Cannot extract version for module '${mod}'. Check that it's referenced in your package.json or installed.`,
-      );
+    if (!entryPathExists) {
+      throw new Error(`Cannot find a handler file for "${handlerPosixPath}".`);
     }
-  });
 
-  return dependencies;
-}
+    // Four cases:
+    //  1. BUNDLE + this.srcPath ROOT
+    //      src       : path/to/file.method
+    //      buildPath : .build/hash-$ts
+    //      outCode   : .build/hash-$ts
+    //      outHandler: file.method
+    //
+    //  2. BUNDLE + this.srcPath NON-ROOT
+    //      src       : this.srcPath/path/to/file.method
+    //      buildPath : this.srcPath/.build/hash-$ts
+    //      outCode   : this.srcPath/.build/hash-$ts
+    //      outHandler: file.method
+    //
+    //  3. non-BUNDLE + this.srcPath ROOT
+    //      src       : path/to/file.method
+    //      buildPath : .build/handlerDir
+    //      outCode   : .
+    //
+    //     Note: This case is NOT SUPPORTED because we need to zip the app root for each
+    //           handler. So after a Lambda's zip is generated, the next Lambda's zip will
+    //           contain the previous Lambda's zip inside .build, and the previous Lambda's
+    //           zip inside cdk.out.
+    //
+    //           One solution would be to cherry pick what to zip. For example, zip should
+    //           only include the esbuid's output (ie. .js and .js.map files) from the
+    //           .build folder.
+    //
+    //           Also need to clear all .build folders generated from Lambda functions that
+    //           has this.srcPath.
+    //
+    //  4. non-BUNDLE + this.srcPath NON-ROOT
+    //      src       : this.srcPath/path/to/file.method
+    //      buildPath : this.srcPath/.build/hash-$ts
+    //      zipInput  : this.srcPath
+    //      zipOutput : .build/hash-$ts.zip
+    //      outCode   : .build/hash-$ts.zip
+    //      outHandler: .build/hash-$ts/file.method
+    //
+    //     Note:
+    //       If `bundle` is disabled, we need to zip manually. Because the same
+    //       `this.srcPath` is zipped for each handler, and CDK asset would only zip
+    //       it once. So the rest of Lambda zips do not contain the output handler file.
+    //
+    //       Place outZip at the app root's .build because entire this.srcPath is zipped up.
+    //       If outZip is this.srcPath's .build, a Lambda's zip would include zip files from
+    //       all the previous Lambdas.
 
-export function builder(builderProps: BuilderProps): BuilderOutput {
-  const { runtime, bundle, srcPath, handler, buildDir } = builderProps;
-  const handlerPosixPath = getHandlerFullPosixPath(srcPath, handler);
+    this.appPath = process.cwd();
+    const handlerHash = this.getHandlerHash(handlerPosixPath);
+    this.buildPath = join(this.srcPath, buildDir, handlerHash);
+    this.metafile = join(this.srcPath, buildDir, this.getEsbuildMetafileName(handler));
 
-  console.log(`Building Lambda function ${handlerPosixPath}`);
+    // Command hook: before bundling
+    this.runBeforeBundling();
 
-  // Check has tsconfig
-  const tsconfig = join(srcPath, 'tsconfig.json');
-  const hasTsconfig = existsSync(tsconfig);
+    // Transpile
+    this.transpile();
 
-  // Check entry path exists
-  let entryPath = '';
-  const entryPathExists = ['.ts', '.tsx', '.js', '.jsx'].some(ext => {
-    entryPath = join(srcPath, addExtensionToHandler(handler, ext));
-    return existsSync(entryPath);
-  });
+    // Command hook: before install
+    this.runBeforeInstall();
 
-  if (!entryPathExists) {
-    throw new Error(`Cannot find a handler file for "${handlerPosixPath}".`);
+    // Package nodeModules
+    this.installNodeModules();
+
+    // Command hook: after bundling
+    this.runAfterBundling();
+
+    // Format response
+    this.outCode = Code.fromAsset(this.buildPath);
+    this.outHandler = basename(handler);
   }
 
-  // Four cases:
-  //  1. BUNDLE + srcPath ROOT
-  //      src       : path/to/file.method
-  //      buildPath : .build/hash-$ts
-  //      outCode   : .build/hash-$ts
-  //      outHandler: file.method
-  //
-  //  2. BUNDLE + srcPath NON-ROOT
-  //      src       : srcPath/path/to/file.method
-  //      buildPath : srcPath/.build/hash-$ts
-  //      outCode   : srcPath/.build/hash-$ts
-  //      outHandler: file.method
-  //
-  //  3. non-BUNDLE + srcPath ROOT
-  //      src       : path/to/file.method
-  //      buildPath : .build/handlerDir
-  //      outCode   : .
-  //
-  //     Note: This case is NOT SUPPORTED because we need to zip the app root for each
-  //           handler. So after a Lambda's zip is generated, the next Lambda's zip will
-  //           contain the previous Lambda's zip inside .build, and the previous Lambda's
-  //           zip inside cdk.out.
-  //
-  //           One solution would be to cherry pick what to zip. For example, zip should
-  //           only include the esbuid's output (ie. .js and .js.map files) from the
-  //           .build folder.
-  //
-  //           Also need to clear all .build folders generated from Lambda functions that
-  //           has srcPath.
-  //
-  //  4. non-BUNDLE + srcPath NON-ROOT
-  //      src       : srcPath/path/to/file.method
-  //      buildPath : srcPath/.build/hash-$ts
-  //      zipInput  : srcPath
-  //      zipOutput : .build/hash-$ts.zip
-  //      outCode   : .build/hash-$ts.zip
-  //      outHandler: .build/hash-$ts/file.method
-  //
-  //     Note:
-  //       If `bundle` is disabled, we need to zip manually. Because the same
-  //       `srcPath` is zipped for each handler, and CDK asset would only zip
-  //       it once. So the rest of Lambda zips do not contain the output handler file.
-  //
-  //       Place outZip at the app root's .build because entire srcPath is zipped up.
-  //       If outZip is srcPath's .build, a Lambda's zip would include zip files from
-  //       all the previous Lambdas.
-
-  const appPath = process.cwd();
-  const handlerHash = getHandlerHash(handlerPosixPath);
-  const buildPath = join(srcPath, buildDir, handlerHash);
-  const metafile = join(srcPath, buildDir, getEsbuildMetafileName(handler));
-
-  // Command hook: before bundling
-  runBeforeBundling(bundle);
-
-  // Transpile
-  transpile(entryPath, bundle);
-
-  // Command hook: before install
-  runBeforeInstall(bundle);
-
-  // Package nodeModules
-  installNodeModules(srcPath, bundle);
-
-  // Command hook: after bundling
-  runAfterBundling(bundle);
-
-  // Format response
-  const outCode = Code.fromAsset(buildPath);
-  const outHandler = basename(handler);
-
-  return { outCode, outHandler };
-
-  /// ////////////
-  // Functions //
-  /// ////////////
-
-  function transpile(entryPath: string, bundle: boolean | FunctionBundleProps) {
+  transpile() {
     // Build default esbuild config
     const defaultConfig: Partial<BuildOptions> = {
-      external: getEsbuildExternal(srcPath, bundle),
-      loader: getEsbuildLoader(bundle),
+      external: this.getEsbuildExternal(),
+      loader: this.getEsbuildLoader(),
       metafile: true,
       bundle: true,
       format: 'cjs',
       sourcemap: true,
       platform: 'node',
-      target: [esbuildTargetMap[runtime.toString()] || 'node12'],
-      outdir: buildPath,
-      entryPoints: [entryPath],
+      target: [esbuildTargetMap[this.runtime.toString()] || 'node12'],
+      outdir: this.buildPath,
+      entryPoints: [this.entryPath],
       color: process.env.NO_COLOR !== 'true',
-      tsconfig: hasTsconfig ? tsconfig : undefined,
+      tsconfig: this.hasTsconfig ? this.tsconfig : undefined,
       logLevel: process.env.DEBUG ? 'warning' : 'error',
     };
 
@@ -243,7 +157,7 @@ export function builder(builderProps: BuilderProps): BuilderOutput {
       '--config',
       configBuffer.toString('base64'),
       '--metafile',
-      metafile,
+      this.metafile,
       '--pnp true',
     ].join(' ');
 
@@ -252,7 +166,7 @@ export function builder(builderProps: BuilderProps): BuilderOutput {
     // Run esbuild
     try {
       execSync(cmd, {
-        cwd: appPath,
+        cwd: this.appPath,
         stdio: 'inherit',
       });
     } catch (e) {
@@ -260,44 +174,44 @@ export function builder(builderProps: BuilderProps): BuilderOutput {
     }
   }
 
-  function installNodeModules(srcPath: string, bundle: boolean | FunctionBundleProps) {
+  installNodeModules() {
     // Validate 'nodeModules' is defined in bundle options
-    bundle = bundle as FunctionBundleProps;
-    if (!bundle || !bundle.nodeModules || bundle.nodeModules.length === 0) {
+    this.bundle = this.bundle as FunctionBundleProps;
+    if (!this.bundle || !this.bundle.nodeModules || this.bundle.nodeModules.length === 0) {
       return;
     }
 
     // Find 'package.json' at handler's srcPath.
-    const pkgPath = join(srcPath, 'package.json');
+    const pkgPath = join(this.srcPath, 'package.json');
     if (!existsSync(pkgPath)) {
       throw new Error(
-        `Cannot find a "package.json" in the function's srcPath: ${resolve(srcPath)}`,
+        `Cannot find a "package.json" in the function's srcPath: ${resolve(this.srcPath)}`,
       );
     }
 
     // Determine dependencies versions, lock file and installer
-    const dependencies = extractDependencies(pkgPath, bundle.nodeModules);
+    const dependencies = this.extractDependencies(pkgPath, this.bundle.nodeModules);
     let installer = 'npm';
     let lockFile;
-    if (existsSync(join(srcPath, 'package-lock.json'))) {
+    if (existsSync(join(this.srcPath, 'package-lock.json'))) {
       installer = 'npm';
       lockFile = 'package-lock.json';
-    } else if (existsSync(join(srcPath, 'yarn.lock'))) {
+    } else if (existsSync(join(this.srcPath, 'yarn.lock'))) {
       installer = 'yarn';
       lockFile = 'yarn.lock';
     }
 
     // Create dummy package.json, copy lock file if any and then install
-    const outputPath = join(buildPath, 'package.json');
+    const outputPath = join(this.buildPath, 'package.json');
     ensureFileSync(outputPath);
     writeJsonSync(outputPath, { dependencies });
     if (lockFile) {
-      copySync(join(srcPath, lockFile), join(buildPath, lockFile));
+      copySync(join(this.srcPath, lockFile), join(this.buildPath, lockFile));
     }
 
     try {
       execSync(`${installer} install`, {
-        cwd: buildPath,
+        cwd: this.buildPath,
         stdio: 'pipe',
       });
     } catch (e) {
@@ -306,17 +220,17 @@ export function builder(builderProps: BuilderProps): BuilderOutput {
     }
   }
 
-  function runBeforeBundling(bundle: boolean | FunctionBundleProps) {
+  runBeforeBundling() {
     // Build command
-    bundle = bundle as FunctionBundleProps;
-    const cmds = bundle?.commandHooks?.beforeBundling(srcPath, buildPath) ?? [];
+    this.bundle = this.bundle as FunctionBundleProps;
+    const cmds = this.bundle?.commandHooks?.beforeBundling(this.srcPath, this.buildPath) ?? [];
     if (cmds.length === 0) {
       return;
     }
 
     try {
       execSync(cmds.join(' && '), {
-        cwd: srcPath,
+        cwd: this.srcPath,
         stdio: 'pipe',
       });
     } catch (e) {
@@ -325,17 +239,17 @@ export function builder(builderProps: BuilderProps): BuilderOutput {
     }
   }
 
-  function runBeforeInstall(bundle: boolean | FunctionBundleProps) {
+  runBeforeInstall() {
     // Build command
-    bundle = bundle as FunctionBundleProps;
-    const cmds = bundle?.commandHooks?.beforeInstall(srcPath, buildPath) ?? [];
+    this.bundle = this.bundle as FunctionBundleProps;
+    const cmds = this.bundle?.commandHooks?.beforeInstall(this.srcPath, this.buildPath) ?? [];
     if (cmds.length === 0) {
       return;
     }
 
     try {
       execSync(cmds.join(' && '), {
-        cwd: srcPath,
+        cwd: this.srcPath,
         stdio: 'pipe',
       });
     } catch (e) {
@@ -344,22 +258,106 @@ export function builder(builderProps: BuilderProps): BuilderOutput {
     }
   }
 
-  function runAfterBundling(bundle: boolean | FunctionBundleProps) {
+  runAfterBundling() {
     // Build command
-    bundle = bundle as FunctionBundleProps;
-    const cmds = bundle?.commandHooks?.afterBundling(srcPath, buildPath) ?? [];
+    this.bundle = this.bundle as FunctionBundleProps;
+    const cmds = this.bundle?.commandHooks?.afterBundling(this.srcPath, this.buildPath) ?? [];
     if (cmds.length === 0) {
       return;
     }
 
     try {
       execSync(cmds.join(' && '), {
-        cwd: srcPath,
+        cwd: this.srcPath,
         stdio: 'pipe',
       });
     } catch (e) {
       console.log('There was a problem running "afterBundling" command.');
       throw e;
     }
+  }
+
+  /**
+   * Extract versions for a list of modules.
+   *
+   * First lookup the version in the package.json and then fallback to requiring
+   * the module's package.json. The fallback is needed for transitive dependencies.
+   */
+  private extractDependencies(pkgPath: string, modules: string[]): { [key: string]: string } {
+    const dependencies: { [key: string]: string } = {};
+
+    const pkgJson = readJsonSync(pkgPath);
+
+    const pkgDependencies: { [k: string]: string } = {
+      ...(pkgJson.dependencies ?? {}),
+      ...(pkgJson.devDependencies ?? {}),
+      ...(pkgJson.peerDependencies ?? {}),
+    };
+
+    modules.forEach(async mod => {
+      try {
+        if (pkgDependencies[mod]) {
+          dependencies[mod] = pkgDependencies[mod];
+        } else {
+          const module = await import(`${mod}/package.json`);
+          dependencies[mod] = module.version;
+        }
+      } catch (err) {
+        throw new Error(
+          `Cannot extract version for module '${mod}'. Check that it's referenced in your package.json or installed.`,
+        );
+      }
+    });
+
+    return dependencies;
+  }
+
+  private getEsbuildLoader(): { [ext: string]: Loader } | undefined {
+    if (this.bundle) {
+      return (this.bundle as FunctionBundleProps).loader || {};
+    }
+    return undefined;
+  }
+
+  private getEsbuildExternal(): Array<string> {
+    let externals = ['aws-sdk'];
+
+    if (this.bundle) {
+      return [
+        ...externals,
+        ...((this.bundle as FunctionBundleProps).externalModules || []),
+        ...((this.bundle as FunctionBundleProps).nodeModules || []),
+      ];
+    }
+
+    try {
+      const packageJson = readJsonSync(join(this.srcPath, 'package.json'));
+      externals = Object.keys({
+        ...(packageJson.dependencies || {}),
+        ...(packageJson.devDependencies || {}),
+        ...(packageJson.peerDependencies || {}),
+      });
+    } catch (e) {
+      console.log(`No package.json found in ${this.srcPath}`);
+    }
+
+    return externals;
+  }
+
+  private addExtensionToHandler(handler: string, extension: string): string {
+    return handler.replace(/\.[\w\d]+$/, extension);
+  }
+
+  private getHandlerFullPosixPath(srcPath: string, handler: string): string {
+    return srcPath === '.' ? handler : `${srcPath}/${handler}`;
+  }
+
+  private getHandlerHash(posixPath: string): string {
+    return `${posixPath.replace(/[/.]/g, '-')}-${Date.now()}`;
+  }
+
+  private getEsbuildMetafileName(handler: string): string {
+    const key = handler.replace(/[/.]/g, '-');
+    return `.esbuild.${key}.json`;
   }
 }
