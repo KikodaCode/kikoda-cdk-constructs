@@ -53,6 +53,15 @@ junit.xml
 .jsii
 tsconfig.json
 !/API.md
+test/.tmp
+test/branch-pipelines.integ.snapshot/asset.*
+test/branch-pipelines.integ.snapshot/**/asset.*
+test/branch-pipelines.integ.snapshot/cdk.out
+test/branch-pipelines.integ.snapshot/**/cdk.out
+test/branch-pipelines.integ.snapshot/manifest.json
+test/branch-pipelines.integ.snapshot/**/manifest.json
+test/branch-pipelines.integ.snapshot/tree.json
+test/branch-pipelines.integ.snapshot/**/tree.json
 !/codecov.yml
 !/NOTICE
 !/.github/pull_request_template.md

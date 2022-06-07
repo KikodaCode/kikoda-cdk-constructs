@@ -112,7 +112,9 @@ export class BranchPipelines<
    */
   constructor(app: App, props: BranchPipelinesProps<TConfig, TBranch>) {
     props.deploymentBranches.forEach((branch: TBranch) => {
-      const pipelineStackId = `${props.component.componentName}-${branch.staticPipelineIdentifier}-pipeline`;
+      const pipelineStackId = `${props.component.componentName}-${
+        branch.staticPipelineIdentifier || branch.branchName
+      }-pipeline`;
       new ComponentPipelineStack(app, pipelineStackId, {
         branch,
         pipelineConfig: props.pipelineConfig,
