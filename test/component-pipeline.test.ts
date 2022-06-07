@@ -1,6 +1,6 @@
 import { App, Arn, Stack, Stage } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
-import { ComponentPipelineStack } from '../src/component-pipeline';
+import { ComponentPipelineStack } from '../src/component-pipeline-stack';
 
 describe('ComponentPipelineStack', () => {
   class TestStage extends Stage {

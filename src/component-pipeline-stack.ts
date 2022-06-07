@@ -121,6 +121,11 @@ export class ComponentPipelineStack<
   TBranch extends IDeploymentBranch<TConfig>,
 > extends Stack {
   /**
+   * Instance of the CDK.CodePipeline created
+   */
+  readonly codePipeline: CodePipeline;
+
+  /**
    * Creates an instance of IndividualPipelineStack.
    *
    * @constructor
@@ -176,7 +181,7 @@ export class ComponentPipelineStack<
       };
       assetPublishingCodeBuildDefaults = merge(assetPublishingCodeBuildDefaults, partialDefaults);
     }
-    const pipeline = new CodePipeline(this, pipelineId, {
+    this.codePipeline = new CodePipeline(this, pipelineId, {
       pipelineName,
       dockerEnabledForSynth: true,
       synthCodeBuildDefaults: {
@@ -202,16 +207,16 @@ export class ComponentPipelineStack<
       // add manual approval step if applicable
       if (stage.manualApproval) pre.push(new ManualApprovalStep(`Promote To ${stage.stageName}`));
 
-      pipeline.addStage(new componentType(this, stage.stageName, stage), {
+      this.codePipeline.addStage(new componentType(this, stage.stageName, stage), {
         pre,
       });
     });
 
-    pipeline.buildPipeline();
+    this.codePipeline.buildPipeline();
 
     // TODO: move to an aspect?
     if (notificationTopicArn && notificationTopicArn !== '') {
-      new PipelineEventNotificationRule(pipeline, {
+      new PipelineEventNotificationRule(this.codePipeline, {
         notificationTopicArn,
       });
     }
