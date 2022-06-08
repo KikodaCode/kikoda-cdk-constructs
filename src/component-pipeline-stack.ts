@@ -1,4 +1,4 @@
-import { Stack, StackProps, StageProps } from 'aws-cdk-lib';
+import { Arn, Stack, StackProps, StageProps } from 'aws-cdk-lib';
 import { ComputeType } from 'aws-cdk-lib/aws-codebuild';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import {
@@ -121,6 +121,11 @@ export class ComponentPipelineStack<
   TBranch extends IDeploymentBranch<TConfig>,
 > extends Stack {
   /**
+   * Instance of the CDK.CodePipeline created
+   */
+  readonly codePipeline: CodePipeline;
+
+  /**
    * Creates an instance of IndividualPipelineStack.
    *
    * @constructor
@@ -148,10 +153,11 @@ export class ComponentPipelineStack<
     let assetPublishingCodeBuildDefaults: CodeBuildOptions = {};
 
     if (codeArtifactRepositoryArn) {
+      const roleName = 'code-artifacts-access-role';
       const codeArtifactAccessRole = new CodeArtifactAuthTokenAccessRole(
         this,
         'CodeArtifactAccessRole',
-        { codeArtifactRepositoryArn },
+        { codeArtifactRepositoryArn, roleName },
       );
       const partialDefaults: CodeBuildOptions = {
         partialBuildSpec: new AssumeRolePartialBuildSpec(codeArtifactAccessRole.roleArn)
@@ -160,13 +166,22 @@ export class ComponentPipelineStack<
           new PolicyStatement({
             effect: Effect.ALLOW,
             actions: ['sts:AssumeRole'],
-            resources: [codeArtifactAccessRole.roleArn],
+            resources: [
+              Arn.format(
+                {
+                  service: 'iam',
+                  resource: 'role',
+                  resourceName: roleName,
+                },
+                this,
+              ),
+            ],
           }),
         ],
       };
       assetPublishingCodeBuildDefaults = merge(assetPublishingCodeBuildDefaults, partialDefaults);
     }
-    const pipeline = new CodePipeline(this, pipelineId, {
+    this.codePipeline = new CodePipeline(this, pipelineId, {
       pipelineName,
       dockerEnabledForSynth: true,
       synthCodeBuildDefaults: {
@@ -192,16 +207,16 @@ export class ComponentPipelineStack<
       // add manual approval step if applicable
       if (stage.manualApproval) pre.push(new ManualApprovalStep(`Promote To ${stage.stageName}`));
 
-      pipeline.addStage(new componentType(this, stage.stageName, stage), {
+      this.codePipeline.addStage(new componentType(this, stage.stageName, stage), {
         pre,
       });
     });
 
-    pipeline.buildPipeline();
+    this.codePipeline.buildPipeline();
 
     // TODO: move to an aspect?
     if (notificationTopicArn && notificationTopicArn !== '') {
-      new PipelineEventNotificationRule(pipeline, {
+      new PipelineEventNotificationRule(this.codePipeline, {
         notificationTopicArn,
       });
     }

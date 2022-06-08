@@ -1,6 +1,6 @@
 import { App, Arn, Stack, Stage } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
-import { ComponentPipelineStack } from '../src/component-pipeline';
+import { ComponentPipelineStack } from '../src/component-pipeline-stack';
 
 describe('ComponentPipelineStack', () => {
   class TestStage extends Stage {
@@ -20,7 +20,15 @@ describe('ComponentPipelineStack', () => {
         componentName: 'test',
         componentType: TestStage,
       },
-      pipelineConfig: {},
+      pipelineConfig: {
+        codeArtifactRepositoryArn: Arn.format({
+          partition: 'aws',
+          region: 'us-east-1',
+          account: '123456789012',
+          service: 'codeartifact',
+          resource: 'my-package',
+        }),
+      },
       repository: {
         source: {
           codeCommitArn: Arn.format({

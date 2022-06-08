@@ -1,0 +1,20 @@
+{
+  "version": "20.0.0",
+  "files": {
+    "499f0bac05e6baa02e8397e1ed5bcd5c4ccbc4038f6331b6f954496249eb5bd0": {
+      "source": {
+        "path": "integ-production-pipeline.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "000000000000-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-000000000000-us-east-1",
+          "objectKey": "499f0bac05e6baa02e8397e1ed5bcd5c4ccbc4038f6331b6f954496249eb5bd0.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::000000000000:role/cdk-hnb659fds-file-publishing-role-000000000000-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
