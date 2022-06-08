@@ -130,6 +130,78 @@
         }
       ]
     },
+    "integ:branch-pipelines:assert": {
+      "name": "integ:branch-pipelines:assert",
+      "description": "assert the snapshot of integration test 'branch-pipelines'",
+      "steps": [
+        {
+          "exec": "[ -d \"test/branch-pipelines.integ.snapshot\" ] || (echo \"No snapshot available for integration test 'branch-pipelines'. Run 'projen integ:branch-pipelines:deploy' to capture.\" && exit 1)"
+        },
+        {
+          "exec": "cdk synth --app \"ts-node -P tsconfig.dev.json test/branch-pipelines.integ.ts\" --no-version-reporting --no-asset-metadata --no-path-metadata -o test/.tmp/branch-pipelines.integ/assert.cdk.out > /dev/null"
+        },
+        {
+          "exec": "diff -r -x asset.* -x cdk.out -x manifest.json -x tree.json test/branch-pipelines.integ.snapshot/ test/.tmp/branch-pipelines.integ/assert.cdk.out/"
+        }
+      ]
+    },
+    "integ:branch-pipelines:deploy": {
+      "name": "integ:branch-pipelines:deploy",
+      "description": "deploy integration test 'branch-pipelines' and capture snapshot",
+      "steps": [
+        {
+          "exec": "rm -fr test/.tmp/branch-pipelines.integ/deploy.cdk.out"
+        },
+        {
+          "exec": "cdk deploy --app \"ts-node -P tsconfig.dev.json test/branch-pipelines.integ.ts\" --no-version-reporting --no-asset-metadata --no-path-metadata '**' --require-approval=never -o test/.tmp/branch-pipelines.integ/deploy.cdk.out"
+        },
+        {
+          "exec": "rm -fr test/branch-pipelines.integ.snapshot"
+        },
+        {
+          "exec": "mv test/.tmp/branch-pipelines.integ/deploy.cdk.out test/branch-pipelines.integ.snapshot"
+        },
+        {
+          "spawn": "integ:branch-pipelines:destroy"
+        }
+      ]
+    },
+    "integ:branch-pipelines:destroy": {
+      "name": "integ:branch-pipelines:destroy",
+      "description": "destroy integration test 'branch-pipelines'",
+      "steps": [
+        {
+          "exec": "cdk destroy --app test/branch-pipelines.integ.snapshot '**' --no-version-reporting"
+        }
+      ]
+    },
+    "integ:branch-pipelines:snapshot": {
+      "name": "integ:branch-pipelines:snapshot",
+      "description": "update snapshot for integration test \"branch-pipelines\"",
+      "steps": [
+        {
+          "exec": "cdk synth --app \"ts-node -P tsconfig.dev.json test/branch-pipelines.integ.ts\" --no-version-reporting --no-asset-metadata --no-path-metadata -o test/branch-pipelines.integ.snapshot > /dev/null"
+        }
+      ]
+    },
+    "integ:branch-pipelines:watch": {
+      "name": "integ:branch-pipelines:watch",
+      "description": "watch integration test 'branch-pipelines' (without updating snapshots)",
+      "steps": [
+        {
+          "exec": "cdk watch --app \"ts-node -P tsconfig.dev.json test/branch-pipelines.integ.ts\" --no-version-reporting --no-asset-metadata --no-path-metadata '**' -o test/.tmp/branch-pipelines.integ/deploy.cdk.out"
+        }
+      ]
+    },
+    "integ:snapshot-all": {
+      "name": "integ:snapshot-all",
+      "description": "update snapshot for all integration tests",
+      "steps": [
+        {
+          "spawn": "integ:branch-pipelines:snapshot"
+        }
+      ]
+    },
     "package": {
       "name": "package",
       "description": "Creates the distribution package",
@@ -207,6 +279,9 @@
         },
         {
           "spawn": "eslint"
+        },
+        {
+          "spawn": "integ:branch-pipelines:assert"
         }
       ]
     },

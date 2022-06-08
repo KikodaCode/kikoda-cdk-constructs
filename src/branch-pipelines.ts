@@ -1,8 +1,8 @@
 import { App, StackProps, Stage } from 'aws-cdk-lib';
 import { RepositoryConfig } from './code-source';
-import { StageConfig, PipelineConfig, ComponentPipelineStack } from './component-pipeline';
+import { StageConfig, PipelineConfig, ComponentPipelineStack } from './component-pipeline-stack';
 
-export { StageConfig, PipelineConfig } from './component-pipeline';
+export { StageConfig, PipelineConfig } from './component-pipeline-stack';
 
 /**
  * Configuration for the component to be deployed.
@@ -104,6 +104,11 @@ export class BranchPipelines<
   TBranch extends IDeploymentBranch<TConfig> = IDeploymentBranch<TConfig>,
 > {
   /**
+   * Instance(s) of ComponentPipelineStacks created
+   */
+  readonly componentPipelineStacks: ComponentPipelineStack<TConfig, TBranch>[] = [];
+
+  /**
    * Creates an instance of DeploymentPipelines.
    *
    * @constructor
@@ -112,14 +117,18 @@ export class BranchPipelines<
    */
   constructor(app: App, props: BranchPipelinesProps<TConfig, TBranch>) {
     props.deploymentBranches.forEach((branch: TBranch) => {
-      const pipelineStackId = `${props.component.componentName}-${branch.staticPipelineIdentifier}-pipeline`;
-      new ComponentPipelineStack(app, pipelineStackId, {
-        branch,
-        pipelineConfig: props.pipelineConfig,
-        repository: props.repository,
-        component: props.component,
-        env: props.env,
-      });
+      const pipelineStackId = `${props.component.componentName}-${
+        branch.staticPipelineIdentifier || branch.branchName
+      }-pipeline`;
+      this.componentPipelineStacks.push(
+        new ComponentPipelineStack(app, pipelineStackId, {
+          branch,
+          pipelineConfig: props.pipelineConfig,
+          repository: props.repository,
+          component: props.component,
+          env: props.env,
+        }),
+      );
     });
   }
 }

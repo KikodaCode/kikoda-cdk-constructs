@@ -68,4 +68,49 @@ describe('BranchPipelines', () => {
     });
     expect(statement).not.toBeNull;
   });
+
+  it('staticPipelineIdentifier should default to branch name', () => {
+    const app = new App();
+    const branchPipelines = new BranchPipelines<CoreConfig>(app, {
+      component: {
+        componentName: 'test',
+        componentType: TestStage,
+      },
+      deploymentBranches: [
+        {
+          branchName: 'test',
+          stages: [
+            {
+              stageName: 'dev',
+              config: {
+                activeTracing: Tracing.ACTIVE,
+              },
+            },
+          ],
+        },
+      ],
+      pipelineConfig: {},
+      repository: {
+        source: {
+          codeCommitArn: Arn.format({
+            partition: 'aws',
+            region: 'us-east-1',
+            account: '123456789012',
+            service: 'codecommit',
+            resource: 'my-repo',
+          }),
+        },
+      },
+      env: {
+        region: 'us-east-1',
+        account: '123456789012',
+      },
+    });
+
+    expect(
+      branchPipelines.componentPipelineStacks.find(
+        x => x.codePipeline.pipeline.pipelineName === 'dev-test-pipeline',
+      ),
+    ).toBeDefined;
+  });
 });
