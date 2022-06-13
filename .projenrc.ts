@@ -33,18 +33,38 @@ const project = new AwsCdkConstructLibrary({
       endOfLine: EndOfLine.LF,
     },
   },
-  bundledDeps: ['md5', 'uuid', 'lodash'],
+  bundledDeps: [
+    'md5',
+    'uuid',
+    'lodash',
+    'esbuild@~0.13',
+    'fs-extra',
+    '@yarnpkg/esbuild-plugin-pnp',
+  ],
   tsconfig: { compilerOptions: { esModuleInterop: true } },
+  eslintOptions: {
+    dirs: ['./'],
+    ignorePatterns: [
+      '*.js',
+      '!.projenrc.ts',
+      '*.d.ts',
+      'node_modules/',
+      '*.generated.ts',
+      'coverage',
+      'bad.handler.ts',
+    ],
+  },
 
   // deps: [],                /* Runtime dependencies of this module. */
   devDeps: [
     '@types/md5',
     '@types/uuid',
     '@types/lodash',
+    '@types/fs-extra',
     '@kikoda/projen-templates',
   ] /* Build dependencies for this module. */,
   packageName: '@kikoda/cdk-constructs',
-  gitignore: ['spa_local_build_artifact'],
+  gitignore: ['spa_local_build_artifact', '.build/'],
   githubOptions: {
     projenCredentials: GithubCredentials.fromApp(),
   },

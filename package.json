@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "@kikoda/projen-templates": "^0.1.6",
+    "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27.5.1",
     "@types/lodash": "^4.14.182",
     "@types/md5": "^2.3.2",
@@ -78,11 +79,17 @@
     "constructs": "^10.0.5"
   },
   "dependencies": {
+    "@yarnpkg/esbuild-plugin-pnp": "^2.0.2",
+    "esbuild": "~0.13",
+    "fs-extra": "^10.1.0",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "uuid": "^8.3.2"
   },
   "bundledDependencies": [
+    "@yarnpkg/esbuild-plugin-pnp",
+    "esbuild",
+    "fs-extra",
     "lodash",
     "md5",
     "uuid"

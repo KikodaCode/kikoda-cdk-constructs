@@ -5,6 +5,10 @@
       "type": "build"
     },
     {
+      "name": "@types/fs-extra",
+      "type": "build"
+    },
+    {
       "name": "@types/jest",
       "type": "build"
     },
@@ -135,6 +139,19 @@
     {
       "name": "typescript",
       "type": "build"
+    },
+    {
+      "name": "@yarnpkg/esbuild-plugin-pnp",
+      "type": "bundled"
+    },
+    {
+      "name": "esbuild",
+      "version": "~0.13",
+      "type": "bundled"
+    },
+    {
+      "name": "fs-extra",
+      "type": "bundled"
     },
     {
       "name": "lodash",
