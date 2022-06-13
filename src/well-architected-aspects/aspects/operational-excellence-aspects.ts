@@ -16,18 +16,18 @@ export class OperationalExcellenceAspects implements IAspect {
   public visit(node: IConstruct): void {
     if (node instanceof CfnFunction) {
       if (!node.tracingConfig) {
-        const { annotate, flagLevel } = new FlagBasedAnnotator(
+        const antr = new FlagBasedAnnotator(
           node,
           WellArchitectedAspectsFeatureFlags.ENABLE_X_RAY_TRACING,
         );
         let message = 'X-Ray Tracing is not enabled for this function';
 
-        if (flagLevel === FlagLevel.FIX) {
+        if (antr.flagLevel === FlagLevel.FIX) {
           message += '. Automatically setting tracingConfig.mode to Active';
           node.addPropertyOverride('TracingConfig', { mode: 'Active' });
         }
 
-        annotate(message);
+        antr.annotate(message);
       }
     }
   }
