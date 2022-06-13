@@ -10,7 +10,7 @@ import {
 } from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
 import { merge } from 'lodash';
-import { AssumeRolePartialBuildSpec } from './assume-role-partial-build-spec.ts';
+import { AssumeRolePartialBuildSpec } from './assume-role-partial-build-spec';
 import { ComponentConfig, IDeploymentBranch } from './branch-pipelines';
 import { CodeSource, RepositoryConfig } from './code-source';
 import { CodeArtifactAuthTokenAccessRole } from './codeartifact-auth-token-access-role';
