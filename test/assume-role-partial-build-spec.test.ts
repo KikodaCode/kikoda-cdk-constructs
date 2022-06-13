@@ -1,4 +1,4 @@
-import { AssumeRolePartialBuildSpec } from '../src/assume-role-partial-build-spec.ts';
+import { AssumeRolePartialBuildSpec } from '../src/assume-role-partial-build-spec';
 
 describe('AssumeRolePartialBuildSpec', () => {
   it('should do the thing its meant to do', () => {

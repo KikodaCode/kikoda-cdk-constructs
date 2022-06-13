@@ -50,6 +50,11 @@ const project = new AwsCdkConstructLibrary({
   },
   pullRequestTemplate: false,
   codeCov: true,
+  jestOptions: {
+    jestConfig: {
+      coveragePathIgnorePatterns: ['/node_modules/', 'test/util.ts'],
+    },
+  },
 });
 
 new YamlFile(project, 'codecov.yml', {

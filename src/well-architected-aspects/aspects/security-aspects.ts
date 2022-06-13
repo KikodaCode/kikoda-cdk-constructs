@@ -5,7 +5,7 @@
 
 import { Annotations, IAspect } from 'aws-cdk-lib';
 import { CfnPolicy, Effect } from 'aws-cdk-lib/aws-iam';
-import { CfnDBCluster } from 'aws-cdk-lib/aws-rds';
+import { CfnDBCluster, CfnDBInstance } from 'aws-cdk-lib/aws-rds';
 import { CfnBucket } from 'aws-cdk-lib/aws-s3';
 import { IConstruct } from 'constructs';
 
@@ -14,14 +14,6 @@ import {
   FlagLevel,
   WellArchitectedAspectsFeatureFlags,
 } from '../flag-based-annotator';
-
-interface PolicyDocument {
-  statements: {
-    effect: Effect;
-    action: string[];
-    resource: string[];
-  }[];
-}
 
 export class SecurityAspects implements IAspect {
   public visit(node: IConstruct): void {
@@ -38,13 +30,13 @@ export class SecurityAspects implements IAspect {
       }
 
       /**
-       * Check if versioning is enable for your S3 Buckets.
+       * Check if versioning is enabled for your S3 Buckets.
        *
        * @link https://docs.aws.amazon.com/config/latest/developerguide/s3-bucket-versioning-enabled.html
        */
       if (!node.versioningConfiguration) {
         Annotations.of(node).addWarning(
-          'S3 bucket versioning is not enabled. Versioning is recommended however, you can explicity disable versioning for a bucket if applicable to remove this warning.',
+          'S3 bucket versioning is not enabled. Bucket versioning is recommended.',
         );
       }
 
@@ -64,7 +56,7 @@ export class SecurityAspects implements IAspect {
        *
        * @link https://docs.aws.amazon.com/config/latest/developerguide/s3-bucket-public-read-prohibited.html
        */
-      const { annotate, flagLevel } = new FlagBasedAnnotator(
+      const antr = new FlagBasedAnnotator(
         node,
         WellArchitectedAspectsFeatureFlags.BLOCK_PUBLIC_BUCKETS,
       );
@@ -74,7 +66,7 @@ export class SecurityAspects implements IAspect {
       if (!config) {
         let message = 'Block Public Access is not configured for this bucket';
 
-        if (flagLevel === FlagLevel.FIX) {
+        if (antr.flagLevel === FlagLevel.FIX) {
           message +=
             '. Automatically configuring publicAccessBlockConfiguration to block public access';
 
@@ -86,7 +78,7 @@ export class SecurityAspects implements IAspect {
           });
         }
 
-        annotate(message);
+        antr.annotate(message);
       } else {
         if (config.blockPublicPolicy === false) {
           Annotations.of(node).addWarning(
@@ -95,14 +87,14 @@ export class SecurityAspects implements IAspect {
         } else if (!config.blockPublicPolicy) {
           let message = 'Block Public Access settings do not restrict public policies';
 
-          if (flagLevel === FlagLevel.FIX) {
+          if (antr.flagLevel === FlagLevel.FIX) {
             message +=
               '. Automatically setting publicAccessBlockConfiguration.blockPublicPolicy to True';
 
             node.addPropertyOverride('PublicAccessBlockConfiguration.BlockPublicPolicy', true);
           }
 
-          annotate(message);
+          antr.annotate(message);
         }
 
         if (config.blockPublicAcls === false) {
@@ -112,14 +104,14 @@ export class SecurityAspects implements IAspect {
         } else if (!config.blockPublicAcls) {
           let message = 'Block Public Access settings do not restrict public bucket ACLs';
 
-          if (flagLevel === FlagLevel.FIX) {
+          if (antr.flagLevel === FlagLevel.FIX) {
             message +=
               '. Automatically setting publicAccessBlockConfiguration.blockPublicAcls to True';
 
             node.addPropertyOverride('PublicAccessBlockConfiguration.BlockPublicAcls', true);
           }
 
-          annotate(message);
+          antr.annotate(message);
         }
       }
     }
@@ -134,14 +126,13 @@ export class SecurityAspects implements IAspect {
        *
        * @link https://docs.aws.amazon.com/config/latest/developerguide/iam-policy-no-statements-with-admin-access.html
        */
-      const policy = node.policyDocument as PolicyDocument;
+      const policy = node.policyDocument;
 
-      // eslint-disable-next-line no-restricted-syntax
-      for (const { effect, action, resource } of policy.statements) {
+      for (const { effect, actions, resources } of policy.statements) {
         if (
           effect === Effect.ALLOW &&
-          !!action.find(a => a === '*') &&
-          !!resource.find(r => r.includes('*'))
+          !!actions.find((a: string) => a === '*') &&
+          !!resources.find((r: string) => r.includes('*'))
         ) {
           Annotations.of(node).addError(
             'Policy statement includes "Effect": "Allow" with "Action": "*" over "Resource" with "*". If a wildcard Resource is absolutely required, scope down the Actions in the statement.',
@@ -151,14 +142,21 @@ export class SecurityAspects implements IAspect {
     }
 
     /** RDS Best Practices */
+
+    /**
+     * Checks whether storage encryption is enabled for your RDS DB instances. If a `snapshotIdentifier` is
+     * specified, encryption settings will be inherited from the snapshot.
+     *
+     * @link https://docs.aws.amazon.com/config/latest/developerguide/rds-storage-encrypted.html
+     */
     if (node instanceof CfnDBCluster) {
-      /**
-       * Checks whether storage encryption is enabled for your RDS DB instances. If a `snapshotIdentifier` is
-       * specified, encryption settings will be inherited from the snapshot.
-       *
-       * @link https://docs.aws.amazon.com/config/latest/developerguide/rds-storage-encrypted.html
-       */
       if (node.storageEncrypted !== true && node.snapshotIdentifier === undefined) {
+        Annotations.of(node).addError('Encryption at rest is not enabled');
+      }
+    }
+
+    if (node instanceof CfnDBInstance) {
+      if (node.storageEncrypted !== true) {
         Annotations.of(node).addError('Encryption at rest is not enabled');
       }
     }
