@@ -154,10 +154,6 @@
       "type": "bundled"
     },
     {
-      "name": "fs-extra",
-      "type": "bundled"
-    },
-    {
       "name": "lodash",
       "type": "bundled"
     },

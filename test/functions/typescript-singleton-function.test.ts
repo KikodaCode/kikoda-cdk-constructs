@@ -14,7 +14,7 @@ describe('TypescriptSingletonFunction', () => {
 
     new TypescriptSingletonFunction(stack, 'TypescriptSingletonFunction', {
       uuid: 'singleton-function',
-      entry: 'test/functions/hello.handler.ts',
+      entry: 'test/functions/typescript-function.test.handler1.ts',
       handler: 'main',
     });
 
