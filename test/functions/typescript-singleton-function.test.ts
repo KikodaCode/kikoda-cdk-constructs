@@ -14,41 +14,11 @@ describe('TypescriptSingletonFunction', () => {
 
     new TypescriptSingletonFunction(stack, 'TypescriptSingletonFunction', {
       uuid: 'singleton-function',
-      handler: 'test/functions/hello.handler.main',
-      bundle: {
-        copyFiles: [{ from: 'test/functions/', to: '../cp' }],
-      },
+      entry: 'test/functions/hello.handler.ts',
+      handler: 'main',
     });
 
     const template = Template.fromStack(stack);
     template.resourceCountIs('AWS::Lambda::Function', 1);
-  });
-
-  test('No bundling when srcPath is root should throw and error', () => {
-    const stack = new TestStack();
-
-    expect(
-      () =>
-        new TypescriptSingletonFunction(stack, 'TypescriptSingletonFunctionNoBundle', {
-          uuid: 'singleton-function',
-          handler: 'test/functions/hello.handler.main',
-          bundle: false,
-        }),
-    ).toThrowError();
-  });
-
-  test('No bundling when srcPath is root should throw and error', () => {
-    const stack = new TestStack();
-
-    expect(
-      () =>
-        new TypescriptSingletonFunction(stack, 'TypescriptSingletonFunctionInvalidCopy', {
-          uuid: 'singleton-function',
-          handler: 'test/functions/hello.handler.main',
-          bundle: {
-            copyFiles: [{ from: '/tmp/does/not/exist', to: '../cp' }],
-          },
-        }),
-    ).toThrowError();
   });
 });

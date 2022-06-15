@@ -1,38 +1,322 @@
-import { isAbsolute, resolve, join } from 'path';
-import { existsSync, copySync } from 'fs-extra';
-import { BundleProp } from './types';
+import { spawnSync, SpawnSyncOptions } from 'child_process';
+import { existsSync, statSync } from 'fs';
+import { dirname, isAbsolute, join, parse, resolve, extname } from 'path';
+import { LockFile } from './package-manager';
 
-export function copyFiles(bundle: BundleProp | undefined, srcPath: string, buildPath: string) {
-  if (!bundle) return;
-  if (typeof bundle === 'boolean') return;
-  if (!bundle.copyFiles) return;
+export interface CallSite {
+  getThis(): any;
+  getTypeName(): string;
+  getFunctionName(): string;
+  getMethodName(): string;
+  getFileName(): string;
+  getLineNumber(): number;
+  getColumnNumber(): number;
+  getFunction(): Function;
+  getEvalOrigin(): string;
+  isNative(): boolean;
+  isToplevel(): boolean;
+  isEval(): boolean;
+  isConstructor(): boolean;
+}
 
-  bundle.copyFiles.forEach(entry => {
-    const fromPath = join(srcPath, entry.from);
-    if (!existsSync(fromPath))
+/**
+ * Get callsites from the V8 stack trace API
+ *
+ * https://github.com/sindresorhus/callsites
+ */
+export function callsites(): CallSite[] {
+  const _prepareStackTrace = Error.prepareStackTrace;
+  Error.prepareStackTrace = (_, stack) => stack;
+  const stack = new Error().stack?.slice(1);
+  Error.prepareStackTrace = _prepareStackTrace;
+  return stack as unknown as CallSite[];
+}
+
+/**
+ * Find a file by walking up parent directories
+ */
+export function findUp(name: string, directory: string = process.cwd()): string | undefined {
+  return findUpMultiple([name], directory)[0];
+}
+
+/**
+ * Find the lowest of multiple files by walking up parent directories. If
+ * multiple files exist at the same level, they will all be returned.
+ */
+export function findUpMultiple(names: string[], directory: string = process.cwd()): string[] {
+  const absoluteDirectory = resolve(directory);
+
+  const files = [];
+  for (const name of names) {
+    const file = join(directory, name);
+    if (existsSync(file)) {
+      files.push(file);
+    }
+  }
+
+  if (files.length > 0) {
+    return files;
+  }
+
+  const { root } = parse(absoluteDirectory);
+  if (absoluteDirectory === root) {
+    return [];
+  }
+
+  return findUpMultiple(names, dirname(absoluteDirectory));
+}
+
+/**
+ * Spawn sync with error handling
+ */
+export function exec(cmd: string, args: string[], options?: SpawnSyncOptions) {
+  const proc = spawnSync(cmd, args, options);
+
+  if (proc.error) {
+    throw proc.error;
+  }
+
+  if (proc.status !== 0) {
+    if (proc.stdout || proc.stderr) {
       throw new Error(
-        `Tried to copy nonexistent file from "${resolve(fromPath)}" - check copyFiles entry "${
-          entry.from
-        }"`,
+        `[Status ${proc.status}] stdout: ${proc.stdout
+          ?.toString()
+          .trim()}\n\n\nstderr: ${proc.stderr?.toString().trim()}`,
       );
-    const to = entry.to || entry.from;
-    if (isAbsolute(to)) throw new Error(`Copy destination path "${to}" must be relative`);
-    const toPath = join(buildPath, to);
-    copySync(fromPath, toPath);
-  });
-}
-
-export function normalizeSrcPath(srcPath: string): string {
-  return srcPath.replace(/\/+$/, '');
-}
-
-export function validateBundle(id: string, srcPath: string, bundle?: BundleProp): BundleProp {
-  const retBundle = bundle === undefined ? true : bundle;
-  if (!retBundle && srcPath === '.') {
+    }
     throw new Error(
-      `Bundle cannot be disabled for the "${id}" function since the "srcPath" is set to the project root.`,
+      `${cmd} ${args.join(' ')} ${
+        options?.cwd ? `run in directory ${options.cwd}` : ''
+      } exited with status ${proc.status}`,
     );
   }
 
-  return retBundle;
+  return proc;
+}
+
+/**
+ * Returns a module version by requiring its package.json file
+ */
+export function tryGetModuleVersionFromRequire(mod: string): string | undefined {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    return require(`${mod}/package.json`).version;
+  } catch (err) {
+    return undefined;
+  }
+}
+
+/**
+ * Gets module version from package.json content
+ */
+export function tryGetModuleVersionFromPkg(
+  mod: string,
+  pkgJson: { [key: string]: any },
+  pkgPath: string,
+): string | undefined {
+  const dependencies = {
+    ...(pkgJson.dependencies ?? {}),
+    ...(pkgJson.devDependencies ?? {}),
+    ...(pkgJson.peerDependencies ?? {}),
+  };
+
+  if (!dependencies[mod]) {
+    return undefined;
+  }
+
+  // If it's a "file:" version, make it absolute
+  const fileMatch = dependencies[mod].match(/file:(.+)/);
+  if (fileMatch && !isAbsolute(fileMatch[1])) {
+    const absoluteFilePath = join(dirname(pkgPath), fileMatch[1]);
+    return `file:${absoluteFilePath}`;
+  }
+
+  return dependencies[mod];
+}
+
+/**
+ * Extract versions for a list of modules.
+ *
+ * First lookup the version in the package.json and then fallback to requiring
+ * the module's package.json. The fallback is needed for transitive dependencies.
+ */
+export function extractDependencies(pkgPath: string, modules: string[]): { [key: string]: string } {
+  const dependencies: { [key: string]: string } = {};
+
+  // Use require for cache
+  const pkgJson = require(pkgPath); // eslint-disable-line @typescript-eslint/no-require-imports
+
+  for (const mod of modules) {
+    const version =
+      tryGetModuleVersionFromPkg(mod, pkgJson, pkgPath) ?? tryGetModuleVersionFromRequire(mod);
+    if (!version) {
+      throw new Error(
+        `Cannot extract version for module '${mod}'. Check that it's referenced in your package.json or installed.`,
+      );
+    }
+    dependencies[mod] = version;
+  }
+
+  return dependencies;
+}
+
+export function getTsconfigCompilerOptions(tsconfigPath: string): string {
+  const compilerOptions = extractTsConfig(tsconfigPath);
+  const excludedCompilerOptions = ['composite', 'tsBuildInfoFile'];
+
+  const options: Record<string, any> = {
+    ...compilerOptions,
+    // Overrides
+    incremental: false,
+    // Intentionally Setting rootDir and outDir, so that the compiled js file always end up next to .ts file.
+    rootDir: './',
+    outDir: './',
+  };
+
+  let compilerOptionsString = '';
+  Object.keys(options)
+    .sort()
+    .forEach((key: string) => {
+      if (excludedCompilerOptions.includes(key)) {
+        return;
+      }
+
+      const value = options[key];
+      const option = '--' + key;
+      const type = typeof value;
+
+      if (type === 'boolean') {
+        if (value) {
+          compilerOptionsString += option + ' ';
+        }
+      } else if (type === 'string') {
+        compilerOptionsString += option + ' ' + value + ' ';
+      } else if (type === 'object') {
+        if (Array.isArray(value)) {
+          compilerOptionsString += option + ' ' + value.join(',') + ' ';
+        }
+      } else {
+        throw new Error(`Missing support for compilerOption: [${key}]: { ${type}, ${value}} \n`);
+      }
+    });
+
+  return compilerOptionsString.trim();
+}
+
+function extractTsConfig(
+  tsconfigPath: string,
+  previousCompilerOptions?: Record<string, any>,
+): Record<string, any> | undefined {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { extends: extendedConfig, compilerOptions } = require(tsconfigPath);
+  const updatedCompilerOptions = {
+    ...(previousCompilerOptions ?? {}),
+    ...compilerOptions,
+  };
+  if (extendedConfig) {
+    return extractTsConfig(
+      resolve(tsconfigPath.replace(/[^\/]+$/, ''), extendedConfig),
+      updatedCompilerOptions,
+    );
+  }
+  return updatedCompilerOptions;
+}
+
+/**
+ * Checks given lock file or searches for a lock file
+ */
+export function findLockFile(depsLockFilePath?: string): string {
+  if (depsLockFilePath) {
+    if (!existsSync(depsLockFilePath)) {
+      throw new Error(`Lock file at ${depsLockFilePath} doesn't exist`);
+    }
+
+    if (!statSync(depsLockFilePath).isFile()) {
+      throw new Error('`depsLockFilePath` should point to a file');
+    }
+
+    return resolve(depsLockFilePath);
+  }
+
+  const lockFiles = findUpMultiple([LockFile.PNPM, LockFile.YARN, LockFile.NPM]);
+
+  if (lockFiles.length === 0) {
+    throw new Error(
+      'Cannot find a package lock file (`pnpm-lock.yaml`, `yarn.lock` or `package-lock.json`). Please specify it with `depsLockFilePath`.',
+    );
+  }
+  if (lockFiles.length > 1) {
+    throw new Error(
+      `Multiple package lock files found: ${lockFiles.join(
+        ', ',
+      )}. Please specify the desired one with \`depsLockFilePath\`.`,
+    );
+  }
+
+  return lockFiles[0];
+}
+
+/**
+ * Searches for an entry file. Preference order is the following:
+ * 1. Given entry file
+ * 2. A .ts file named as the defining file with id as suffix (defining-file.id.ts)
+ * 3. A .js file name as the defining file with id as suffix (defining-file.id.js)
+ * 4. A .mjs file name as the defining file with id as suffix (defining-file.id.mjs)
+ */
+export function findEntry(id: string, entry?: string): string {
+  if (entry) {
+    if (!/\.(ts)$/.test(entry)) {
+      throw new Error('Only TypeScript entry files are supported.');
+    }
+    if (!existsSync(entry)) {
+      throw new Error(`Cannot find entry file at ${entry}`);
+    }
+    return entry;
+  }
+
+  const definingFile = findDefiningFile();
+  const extName = extname(definingFile);
+
+  const tsHandlerFile = definingFile.replace(new RegExp(`${extName}$`), `.${id}.ts`);
+  if (existsSync(tsHandlerFile)) {
+    return tsHandlerFile;
+  }
+
+  const jsHandlerFile = definingFile.replace(new RegExp(`${extName}$`), `.${id}.js`);
+  if (existsSync(jsHandlerFile)) {
+    return jsHandlerFile;
+  }
+
+  const mjsHandlerFile = definingFile.replace(new RegExp(`${extName}$`), `.${id}.mjs`);
+  if (existsSync(mjsHandlerFile)) {
+    return mjsHandlerFile;
+  }
+
+  throw new Error(
+    `Cannot find handler file ${tsHandlerFile}, ${jsHandlerFile} or ${mjsHandlerFile}`,
+  );
+}
+
+/**
+ * Finds the name of the file where the `TypescriptFunction` is defined
+ */
+function findDefiningFile(): string {
+  let definingIndex;
+  const sites = callsites();
+  for (const [index, site] of sites.entries()) {
+    if (
+      site.getFunctionName() === 'TypescriptFunction' ||
+      site.getFunctionName() === 'TypescriptSingletonFunction'
+    ) {
+      // The next site is the site where the TypescriptFunction was created
+      definingIndex = index + 1;
+      break;
+    }
+  }
+
+  if (!definingIndex || !sites[definingIndex]) {
+    throw new Error('Cannot find defining file.');
+  }
+
+  return sites[definingIndex].getFileName();
 }

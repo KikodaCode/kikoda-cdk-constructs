@@ -1,169 +1,201 @@
 import { Stack } from 'aws-cdk-lib';
-import { Template } from 'aws-cdk-lib/assertions';
-import { TypescriptFunction } from '../../src';
-import {
-  NonExistentHandlerError,
-  HandlerTransipilationError,
-  AmbiguousPackageManagerError,
-  NonExistentPackageJsonError,
-} from '../../src/typescript-function/builder';
+import { Template, Match } from 'aws-cdk-lib/assertions';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
+import { CodeConfig, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { TypescriptFunction } from '../../src/typescript-function';
+import { Bundling } from '../../src/typescript-function/bundling';
 
-describe('TypescriptFunction', () => {
-  class TestStack extends Stack {
-    constructor() {
-      super();
-    }
-  }
-
-  test('contains Lambda Function', () => {
-    const stack = new TestStack();
-    new TypescriptFunction(stack, 'RegularFunction', {
-      handler: 'test/functions/hello.handler.main',
-      bundle: {
-        copyFiles: [{ from: 'test/functions/', to: '../cp' }],
-      },
-    });
-
-    const template = Template.fromStack(stack);
-    template.resourceCountIs('AWS::Lambda::Function', 1);
-  });
-
-  describe('Bundling', () => {
-    test('No bundling when srcPath is root should throw and error', () => {
-      const stack = new TestStack();
-
-      expect(
-        () =>
-          new TypescriptFunction(stack, 'TypescriptFunctionNoBundle', {
-            handler: 'test/functions/hello.handler.main',
-            bundle: false,
-          }),
-      ).toThrowError();
-    });
-
-    test('disable bundling', () => {
-      const stack = new TestStack();
-
-      new TypescriptFunction(stack, 'TypescriptFunctionNoBundle', {
-        srcPath: 'test/functions/package-managers/yarn',
-        handler: 'hello.handler.main',
-        bundle: false,
-      });
-
-      const template = Template.fromStack(stack);
-      template.resourceCountIs('AWS::Lambda::Function', 1);
-    });
-
-    test('Copy files throws when from path doesnt exist', () => {
-      const stack = new TestStack();
-
-      expect(
-        () =>
-          new TypescriptFunction(stack, 'TypescriptFunctionInvalidCopy', {
-            handler: 'test/functions/hello.handler.main',
-            bundle: {
-              copyFiles: [{ from: '/tmp/does/not/exist', to: '../cp' }],
+jest.mock('../../src/typescript-function/bundling', () => {
+  return {
+    Bundling: {
+      bundle: jest.fn().mockReturnValue({
+        bind: (): CodeConfig => {
+          return {
+            s3Location: {
+              bucketName: 'my-bucket',
+              objectKey: 'my-key',
             },
-          }),
-      ).toThrowError();
-    });
-  });
-
-  describe('Handler files', () => {
-    test('Throws on non-existent handler', () => {
-      const stack = new TestStack();
-
-      expect(
-        () =>
-          new TypescriptFunction(stack, 'TypescriptFunctionNonExistentHandler', {
-            handler: 'test/functions/non-existent.handler.main',
-          }),
-      ).toThrow(NonExistentHandlerError);
-    });
-
-    test('Throws on bad handler', () => {
-      const stack = new TestStack();
-
-      expect(
-        () =>
-          new TypescriptFunction(stack, 'TypescriptFunctionBadHandler', {
-            handler: 'test/functions/bad.handler.main',
-          }),
-      ).toThrow(HandlerTransipilationError);
-    });
-  });
-
-  describe('Package Managers', () => {
-    test('NPM', () => {
-      const stack = new TestStack();
-
-      new TypescriptFunction(stack, 'TypescriptFunctionNpm', {
-        srcPath: 'test/functions/package-managers/npm',
-        handler: 'hello.handler.main',
-      });
-
-      const template = Template.fromStack(stack);
-      template.resourceCountIs('AWS::Lambda::Function', 1);
-    });
-
-    test('Yarn', () => {
-      const stack = new TestStack();
-
-      new TypescriptFunction(stack, 'TypescriptFunctionYarn', {
-        srcPath: 'test/functions/package-managers/yarn',
-        handler: 'hello.handler.main',
-      });
-
-      const template = Template.fromStack(stack);
-      template.resourceCountIs('AWS::Lambda::Function', 1);
-    });
-
-    test('Throws on non-determinate package manager', () => {
-      const stack = new TestStack();
-
-      expect(
-        () =>
-          new TypescriptFunction(stack, 'TypescriptFunctionNoPackageManager', {
-            srcPath: 'test/website/config',
-            handler: 'base.config.main',
-            bundle: {
-              nodeModules: ['lodash'],
-            },
-          }),
-      ).toThrow(AmbiguousPackageManagerError);
-    });
-
-    test('Throws on non-existent package.json', () => {
-      const stack = new TestStack();
-
-      expect(
-        () =>
-          new TypescriptFunction(stack, 'TypescriptFunctionNonExistentPackageJSON', {
-            srcPath: 'test/functions/package-managers/yarn',
-            handler: 'hello.handler.main',
-            bundle: {
-              nodeModules: ['lodash'],
-            },
-          }),
-      ).toThrow(NonExistentPackageJsonError);
-    });
-
-    test('Installs node modules and runs hooks', () => {
-      const stack = new TestStack();
-      new TypescriptFunction(stack, 'TypescriptFunctionWithNodeModules', {
-        handler: 'test/functions/hello.handler.main',
-        bundle: {
-          commandHooks: {
-            beforeBundling: () => ['echo "beforeBundling"'],
-            beforeInstall: () => ['echo "beforeInstall"'],
-            afterBundling: () => ['echo "afterBundling"'],
-          },
-          nodeModules: ['lodash'],
+          };
         },
-      });
+        bindToResource: () => {
+          return;
+        },
+      }),
+    },
+  };
+});
 
-      const template = Template.fromStack(stack);
-      template.resourceCountIs('AWS::Lambda::Function', 1);
-    });
+let stack: Stack;
+beforeEach(() => {
+  stack = new Stack();
+  jest.clearAllMocks();
+});
+
+test('TypescriptFunction with .ts handler', () => {
+  // WHEN
+  new TypescriptFunction(stack, 'handler1');
+
+  expect(Bundling.bundle).toHaveBeenCalledWith(
+    expect.objectContaining({
+      entry: expect.stringContaining('function.test.handler1.ts'), // Automatically finds .ts handler file
+    }),
+  );
+
+  Template.fromStack(stack).hasResourceProperties('AWS::Lambda::Function', {
+    Handler: 'index.handler',
+    Runtime: 'nodejs14.x',
+  });
+});
+
+test('TypescriptFunction with container env vars', () => {
+  // WHEN
+  new TypescriptFunction(stack, 'handler1', {
+    bundling: {
+      environment: {
+        KEY: 'VALUE',
+      },
+    },
+  });
+
+  expect(Bundling.bundle).toHaveBeenCalledWith(
+    expect.objectContaining({
+      environment: {
+        KEY: 'VALUE',
+      },
+    }),
+  );
+});
+
+test('throws when entry is not ts', () => {
+  expect(
+    () =>
+      new TypescriptFunction(stack, 'Fn', {
+        entry: 'handler.py',
+      }),
+  ).toThrow(/Only TypeScript entry files are supported/);
+
+  expect(
+    () =>
+      new TypescriptFunction(stack, 'Fn', {
+        entry: 'handler1.js',
+      }),
+  ).toThrow(/Only TypeScript entry files are supported/);
+});
+
+test('throws when entry does not exist', () => {
+  expect(
+    () =>
+      new TypescriptFunction(stack, 'Fn', {
+        entry: 'notfound.ts',
+      }),
+  ).toThrow(/Cannot find entry file at/);
+});
+
+test('throws when entry cannot be automatically found', () => {
+  expect(() => new TypescriptFunction(stack, 'Fn')).toThrow(
+    /Cannot find handler file .*function.test.Fn.ts/,
+  );
+});
+
+test('throws with the wrong runtime family', () => {
+  expect(
+    () =>
+      new TypescriptFunction(stack, 'handler1', {
+        runtime: Runtime.PYTHON_3_8,
+      }),
+  ).toThrow(/Only `NODEJS` runtimes are supported/);
+});
+
+test('throws with non existing lock file', () => {
+  expect(
+    () =>
+      new TypescriptFunction(stack, 'handler1', {
+        depsLockFilePath: '/does/not/exist.lock',
+      }),
+  ).toThrow(/Lock file at \/does\/not\/exist.lock doesn't exist/);
+});
+
+test('throws when depsLockFilePath is not a file', () => {
+  expect(
+    () =>
+      new TypescriptFunction(stack, 'handler1', {
+        depsLockFilePath: __dirname,
+      }),
+  ).toThrow(/\`depsLockFilePath\` should point to a file/);
+});
+
+test('resolves depsLockFilePath to an absolute path', () => {
+  new TypescriptFunction(stack, 'handler1', {
+    depsLockFilePath: './package.json',
+  });
+
+  expect(Bundling.bundle).toHaveBeenCalledWith(
+    expect.objectContaining({
+      depsLockFilePath: expect.stringMatching(/kikoda-cdk-constructs\/package.json$/),
+    }),
+  );
+});
+
+test('resolves entry to an absolute path', () => {
+  // WHEN
+  new TypescriptFunction(stack, 'fn', {
+    entry: 'src/index.ts',
+  });
+
+  expect(Bundling.bundle).toHaveBeenCalledWith(
+    expect.objectContaining({
+      entry: expect.stringMatching(/kikoda-cdk-constructs\/src\/index.ts$/),
+    }),
+  );
+});
+
+test('configures connection reuse for aws sdk', () => {
+  // WHEN
+  new TypescriptFunction(stack, 'handler1');
+
+  Template.fromStack(stack).hasResourceProperties('AWS::Lambda::Function', {
+    Environment: {
+      Variables: {
+        AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      },
+    },
+  });
+});
+
+test('can opt-out of connection reuse for aws sdk', () => {
+  // WHEN
+  new TypescriptFunction(stack, 'handler1', {
+    awsSdkConnectionReuse: false,
+  });
+
+  Template.fromStack(stack).hasResourceProperties('AWS::Lambda::Function', {
+    Environment: Match.absent(),
+  });
+});
+
+test('TypescriptFunction in a VPC', () => {
+  // GIVEN
+  const vpc = new Vpc(stack, 'Vpc');
+
+  // WHEN
+  new TypescriptFunction(stack, 'handler1', { vpc });
+
+  // THEN
+  Template.fromStack(stack).hasResourceProperties('AWS::Lambda::Function', {
+    VpcConfig: {
+      SecurityGroupIds: [
+        {
+          'Fn::GetAtt': ['handler1SecurityGroup30688A62', 'GroupId'],
+        },
+      ],
+      SubnetIds: [
+        {
+          Ref: 'VpcPrivateSubnet1Subnet536B997A',
+        },
+        {
+          Ref: 'VpcPrivateSubnet2Subnet3788AAA1',
+        },
+      ],
+    },
   });
 });

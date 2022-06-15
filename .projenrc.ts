@@ -62,6 +62,7 @@ const project = new AwsCdkConstructLibrary({
     '@types/lodash',
     '@types/fs-extra',
     '@kikoda/projen-templates',
+    'delay',
   ] /* Build dependencies for this module. */,
   packageName: '@kikoda/cdk-constructs',
   gitignore: ['spa_local_build_artifact'],

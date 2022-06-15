@@ -1,54 +1,48 @@
-import { basename } from 'path';
-import { Function, FunctionOptions, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
+import { dirname, resolve } from 'path';
+import { Architecture, Function, Runtime, RuntimeFamily, Tracing } from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
-import { Builder } from './builder';
-import { BundleProp } from './types';
+import { Bundling, BundlingProps } from './bundling';
+import { findEntry, findLockFile } from './util';
 
-export interface TypescriptFunctionProps extends FunctionOptions {
-  /** Path to the entry point and handler function. Uses the format, /path/to/file.function.
-   * Where the first part is the path to the file, followed by the name of the function that's
-   * exported in that file.
-   */
-  readonly handler: string;
-  readonly runtime?: Runtime;
-  /**
-   * Disable bundling with esbuild.
-   *
-   * @default - Defaults to true
-   */
-  readonly bundle?: BundleProp;
-  /**
-   * The source directory where the entry point is located. The node_modules in this
-   * directory is used to generate the bundle.
-   *
-   * @default - Defaults to the app directory.
-   */
-  readonly srcPath?: string;
+export interface TypescriptFunctionProps extends NodejsFunctionProps {
+  readonly yarnPnP?: BundlingProps['yarnPnP'];
 }
 
 export class TypescriptFunction extends Function {
-  constructor(scope: Construct, id: string, props: TypescriptFunctionProps) {
-    // defaults
+  constructor(scope: Construct, id: string, props: TypescriptFunctionProps = {}) {
+    if (props.runtime && props.runtime.family !== RuntimeFamily.NODEJS) {
+      throw new Error('Only `NODEJS` runtimes are supported.');
+    }
+
+    const entry = resolve(findEntry(id, props.entry));
+    const handler = props.handler ?? 'handler';
     const runtime = props.runtime ?? Runtime.NODEJS_14_X;
-    const handler = basename(props.handler);
+    const architecture = props.architecture ?? Architecture.X86_64;
+    const depsLockFilePath = findLockFile(props.depsLockFilePath);
+    const projectRoot = props.projectRoot ?? dirname(depsLockFilePath);
 
     super(scope, id, {
       ...props,
       runtime,
-      handler,
-      code: Builder.bundle({
-        id,
-        srcPath: props.srcPath,
-        bundle: props.bundle,
-        handler: props.handler,
+      code: Bundling.bundle({
+        ...(props.bundling ?? {}),
+        entry,
         runtime,
+        architecture,
+        depsLockFilePath,
+        projectRoot,
+        yarnPnP: !!props.yarnPnP,
       }),
+      handler: `index.${handler}`,
       tracing: props.tracing ?? Tracing.ACTIVE,
     });
 
-    this.addEnvironment('AWS_NODEJS_CONNECTION_REUSE_ENABLED', '1', {
-      removeInEdge: true,
-    });
+    if (props.awsSdkConnectionReuse ?? true) {
+      this.addEnvironment('AWS_NODEJS_CONNECTION_REUSE_ENABLED', '1', {
+        removeInEdge: true,
+      });
+    }
   }
 }
