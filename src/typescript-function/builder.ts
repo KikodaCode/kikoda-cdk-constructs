@@ -1,9 +1,11 @@
 import { execSync } from 'child_process';
-import { basename, join, resolve } from 'path';
-import { AssetCode, Code, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { join, resolve } from 'path';
+import { AssetHashType, DockerImage } from 'aws-cdk-lib';
+import { AssetCode, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Loader, BuildOptions } from 'esbuild';
 import { copySync, ensureFileSync, existsSync, readJsonSync, writeJsonSync } from 'fs-extra';
-import { FunctionBundleProps } from './types';
+import { BundleProp, FunctionBundleProps } from './types';
+import { copyFiles, normalizeSrcPath, validateBundle } from './util';
 
 // A map of supported runtimes and esbuild targets
 const esbuildTargetMap = {
@@ -17,35 +19,70 @@ export class NonExistentPackageJsonError extends Error {}
 export class AmbiguousPackageManagerError extends Error {}
 export class HandlerTransipilationError extends Error {}
 
+export interface BundleProps {
+  readonly id: string;
+  readonly srcPath?: string;
+  readonly handler: string;
+  readonly runtime: Runtime;
+  readonly bundle?: BundleProp;
+}
+
 export interface BuilderProps {
   readonly srcPath: string;
   readonly handler: string;
-  readonly buildDir: string;
+  readonly buildPath: string;
   readonly runtime: Runtime;
   readonly bundle: boolean | FunctionBundleProps;
 }
 
 export class Builder {
-  public readonly outCode: AssetCode;
-  public readonly outHandler: string;
+  public static bundle({ id, srcPath = '.', bundle, handler, runtime }: BundleProps): AssetCode {
+    srcPath = normalizeSrcPath(srcPath);
+    const validBundle = validateBundle(id, srcPath, bundle);
+
+    return AssetCode.fromAsset(srcPath, {
+      assetHashType: AssetHashType.OUTPUT,
+      bundling: {
+        image: DockerImage.fromRegistry('public.ecr.aws/sam/build-nodejs16.x'), // unsupported
+        local: {
+          tryBundle: outputDir => {
+            new Builder({
+              bundle: validBundle as boolean | FunctionBundleProps,
+              srcPath,
+              buildPath: outputDir,
+              handler,
+              runtime,
+            });
+
+            copyFiles(bundle, srcPath, outputDir);
+
+            return true;
+          },
+        },
+      },
+    });
+  }
+
   readonly appPath: string;
+  readonly buildPath: string;
   readonly metafile: string;
   readonly runtime: Runtime;
   readonly hasTsconfig: Boolean;
   readonly tsconfig: string;
-  readonly buildPath: string;
   readonly srcPath: string;
   bundle: boolean | FunctionBundleProps;
   entryPath: string;
 
   constructor(props: BuilderProps) {
-    const { handler, buildDir } = props;
+    const { handler } = props;
     this.srcPath = props.srcPath;
+    this.buildPath = props.buildPath;
     this.bundle = props.bundle;
     this.runtime = props.runtime;
     const handlerPosixPath = this.getHandlerFullPosixPath(this.srcPath, handler);
 
-    console.log(`Building Lambda function ${handlerPosixPath}`);
+    this.appPath = process.cwd();
+    this.metafile = join(this.buildPath, this.getEsbuildMetafileName(handler));
 
     // Check has tsconfig
     this.tsconfig = join(this.srcPath, 'tsconfig.json');
@@ -111,11 +148,6 @@ export class Builder {
      *       all the previous Lambdas.
      */
 
-    this.appPath = process.cwd();
-    const handlerHash = this.getHandlerHash(handlerPosixPath);
-    this.buildPath = join(this.srcPath, buildDir, handlerHash);
-    this.metafile = join(this.srcPath, buildDir, this.getEsbuildMetafileName(handler));
-
     // Command hook: before bundling
     this.runBeforeBundling();
 
@@ -130,10 +162,6 @@ export class Builder {
 
     // Command hook: after bundling
     this.runAfterBundling();
-
-    // Format response
-    this.outCode = Code.fromAsset(this.buildPath);
-    this.outHandler = basename(handler);
   }
 
   transpile() {
@@ -351,10 +379,6 @@ export class Builder {
 
   private getHandlerFullPosixPath(srcPath: string, handler: string): string {
     return srcPath === '.' ? handler : `${srcPath}/${handler}`;
-  }
-
-  private getHandlerHash(posixPath: string): string {
-    return `${posixPath.replace(/[/.]/g, '-')}-${Date.now()}`;
   }
 
   private getEsbuildMetafileName(handler: string): string {

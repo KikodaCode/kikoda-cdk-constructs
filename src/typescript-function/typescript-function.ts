@@ -1,9 +1,9 @@
+import { basename } from 'path';
 import { Function, FunctionOptions, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
 import { Builder } from './builder';
-import { BundleProp, FunctionBundleProps } from './types';
-import { normalizeSrcPath, copyFiles, validateBundle } from './util';
+import { BundleProp } from './types';
 
 export interface TypescriptFunctionProps extends FunctionOptions {
   /** Path to the entry point and handler function. Uses the format, /path/to/file.function.
@@ -30,28 +30,20 @@ export interface TypescriptFunctionProps extends FunctionOptions {
 export class TypescriptFunction extends Function {
   constructor(scope: Construct, id: string, props: TypescriptFunctionProps) {
     // defaults
-    const srcPath = normalizeSrcPath(props.srcPath || '.');
     const runtime = props.runtime ?? Runtime.NODEJS_14_X;
-
-    const bundle = validateBundle(id, srcPath, props.bundle);
-
-    const builder = new Builder({
-      bundle: bundle as boolean | FunctionBundleProps,
-      srcPath,
-      handler: props.handler,
-      runtime,
-      buildDir: '.build',
-    });
-
-    const { outCode, outHandler } = builder;
-
-    copyFiles(bundle, srcPath, outCode.path);
+    const handler = basename(props.handler);
 
     super(scope, id, {
       ...props,
       runtime,
-      handler: outHandler,
-      code: outCode,
+      handler,
+      code: Builder.bundle({
+        id,
+        srcPath: props.srcPath,
+        bundle: props.bundle,
+        handler: props.handler,
+        runtime,
+      }),
       tracing: props.tracing ?? Tracing.ACTIVE,
     });
 

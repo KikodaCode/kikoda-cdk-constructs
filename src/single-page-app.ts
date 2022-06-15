@@ -1,5 +1,5 @@
 import { execSync, ExecSyncOptions } from 'child_process';
-import { DockerImage, FileCopyOptions } from 'aws-cdk-lib';
+import { AssetStaging, DockerImage, FileCopyOptions } from 'aws-cdk-lib';
 import { DnsValidatedCertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import {
   SecurityPolicyProtocol,
@@ -140,7 +140,11 @@ export class SinglePageApp extends Construct {
             },
           },
           image: DockerImage.fromRegistry('node:16'),
-          command: ['bash', '-c', `${buildCmd}  && cp -a ${props.buildDir}/* /asset-output/`],
+          command: [
+            'bash',
+            '-c',
+            `${buildCmd}  && cp -a ${props.buildDir}/* ${AssetStaging.BUNDLING_OUTPUT_DIR}/`,
+          ],
           user: 'root',
         },
       };

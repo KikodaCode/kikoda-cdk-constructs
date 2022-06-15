@@ -32,7 +32,6 @@ jspm_packages/
 .yarn-integrity
 .cache
 spa_local_build_artifact
-.build/
 !/.projenrc.js
 /test-reports/
 junit.xml
@@ -63,6 +62,15 @@ test/branch-pipelines.integ.snapshot/manifest.json
 test/branch-pipelines.integ.snapshot/**/manifest.json
 test/branch-pipelines.integ.snapshot/tree.json
 test/branch-pipelines.integ.snapshot/**/tree.json
+test/functions/.tmp
+test/functions/typescript-function.integ.snapshot/asset.*
+test/functions/typescript-function.integ.snapshot/**/asset.*
+test/functions/typescript-function.integ.snapshot/cdk.out
+test/functions/typescript-function.integ.snapshot/**/cdk.out
+test/functions/typescript-function.integ.snapshot/manifest.json
+test/functions/typescript-function.integ.snapshot/**/manifest.json
+test/functions/typescript-function.integ.snapshot/tree.json
+test/functions/typescript-function.integ.snapshot/**/tree.json
 !/codecov.yml
 !/NOTICE
 !/.github/pull_request_template.md

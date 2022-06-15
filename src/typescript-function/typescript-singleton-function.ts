@@ -1,10 +1,9 @@
+import { basename } from 'path';
 import { Runtime, SingletonFunction, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
 import { Builder } from './builder';
-import { FunctionBundleProps } from './types';
 import { TypescriptFunctionProps } from './typescript-function';
-import { normalizeSrcPath, copyFiles, validateBundle } from './util';
 
 export interface TypescriptSingletonFunctionProps extends TypescriptFunctionProps {
   /**
@@ -29,28 +28,20 @@ export interface TypescriptSingletonFunctionProps extends TypescriptFunctionProp
 export class TypescriptSingletonFunction extends SingletonFunction {
   constructor(scope: Construct, id: string, props: TypescriptSingletonFunctionProps) {
     // defaults
-    const srcPath = normalizeSrcPath(props.srcPath || '.');
     const runtime = props.runtime ?? Runtime.NODEJS_14_X;
-
-    const bundle = validateBundle(id, srcPath, props.bundle);
-
-    const builder = new Builder({
-      bundle: bundle as boolean | FunctionBundleProps,
-      srcPath,
-      handler: props.handler,
-      runtime,
-      buildDir: '.build',
-    });
-
-    const { outCode, outHandler } = builder;
-
-    copyFiles(bundle, srcPath, outCode.path);
+    const handler = basename(props.handler);
 
     super(scope, id, {
       ...props,
       runtime,
-      handler: outHandler,
-      code: outCode,
+      handler,
+      code: Builder.bundle({
+        id,
+        srcPath: props.srcPath,
+        bundle: props.bundle,
+        handler: props.handler,
+        runtime,
+      }),
       tracing: props.tracing ?? Tracing.ACTIVE,
     });
 
