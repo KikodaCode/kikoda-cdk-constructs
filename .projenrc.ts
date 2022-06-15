@@ -33,7 +33,10 @@ const project = new AwsCdkConstructLibrary({
       endOfLine: EndOfLine.LF,
     },
   },
-  tsconfig: { compilerOptions: { esModuleInterop: true } },
+  tsconfig: {
+    compilerOptions: { esModuleInterop: true },
+    include: ['src/typescript-function/esbuild.js'],
+  },
   // deps: [],                /* Runtime dependencies of this module. */
   bundledDeps: ['md5', 'uuid', 'lodash', 'esbuild@~0.13', '@yarnpkg/esbuild-plugin-pnp'],
   devDeps: [
@@ -57,6 +60,8 @@ const project = new AwsCdkConstructLibrary({
     },
   },
 });
+
+project.compileTask.exec('cp src/typescript-function/esbuild.js lib/typescript-function/');
 
 new YamlFile(project, 'codecov.yml', {
   obj: {

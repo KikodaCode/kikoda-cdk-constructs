@@ -28,6 +28,7 @@
     ".projenrc.js",
     "src/**/*.ts",
     "test/**/*.ts",
+    "src/typescript-function/esbuild.js",
     ".projenrc.ts",
     "projenrc/**/*.ts"
   ],

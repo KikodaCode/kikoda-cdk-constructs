@@ -88,6 +88,9 @@
       "steps": [
         {
           "exec": "jsii --silence-warnings=reserved-word"
+        },
+        {
+          "exec": "cp src/typescript-function/esbuild.js lib/typescript-function/"
         }
       ]
     },
