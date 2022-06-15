@@ -55,6 +55,10 @@
       "type": "build"
     },
     {
+      "name": "delay",
+      "type": "build"
+    },
+    {
       "name": "eslint-config-prettier",
       "type": "build"
     },

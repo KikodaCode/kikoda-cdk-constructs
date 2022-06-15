@@ -1343,7 +1343,7 @@ The CFN Export, will be populated if createCfnExport is true.
 ```typescript
 import { TypescriptFunction } from '@kikoda/cdk-constructs'
 
-new TypescriptFunction(scope: Construct, id: string, props: TypescriptFunctionProps)
+new TypescriptFunction(scope: Construct, id: string, props?: TypescriptFunctionProps)
 ```
 
 | **Name** | **Type** | **Description** |
@@ -1366,7 +1366,7 @@ new TypescriptFunction(scope: Construct, id: string, props: TypescriptFunctionPr
 
 ---
 
-##### `props`<sup>Required</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptFunction.Initializer.parameter.props"></a>
+##### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptFunction.Initializer.parameter.props"></a>
 
 - *Type:* <a href="#@kikoda/cdk-constructs.TypescriptFunctionProps">TypescriptFunctionProps</a>
 
@@ -4335,10 +4335,14 @@ const typescriptFunctionProps: TypescriptFunctionProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.tracing">tracing</a></code> | <code>aws-cdk-lib.aws_lambda.Tracing</code> | Enable AWS X-Ray Tracing for Lambda Function. |
 | <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | VPC network to place Lambda network interfaces. |
 | <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.vpcSubnets">vpcSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Where to place the network interfaces within the VPC. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.handler">handler</a></code> | <code>string</code> | Path to the entry point and handler function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.bundle">bundle</a></code> | <code>boolean \| <a href="#@kikoda/cdk-constructs.FunctionBundleProps">FunctionBundleProps</a></code> | Disable bundling with esbuild. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.runtime">runtime</a></code> | <code>aws-cdk-lib.aws_lambda.Runtime</code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.srcPath">srcPath</a></code> | <code>string</code> | The source directory where the entry point is located. |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.awsSdkConnectionReuse">awsSdkConnectionReuse</a></code> | <code>boolean</code> | Whether to automatically reuse TCP connections when working with the AWS SDK for JavaScript. |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.bundling">bundling</a></code> | <code>aws-cdk-lib.aws_lambda_nodejs.BundlingOptions</code> | Bundling options. |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.depsLockFilePath">depsLockFilePath</a></code> | <code>string</code> | The path to the dependencies lock file (`yarn.lock` or `package-lock.json`). |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.entry">entry</a></code> | <code>string</code> | Path to the entry file (JavaScript or TypeScript). |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.handler">handler</a></code> | <code>string</code> | The name of the exported handler in the entry file. |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.projectRoot">projectRoot</a></code> | <code>string</code> | The path to the directory containing project config files (`package.json` or `tsconfig.json`). |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.runtime">runtime</a></code> | <code>aws-cdk-lib.aws_lambda.Runtime</code> | The runtime environment. |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.yarnPnP">yarnPnP</a></code> | <code>boolean</code> | *No description.* |
 
 ---
 
@@ -4868,32 +4872,92 @@ requires a NAT gateway, so picking Public subnets is not allowed.
 
 ---
 
-##### `handler`<sup>Required</sup> <a name="handler" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.handler"></a>
+##### `awsSdkConnectionReuse`<sup>Optional</sup> <a name="awsSdkConnectionReuse" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.awsSdkConnectionReuse"></a>
+
+```typescript
+public readonly awsSdkConnectionReuse: boolean;
+```
+
+- *Type:* boolean
+- *Default:* true
+
+Whether to automatically reuse TCP connections when working with the AWS SDK for JavaScript.
+
+This sets the `AWS_NODEJS_CONNECTION_REUSE_ENABLED` environment variable
+to `1`.
+
+> [https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/node-reusing-connections.html](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/node-reusing-connections.html)
+
+---
+
+##### `bundling`<sup>Optional</sup> <a name="bundling" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.bundling"></a>
+
+```typescript
+public readonly bundling: BundlingOptions;
+```
+
+- *Type:* aws-cdk-lib.aws_lambda_nodejs.BundlingOptions
+- *Default:* use default bundling options: no minify, no sourcemap, all modules are bundled.
+
+Bundling options.
+
+---
+
+##### `depsLockFilePath`<sup>Optional</sup> <a name="depsLockFilePath" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.depsLockFilePath"></a>
+
+```typescript
+public readonly depsLockFilePath: string;
+```
+
+- *Type:* string
+- *Default:* the path is found by walking up parent directories searching for a `yarn.lock` or `package-lock.json` file
+
+The path to the dependencies lock file (`yarn.lock` or `package-lock.json`).
+
+This will be used as the source for the volume mounted in the Docker
+container.
+
+Modules specified in `nodeModules` will be installed using the right
+installer (`npm` or `yarn`) along with this lock file.
+
+---
+
+##### `entry`<sup>Optional</sup> <a name="entry" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.entry"></a>
+
+```typescript
+public readonly entry: string;
+```
+
+- *Type:* string
+- *Default:* Derived from the name of the defining file and the construct's id. If the `NodejsFunction` is defined in `stack.ts` with `my-handler` as id (`new NodejsFunction(this, 'my-handler')`), the construct will look at `stack.my-handler.ts` and `stack.my-handler.js`.
+
+Path to the entry file (JavaScript or TypeScript).
+
+---
+
+##### `handler`<sup>Optional</sup> <a name="handler" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.handler"></a>
 
 ```typescript
 public readonly handler: string;
 ```
 
 - *Type:* string
+- *Default:* handler
 
-Path to the entry point and handler function.
-
-Uses the format, /path/to/file.function.
-Where the first part is the path to the file, followed by the name of the function that's
-exported in that file.
+The name of the exported handler in the entry file.
 
 ---
 
-##### `bundle`<sup>Optional</sup> <a name="bundle" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.bundle"></a>
+##### `projectRoot`<sup>Optional</sup> <a name="projectRoot" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.projectRoot"></a>
 
 ```typescript
-public readonly bundle: boolean | FunctionBundleProps;
+public readonly projectRoot: string;
 ```
 
-- *Type:* boolean | <a href="#@kikoda/cdk-constructs.FunctionBundleProps">FunctionBundleProps</a>
-- *Default:* Defaults to true
+- *Type:* string
+- *Default:* the directory containing the `depsLockFilePath`
 
-Disable bundling with esbuild.
+The path to the directory containing project config files (`package.json` or `tsconfig.json`).
 
 ---
 
@@ -4904,22 +4968,22 @@ public readonly runtime: Runtime;
 ```
 
 - *Type:* aws-cdk-lib.aws_lambda.Runtime
+- *Default:* Runtime.NODEJS_14_X
+
+The runtime environment.
+
+Only runtimes of the Node.js family are
+supported.
 
 ---
 
-##### `srcPath`<sup>Optional</sup> <a name="srcPath" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.srcPath"></a>
+##### `yarnPnP`<sup>Optional</sup> <a name="yarnPnP" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.yarnPnP"></a>
 
 ```typescript
-public readonly srcPath: string;
+public readonly yarnPnP: boolean;
 ```
 
-- *Type:* string
-- *Default:* Defaults to the app directory.
-
-The source directory where the entry point is located.
-
-The node_modules in this
-directory is used to generate the bundle.
+- *Type:* boolean
 
 ---
 
@@ -4972,10 +5036,14 @@ const typescriptSingletonFunctionProps: TypescriptSingletonFunctionProps = { ...
 | <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.tracing">tracing</a></code> | <code>aws-cdk-lib.aws_lambda.Tracing</code> | Enable AWS X-Ray Tracing for Lambda Function. |
 | <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | VPC network to place Lambda network interfaces. |
 | <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.vpcSubnets">vpcSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Where to place the network interfaces within the VPC. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.handler">handler</a></code> | <code>string</code> | Path to the entry point and handler function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.bundle">bundle</a></code> | <code>boolean \| <a href="#@kikoda/cdk-constructs.FunctionBundleProps">FunctionBundleProps</a></code> | Disable bundling with esbuild. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.runtime">runtime</a></code> | <code>aws-cdk-lib.aws_lambda.Runtime</code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.srcPath">srcPath</a></code> | <code>string</code> | The source directory where the entry point is located. |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.awsSdkConnectionReuse">awsSdkConnectionReuse</a></code> | <code>boolean</code> | Whether to automatically reuse TCP connections when working with the AWS SDK for JavaScript. |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.bundling">bundling</a></code> | <code>aws-cdk-lib.aws_lambda_nodejs.BundlingOptions</code> | Bundling options. |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.depsLockFilePath">depsLockFilePath</a></code> | <code>string</code> | The path to the dependencies lock file (`yarn.lock` or `package-lock.json`). |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.entry">entry</a></code> | <code>string</code> | Path to the entry file (JavaScript or TypeScript). |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.handler">handler</a></code> | <code>string</code> | The name of the exported handler in the entry file. |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.projectRoot">projectRoot</a></code> | <code>string</code> | The path to the directory containing project config files (`package.json` or `tsconfig.json`). |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.runtime">runtime</a></code> | <code>aws-cdk-lib.aws_lambda.Runtime</code> | The runtime environment. |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.yarnPnP">yarnPnP</a></code> | <code>boolean</code> | *No description.* |
 | <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.uuid">uuid</a></code> | <code>string</code> | A unique identifier to identify this lambda. |
 | <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.lambdaPurpose">lambdaPurpose</a></code> | <code>string</code> | A descriptive name for the purpose of this Lambda. |
 
@@ -5507,32 +5575,92 @@ requires a NAT gateway, so picking Public subnets is not allowed.
 
 ---
 
-##### `handler`<sup>Required</sup> <a name="handler" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.handler"></a>
+##### `awsSdkConnectionReuse`<sup>Optional</sup> <a name="awsSdkConnectionReuse" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.awsSdkConnectionReuse"></a>
+
+```typescript
+public readonly awsSdkConnectionReuse: boolean;
+```
+
+- *Type:* boolean
+- *Default:* true
+
+Whether to automatically reuse TCP connections when working with the AWS SDK for JavaScript.
+
+This sets the `AWS_NODEJS_CONNECTION_REUSE_ENABLED` environment variable
+to `1`.
+
+> [https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/node-reusing-connections.html](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/node-reusing-connections.html)
+
+---
+
+##### `bundling`<sup>Optional</sup> <a name="bundling" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.bundling"></a>
+
+```typescript
+public readonly bundling: BundlingOptions;
+```
+
+- *Type:* aws-cdk-lib.aws_lambda_nodejs.BundlingOptions
+- *Default:* use default bundling options: no minify, no sourcemap, all modules are bundled.
+
+Bundling options.
+
+---
+
+##### `depsLockFilePath`<sup>Optional</sup> <a name="depsLockFilePath" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.depsLockFilePath"></a>
+
+```typescript
+public readonly depsLockFilePath: string;
+```
+
+- *Type:* string
+- *Default:* the path is found by walking up parent directories searching for a `yarn.lock` or `package-lock.json` file
+
+The path to the dependencies lock file (`yarn.lock` or `package-lock.json`).
+
+This will be used as the source for the volume mounted in the Docker
+container.
+
+Modules specified in `nodeModules` will be installed using the right
+installer (`npm` or `yarn`) along with this lock file.
+
+---
+
+##### `entry`<sup>Optional</sup> <a name="entry" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.entry"></a>
+
+```typescript
+public readonly entry: string;
+```
+
+- *Type:* string
+- *Default:* Derived from the name of the defining file and the construct's id. If the `NodejsFunction` is defined in `stack.ts` with `my-handler` as id (`new NodejsFunction(this, 'my-handler')`), the construct will look at `stack.my-handler.ts` and `stack.my-handler.js`.
+
+Path to the entry file (JavaScript or TypeScript).
+
+---
+
+##### `handler`<sup>Optional</sup> <a name="handler" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.handler"></a>
 
 ```typescript
 public readonly handler: string;
 ```
 
 - *Type:* string
+- *Default:* handler
 
-Path to the entry point and handler function.
-
-Uses the format, /path/to/file.function.
-Where the first part is the path to the file, followed by the name of the function that's
-exported in that file.
+The name of the exported handler in the entry file.
 
 ---
 
-##### `bundle`<sup>Optional</sup> <a name="bundle" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.bundle"></a>
+##### `projectRoot`<sup>Optional</sup> <a name="projectRoot" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.projectRoot"></a>
 
 ```typescript
-public readonly bundle: boolean | FunctionBundleProps;
+public readonly projectRoot: string;
 ```
 
-- *Type:* boolean | <a href="#@kikoda/cdk-constructs.FunctionBundleProps">FunctionBundleProps</a>
-- *Default:* Defaults to true
+- *Type:* string
+- *Default:* the directory containing the `depsLockFilePath`
 
-Disable bundling with esbuild.
+The path to the directory containing project config files (`package.json` or `tsconfig.json`).
 
 ---
 
@@ -5543,22 +5671,22 @@ public readonly runtime: Runtime;
 ```
 
 - *Type:* aws-cdk-lib.aws_lambda.Runtime
+- *Default:* Runtime.NODEJS_14_X
+
+The runtime environment.
+
+Only runtimes of the Node.js family are
+supported.
 
 ---
 
-##### `srcPath`<sup>Optional</sup> <a name="srcPath" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.srcPath"></a>
+##### `yarnPnP`<sup>Optional</sup> <a name="yarnPnP" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.yarnPnP"></a>
 
 ```typescript
-public readonly srcPath: string;
+public readonly yarnPnP: boolean;
 ```
 
-- *Type:* string
-- *Default:* Defaults to the app directory.
-
-The source directory where the entry point is located.
-
-The node_modules in this
-directory is used to generate the bundle.
+- *Type:* boolean
 
 ---
 

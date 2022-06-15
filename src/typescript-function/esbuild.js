@@ -29,8 +29,9 @@ const finalConfig = {
 
 esbuild
   .build(finalConfig)
-  .then((result) =>
-    require('fs').writeFileSync(parsedArgs['--metafile'], JSON.stringify(result.metafile)),
+  .then((result) => {
+      if (result.metafile) return require('fs').writeFileSync(parsedArgs['--metafile'], JSON.stringify(result.metafile));
+    }
   )
   .catch((e) => {
     console.error(e);

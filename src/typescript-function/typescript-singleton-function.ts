@@ -1,10 +1,16 @@
-import { Runtime, SingletonFunction, Tracing } from 'aws-cdk-lib/aws-lambda';
+import { dirname, resolve } from 'path';
+import {
+  Architecture,
+  Runtime,
+  RuntimeFamily,
+  SingletonFunction,
+  Tracing,
+} from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
-import { Builder } from './builder';
-import { FunctionBundleProps } from './types';
+import { Bundling } from './bundling';
 import { TypescriptFunctionProps } from './typescript-function';
-import { normalizeSrcPath, copyFiles, validateBundle } from './util';
+import { findEntry, findLockFile } from './util';
 
 export interface TypescriptSingletonFunctionProps extends TypescriptFunctionProps {
   /**
@@ -28,34 +34,38 @@ export interface TypescriptSingletonFunctionProps extends TypescriptFunctionProp
 
 export class TypescriptSingletonFunction extends SingletonFunction {
   constructor(scope: Construct, id: string, props: TypescriptSingletonFunctionProps) {
-    // defaults
-    const srcPath = normalizeSrcPath(props.srcPath || '.');
+    if (props.runtime && props.runtime.family !== RuntimeFamily.NODEJS) {
+      throw new Error('Only `NODEJS` runtimes are supported.');
+    }
+
+    // Entry and defaults
+    const entry = resolve(findEntry(id, props.entry));
+    const handler = props.handler ?? 'handler';
     const runtime = props.runtime ?? Runtime.NODEJS_14_X;
-
-    const bundle = validateBundle(id, srcPath, props.bundle);
-
-    const builder = new Builder({
-      bundle: bundle as boolean | FunctionBundleProps,
-      srcPath,
-      handler: props.handler,
-      runtime,
-      buildDir: '.build',
-    });
-
-    const { outCode, outHandler } = builder;
-
-    copyFiles(bundle, srcPath, outCode.path);
+    const architecture = props.architecture ?? Architecture.X86_64;
+    const depsLockFilePath = findLockFile(props.depsLockFilePath);
+    const projectRoot = props.projectRoot ?? dirname(depsLockFilePath);
 
     super(scope, id, {
       ...props,
       runtime,
-      handler: outHandler,
-      code: outCode,
+      code: Bundling.bundle({
+        ...(props.bundling ?? {}),
+        entry,
+        runtime,
+        architecture,
+        depsLockFilePath,
+        projectRoot,
+        yarnPnP: !!props.yarnPnP,
+      }),
+      handler: `index.${handler}`,
       tracing: props.tracing ?? Tracing.ACTIVE,
     });
 
-    this.addEnvironment('AWS_NODEJS_CONNECTION_REUSE_ENABLED', '1', {
-      removeInEdge: true,
-    });
+    if (props.awsSdkConnectionReuse ?? true) {
+      this.addEnvironment('AWS_NODEJS_CONNECTION_REUSE_ENABLED', '1', {
+        removeInEdge: true,
+      });
+    }
   }
 }
