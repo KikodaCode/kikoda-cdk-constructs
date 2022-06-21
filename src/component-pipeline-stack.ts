@@ -1,4 +1,4 @@
-import { Arn, Stack, StackProps, StageProps } from 'aws-cdk-lib';
+import { Stack, StackProps, StageProps } from 'aws-cdk-lib';
 import { ComputeType } from 'aws-cdk-lib/aws-codebuild';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import {
@@ -166,16 +166,7 @@ export class ComponentPipelineStack<
           new PolicyStatement({
             effect: Effect.ALLOW,
             actions: ['sts:AssumeRole'],
-            resources: [
-              Arn.format(
-                {
-                  service: 'iam',
-                  resource: 'role',
-                  resourceName: roleName,
-                },
-                this,
-              ),
-            ],
+            resources: ['*'],
           }),
         ],
       };
