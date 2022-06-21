@@ -4,7 +4,7 @@ then
 fi
 
 subdomain="kikoda"
-account="703400946075"
+account=""
 roleName="SystemAdministrator"
 
 echo "[default]" > /home/node/.aws/config
