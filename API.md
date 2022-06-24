@@ -4342,7 +4342,7 @@ const typescriptFunctionProps: TypescriptFunctionProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.handler">handler</a></code> | <code>string</code> | The name of the exported handler in the entry file. |
 | <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.projectRoot">projectRoot</a></code> | <code>string</code> | The path to the directory containing project config files (`package.json` or `tsconfig.json`). |
 | <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.runtime">runtime</a></code> | <code>aws-cdk-lib.aws_lambda.Runtime</code> | The runtime environment. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.yarnPnP">yarnPnP</a></code> | <code>boolean</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.yarnPnP">yarnPnP</a></code> | <code>boolean</code> | Enable esbuild Yarn PnP support through `@yarnpkg/esbuild-plugin-pnp`. |
 
 ---
 
@@ -4985,6 +4985,8 @@ public readonly yarnPnP: boolean;
 
 - *Type:* boolean
 
+Enable esbuild Yarn PnP support through `@yarnpkg/esbuild-plugin-pnp`.
+
 ---
 
 ### TypescriptSingletonFunctionProps <a name="TypescriptSingletonFunctionProps" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps"></a>
@@ -5043,7 +5045,7 @@ const typescriptSingletonFunctionProps: TypescriptSingletonFunctionProps = { ...
 | <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.handler">handler</a></code> | <code>string</code> | The name of the exported handler in the entry file. |
 | <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.projectRoot">projectRoot</a></code> | <code>string</code> | The path to the directory containing project config files (`package.json` or `tsconfig.json`). |
 | <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.runtime">runtime</a></code> | <code>aws-cdk-lib.aws_lambda.Runtime</code> | The runtime environment. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.yarnPnP">yarnPnP</a></code> | <code>boolean</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.yarnPnP">yarnPnP</a></code> | <code>boolean</code> | Enable esbuild Yarn PnP support through `@yarnpkg/esbuild-plugin-pnp`. |
 | <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.uuid">uuid</a></code> | <code>string</code> | A unique identifier to identify this lambda. |
 | <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.lambdaPurpose">lambdaPurpose</a></code> | <code>string</code> | A descriptive name for the purpose of this Lambda. |
 
@@ -5688,6 +5690,8 @@ public readonly yarnPnP: boolean;
 
 - *Type:* boolean
 
+Enable esbuild Yarn PnP support through `@yarnpkg/esbuild-plugin-pnp`.
+
 ---
 
 ##### `uuid`<sup>Required</sup> <a name="uuid" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.uuid"></a>
@@ -5980,6 +5984,48 @@ Instance(s) of ComponentPipelineStacks created.
 ---
 
 
+### CostOptimizationAspects <a name="CostOptimizationAspects" id="@kikoda/cdk-constructs.CostOptimizationAspects"></a>
+
+- *Implements:* aws-cdk-lib.IAspect
+
+#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.CostOptimizationAspects.Initializer"></a>
+
+```typescript
+import { CostOptimizationAspects } from '@kikoda/cdk-constructs'
+
+new CostOptimizationAspects()
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.CostOptimizationAspects.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="@kikoda/cdk-constructs.CostOptimizationAspects.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+All aspects can visit an IConstruct.
+
+###### `node`<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.CostOptimizationAspects.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+
+
 ### FlagBasedAnnotator <a name="FlagBasedAnnotator" id="@kikoda/cdk-constructs.FlagBasedAnnotator"></a>
 
 #### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.FlagBasedAnnotator.Initializer"></a>
@@ -6080,6 +6126,216 @@ new LayeredConfig(base: any, layers: any)
 
 ---
 
+
+
+
+
+### OperationalExcellenceAspects <a name="OperationalExcellenceAspects" id="@kikoda/cdk-constructs.OperationalExcellenceAspects"></a>
+
+- *Implements:* aws-cdk-lib.IAspect
+
+#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.OperationalExcellenceAspects.Initializer"></a>
+
+```typescript
+import { OperationalExcellenceAspects } from '@kikoda/cdk-constructs'
+
+new OperationalExcellenceAspects()
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.OperationalExcellenceAspects.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="@kikoda/cdk-constructs.OperationalExcellenceAspects.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+All aspects can visit an IConstruct.
+
+###### `node`<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.OperationalExcellenceAspects.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+
+
+### PerformanceEfficiencyAspects <a name="PerformanceEfficiencyAspects" id="@kikoda/cdk-constructs.PerformanceEfficiencyAspects"></a>
+
+- *Implements:* aws-cdk-lib.IAspect
+
+#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.PerformanceEfficiencyAspects.Initializer"></a>
+
+```typescript
+import { PerformanceEfficiencyAspects } from '@kikoda/cdk-constructs'
+
+new PerformanceEfficiencyAspects()
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.PerformanceEfficiencyAspects.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="@kikoda/cdk-constructs.PerformanceEfficiencyAspects.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+All aspects can visit an IConstruct.
+
+###### `node`<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.PerformanceEfficiencyAspects.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+
+
+### ReliabilityAspects <a name="ReliabilityAspects" id="@kikoda/cdk-constructs.ReliabilityAspects"></a>
+
+- *Implements:* aws-cdk-lib.IAspect
+
+#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.ReliabilityAspects.Initializer"></a>
+
+```typescript
+import { ReliabilityAspects } from '@kikoda/cdk-constructs'
+
+new ReliabilityAspects()
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.ReliabilityAspects.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="@kikoda/cdk-constructs.ReliabilityAspects.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+All aspects can visit an IConstruct.
+
+###### `node`<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.ReliabilityAspects.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+
+
+### SecurityAspects <a name="SecurityAspects" id="@kikoda/cdk-constructs.SecurityAspects"></a>
+
+- *Implements:* aws-cdk-lib.IAspect
+
+#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.SecurityAspects.Initializer"></a>
+
+```typescript
+import { SecurityAspects } from '@kikoda/cdk-constructs'
+
+new SecurityAspects()
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.SecurityAspects.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="@kikoda/cdk-constructs.SecurityAspects.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+All aspects can visit an IConstruct.
+
+###### `node`<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.SecurityAspects.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+
+
+### SustainabilityAspects <a name="SustainabilityAspects" id="@kikoda/cdk-constructs.SustainabilityAspects"></a>
+
+- *Implements:* aws-cdk-lib.IAspect
+
+#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.SustainabilityAspects.Initializer"></a>
+
+```typescript
+import { SustainabilityAspects } from '@kikoda/cdk-constructs'
+
+new SustainabilityAspects()
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.SustainabilityAspects.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="@kikoda/cdk-constructs.SustainabilityAspects.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+All aspects can visit an IConstruct.
+
+###### `node`<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.SustainabilityAspects.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
 
 
 

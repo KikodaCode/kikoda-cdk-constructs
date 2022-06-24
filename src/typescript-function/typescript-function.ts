@@ -7,6 +7,9 @@ import { Bundling, BundlingProps } from './bundling';
 import { findEntry, findLockFile } from './util';
 
 export interface TypescriptFunctionProps extends NodejsFunctionProps {
+  /**
+   * Enable esbuild Yarn PnP support through `@yarnpkg/esbuild-plugin-pnp`
+   */
   readonly yarnPnP?: BundlingProps['yarnPnP'];
 }
 
