@@ -54,6 +54,10 @@ const project = new AwsCdkConstructLibrary({
   },
   pullRequestTemplate: false,
   codeCov: true,
+  autoApproveUpgrades: true,
+  autoApproveOptions: {
+    allowedUsernames: ['projen-workflows'],
+  },
   jestOptions: {
     jestConfig: {
       coveragePathIgnorePatterns: ['/node_modules/', 'test/util.ts'],
