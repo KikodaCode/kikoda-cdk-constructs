@@ -4066,6 +4066,7 @@ const repositoryConfig: RepositoryConfig = { ... }
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.RepositoryConfig.property.source">source</a></code> | <code><a href="#@kikoda/cdk-constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a> \| <a href="#@kikoda/cdk-constructs.GitHubSourceConfig">GitHubSourceConfig</a></code> | *No description.* |
 | <code><a href="#@kikoda/cdk-constructs.RepositoryConfig.property.baseDir">baseDir</a></code> | <code>string</code> | Base directory for the repository. |
+| <code><a href="#@kikoda/cdk-constructs.RepositoryConfig.property.packageManager">packageManager</a></code> | <code>string</code> | Package manager used in your source project. |
 | <code><a href="#@kikoda/cdk-constructs.RepositoryConfig.property.synthOuputDir">synthOuputDir</a></code> | <code>string</code> | Output directory for the cloudformation synthisis. |
 
 ---
@@ -4090,6 +4091,19 @@ public readonly baseDir: string;
 - *Default:* '.'
 
 Base directory for the repository.
+
+---
+
+##### `packageManager`<sup>Optional</sup> <a name="packageManager" id="@kikoda/cdk-constructs.RepositoryConfig.property.packageManager"></a>
+
+```typescript
+public readonly packageManager: string;
+```
+
+- *Type:* string
+- *Default:* 'yarn'
+
+Package manager used in your source project.
 
 ---
 
