@@ -56,7 +56,7 @@ const project = new AwsCdkConstructLibrary({
   codeCov: true,
   autoApproveUpgrades: true,
   autoApproveOptions: {
-    allowedUsernames: ['projen-workflows'],
+    allowedUsernames: ['projen-workflows[bot]'],
   },
   jestOptions: {
     jestConfig: {
