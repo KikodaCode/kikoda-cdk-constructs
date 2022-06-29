@@ -182,7 +182,7 @@ export class ComponentPipelineStack<
       },
       synth: new ShellStep('Synth', {
         input: new CodeSource(this, props.branch.branchName, source).source,
-        commands: defineSynthCommands('npm', baseDir, synthOuputDir),
+        commands: defineSynthCommands(props.repository.packageManager, baseDir, synthOuputDir),
         primaryOutputDirectory: `${baseDir}/${synthOuputDir}`,
       }),
       assetPublishingCodeBuildDefaults,
