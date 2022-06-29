@@ -588,12 +588,12 @@
   dependencies:
     ajv "^8.11.0"
 
-"@kikoda/projen-templates@^0.1.12":
-  version "0.1.12"
-  resolved "https://registry.yarnpkg.com/@kikoda/projen-templates/-/projen-templates-0.1.12.tgz#91e14b1fa55676c3b0abd1a06b1b7987626cd10b"
-  integrity sha512-Is1BD9X+orrfLgT+6dnCnwJzGGSdBEMum7VWMLrt9m/e2I+Pb40LE60TY/etadUnMgys8j+XiHpjSH6yx0LGmg==
+"@kikoda/projen-templates@^0.1.15":
+  version "0.1.15"
+  resolved "https://registry.yarnpkg.com/@kikoda/projen-templates/-/projen-templates-0.1.15.tgz#fe571b55b30070fc57f2ceabbf82d1f5832790d2"
+  integrity sha512-Gefhsn7MPyB1Tynjb29tqBD22SpT6TrP3dHOyPW1OhO5X1ng+nQ+4Lq4wkQSWVZLbtr52GY5NcRE2OQVQdHNmQ==
   dependencies:
-    projen "^0.58.15"
+    projen "^0.58.17"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -5043,10 +5043,28 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.58.15, projen@^0.58.17:
+projen@^0.58.17:
   version "0.58.17"
   resolved "https://registry.yarnpkg.com/projen/-/projen-0.58.17.tgz#0e5f0b723db94d275b4fd3c038b276a622502d61"
   integrity sha512-dwVCHFB9cMDDn8ctJM/AXVHHabh+G+AbZ84kSOPo2uvpVdzTMkuJV/T/oXu+CDhkHCJQIfSh5zJ+7Ebpo5MGyg==
+  dependencies:
+    "@iarna/toml" "^2.2.5"
+    case "^1.6.3"
+    chalk "^4.1.2"
+    conventional-changelog-config-spec "^2.1.0"
+    fs-extra "^9.1.0"
+    glob "^7"
+    ini "^2.0.0"
+    semver "^7.3.7"
+    shx "^0.3.4"
+    xmlbuilder2 "^2.4.1"
+    yaml "2.0.0"
+    yargs "^16.2.0"
+
+projen@^0.58.21:
+  version "0.58.21"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.58.21.tgz#7549dd6ac38c70cca6e780129d3786cbfb3dfd85"
+  integrity sha512-Oai5QjuM4j3qfaOhErlllCJ8mSVKzyNft9aORhIwClfJCSJxdaJY0EeePjtt9wRocipCTzjL+IAEazwlP7iuGg==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"

@@ -8,7 +8,7 @@ _Anything else we should know when reviewing?_
 
 ### Types of Changes
 
-What types of changes does your code introduce? _Chedk all the boxes that apply_
+What types of changes does your code introduce? _Check all the boxes that apply_
 
 - [ ] Bugfix (non - breaking change which fixes an issue)
 - [ ] New feature or Enhancement (non - breaking change which adds functionality)
