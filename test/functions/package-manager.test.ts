@@ -1,6 +1,6 @@
 import * as os from 'os';
 import { LogLevel } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { LockFile, PackageManager } from '../../src/typescript-function/package-manager';
+import { LockFile, PackageManager } from '../../src/utils/package-manager';
 
 test('from a package-lock.json', () => {
   const packageManager = PackageManager.fromLockFile('/path/to/package-lock.json');

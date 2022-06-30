@@ -1,7 +1,6 @@
 import { spawnSync, SpawnSyncOptions } from 'child_process';
-import { existsSync, statSync } from 'fs';
+import { existsSync } from 'fs';
 import { dirname, isAbsolute, join, parse, resolve, extname } from 'path';
-import { LockFile } from './package-manager';
 
 export interface CallSite {
   getThis(): any;
@@ -221,41 +220,6 @@ function extractTsConfig(
   }
   return updatedCompilerOptions;
 }
-
-/**
- * Checks given lock file or searches for a lock file
- */
-export function findLockFile(depsLockFilePath?: string): string {
-  if (depsLockFilePath) {
-    if (!existsSync(depsLockFilePath)) {
-      throw new Error(`Lock file at ${depsLockFilePath} doesn't exist`);
-    }
-
-    if (!statSync(depsLockFilePath).isFile()) {
-      throw new Error('`depsLockFilePath` should point to a file');
-    }
-
-    return resolve(depsLockFilePath);
-  }
-
-  const lockFiles = findUpMultiple([LockFile.PNPM, LockFile.YARN, LockFile.NPM]);
-
-  if (lockFiles.length === 0) {
-    throw new Error(
-      'Cannot find a package lock file (`pnpm-lock.yaml`, `yarn.lock` or `package-lock.json`). Please specify it with `depsLockFilePath`.',
-    );
-  }
-  if (lockFiles.length > 1) {
-    throw new Error(
-      `Multiple package lock files found: ${lockFiles.join(
-        ', ',
-      )}. Please specify the desired one with \`depsLockFilePath\`.`,
-    );
-  }
-
-  return lockFiles[0];
-}
-
 /**
  * Searches for an entry file. Preference order is the following:
  * 1. Given entry file

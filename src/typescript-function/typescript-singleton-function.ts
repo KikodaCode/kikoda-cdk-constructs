@@ -8,9 +8,10 @@ import {
 } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
+import { findLockFile } from '../utils/package-manager';
 import { Bundling } from './bundling';
 import { TypescriptFunctionProps } from './typescript-function';
-import { findEntry, findLockFile } from './util';
+import { findEntry } from './util';
 
 export interface TypescriptSingletonFunctionProps extends TypescriptFunctionProps {
   /**
