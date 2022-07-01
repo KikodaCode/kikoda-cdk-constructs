@@ -588,10 +588,10 @@
   dependencies:
     ajv "^8.11.0"
 
-"@kikoda/projen-templates@^0.1.17":
-  version "0.1.17"
-  resolved "https://registry.yarnpkg.com/@kikoda/projen-templates/-/projen-templates-0.1.17.tgz#09a61794d6a40619cb16865769c90f51b369c1a1"
-  integrity sha512-XX+/ryO0JdFNsxwuzTo2r+5SbNabwazA6J8HcaZL2fpSdt5wPVhLrqaMsUtRjNsToDYWx165xV9bnUI62l75+Q==
+"@kikoda/projen-templates@^0.1.19":
+  version "0.1.19"
+  resolved "https://registry.yarnpkg.com/@kikoda/projen-templates/-/projen-templates-0.1.19.tgz#0d9d4b35bae2e9aad22f653799aea3d86a0b13b8"
+  integrity sha512-bm0kcPGGIfYhRjEnDFy7wQCzn4pR5tOrqWEJ5OP4jwV3xs+9pKR/VOqoZWw+X2pli+XP/ZFo7cCgVeebINYckg==
   dependencies:
     projen "^0.58.21"
 
