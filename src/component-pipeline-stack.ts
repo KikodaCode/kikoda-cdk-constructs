@@ -16,7 +16,7 @@ import { CodeSource, RepositoryConfig } from './code-source';
 import { CodeArtifactAuthTokenAccessRole } from './codeartifact-auth-token-access-role';
 import { PipelineEventNotificationRule } from './pipeline-event-notification-rule';
 import { TrimCloudAssemblyStep } from './trim-cloud-assembly-step';
-import { defineSynthCommands } from './util';
+import { defineSynthCommands } from './utils/util';
 
 /**
  * Configuration for the stage.
@@ -182,7 +182,7 @@ export class ComponentPipelineStack<
       },
       synth: new ShellStep('Synth', {
         input: new CodeSource(this, props.branch.branchName, source).source,
-        commands: defineSynthCommands('npm', baseDir, synthOuputDir),
+        commands: defineSynthCommands(baseDir, synthOuputDir),
         primaryOutputDirectory: `${baseDir}/${synthOuputDir}`,
       }),
       assetPublishingCodeBuildDefaults,

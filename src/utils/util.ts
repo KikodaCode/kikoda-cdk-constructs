@@ -1,3 +1,5 @@
+import { findLockFile, PackageManager } from './package-manager';
+
 /**
  * Creates synth commands based on input parameters.
  *
@@ -10,22 +12,26 @@
  * @returns {{}}
  */
 export function defineSynthCommands(
-  pkgManager: 'yarn' | 'npm' = 'yarn',
   baseDir?: string,
   synthOutputDir?: string,
+  depsLockFilePath?: string,
   installRequired: boolean = true,
 ) {
   let commands: string[] = [];
+  const lockFilePath = findLockFile(depsLockFilePath);
+  const pkgManager = PackageManager.fromLockFile(lockFilePath);
   if (baseDir) {
     commands.push(`cd ${baseDir}`);
   }
   if (installRequired) {
-    commands.push(`${pkgManager} install`);
+    for (const cmd of pkgManager.installCommand) {
+      commands.push(cmd);
+    }
   }
-  let synthCommand = `${pkgManager}${pkgManager === 'npm' ? ' run' : ''} cdk synth`;
-  if (synthOutputDir && synthOutputDir !== '') {
-    synthCommand += `${pkgManager === 'npm' ? ' --' : ''} -o ${synthOutputDir}`;
+  if (synthOutputDir) {
+    commands.push(pkgManager.runScript('cdk synth', `-o ${synthOutputDir}`));
+  } else {
+    commands.push(pkgManager.runScript('cdk synth'));
   }
-  commands.push(synthCommand);
   return commands;
 }

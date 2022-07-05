@@ -1,7 +1,6 @@
 import { spawnSync, SpawnSyncOptions } from 'child_process';
-import { existsSync, statSync } from 'fs';
-import { dirname, isAbsolute, join, parse, resolve, extname } from 'path';
-import { LockFile } from './package-manager';
+import { existsSync } from 'fs';
+import { dirname, isAbsolute, join, resolve, extname } from 'path';
 
 export interface CallSite {
   getThis(): any;
@@ -30,40 +29,6 @@ export function callsites(): CallSite[] {
   const stack = new Error().stack?.slice(1);
   Error.prepareStackTrace = _prepareStackTrace;
   return stack as unknown as CallSite[];
-}
-
-/**
- * Find a file by walking up parent directories
- */
-export function findUp(name: string, directory: string = process.cwd()): string | undefined {
-  return findUpMultiple([name], directory)[0];
-}
-
-/**
- * Find the lowest of multiple files by walking up parent directories. If
- * multiple files exist at the same level, they will all be returned.
- */
-export function findUpMultiple(names: string[], directory: string = process.cwd()): string[] {
-  const absoluteDirectory = resolve(directory);
-
-  const files = [];
-  for (const name of names) {
-    const file = join(directory, name);
-    if (existsSync(file)) {
-      files.push(file);
-    }
-  }
-
-  if (files.length > 0) {
-    return files;
-  }
-
-  const { root } = parse(absoluteDirectory);
-  if (absoluteDirectory === root) {
-    return [];
-  }
-
-  return findUpMultiple(names, dirname(absoluteDirectory));
 }
 
 /**
@@ -221,41 +186,6 @@ function extractTsConfig(
   }
   return updatedCompilerOptions;
 }
-
-/**
- * Checks given lock file or searches for a lock file
- */
-export function findLockFile(depsLockFilePath?: string): string {
-  if (depsLockFilePath) {
-    if (!existsSync(depsLockFilePath)) {
-      throw new Error(`Lock file at ${depsLockFilePath} doesn't exist`);
-    }
-
-    if (!statSync(depsLockFilePath).isFile()) {
-      throw new Error('`depsLockFilePath` should point to a file');
-    }
-
-    return resolve(depsLockFilePath);
-  }
-
-  const lockFiles = findUpMultiple([LockFile.PNPM, LockFile.YARN, LockFile.NPM]);
-
-  if (lockFiles.length === 0) {
-    throw new Error(
-      'Cannot find a package lock file (`pnpm-lock.yaml`, `yarn.lock` or `package-lock.json`). Please specify it with `depsLockFilePath`.',
-    );
-  }
-  if (lockFiles.length > 1) {
-    throw new Error(
-      `Multiple package lock files found: ${lockFiles.join(
-        ', ',
-      )}. Please specify the desired one with \`depsLockFilePath\`.`,
-    );
-  }
-
-  return lockFiles[0];
-}
-
 /**
  * Searches for an entry file. Preference order is the following:
  * 1. Given entry file
