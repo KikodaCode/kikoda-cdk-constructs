@@ -4,10 +4,9 @@ import {
   callsites,
   exec,
   extractDependencies,
-  findUp,
-  findUpMultiple,
   getTsconfigCompilerOptions,
 } from '../../src/typescript-function/util';
+import { findUp, findUpMultiple } from '../../src/utils/file-utils';
 
 beforeEach(() => {
   jest.clearAllMocks();
