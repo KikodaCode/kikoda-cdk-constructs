@@ -18,6 +18,27 @@ describe('defineSynthCommands', () => {
       ).join(', '),
     ).toMatch('-- -o test');
   });
+  it('properly handles yarn manager', () => {
+    expect(
+      defineSynthCommands(
+        undefined,
+        undefined,
+        resolve(__dirname, './test-configs/yarn.lock'),
+      ).join(', '),
+    ).toMatch('yarn');
+    expect(
+      defineSynthCommands(undefined, 'test', resolve(__dirname, './test-configs/yarn.lock')).join(
+        ', ',
+      ),
+    ).toMatch('-o test');
+    expect(
+      defineSynthCommands(
+        undefined,
+        undefined,
+        resolve(__dirname, './test-configs/yarn.lock'),
+      ).join(', '),
+    ).toMatch('yarn install --no-immutable');
+  });
   it('synthOutputDir', () => {
     const commands = defineSynthCommands(
       undefined,
