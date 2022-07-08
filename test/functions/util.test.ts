@@ -6,7 +6,6 @@ import {
   extractDependencies,
   getTsconfigCompilerOptions,
 } from '../../src/typescript-function/util';
-import { findUp, findUpMultiple } from '../../src/utils/file-utils';
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -14,76 +13,6 @@ beforeEach(() => {
 
 describe('callsites', () => {
   expect(callsites()[0].getFileName()).toMatch(/.*\/test\/functions\/util.test.ts$/);
-});
-
-describe('findUp', () => {
-  test('Starting at process.cwd()', () => {
-    expect(findUp('README.md')).toMatch(/kikoda-cdk-constructs\/README.md$/);
-  });
-
-  test('Non existing file', () => {
-    expect(findUp('non-existing-file.unknown')).toBe(undefined);
-  });
-
-  test('Starting at a specific path', () => {
-    expect(findUp('util.test.ts', __dirname)).toMatch(/.*\/test\/functions\/util.test.ts$/);
-  });
-
-  test('Non existing file starting at a non existing relative path', () => {
-    expect(findUp('not-to-be-found.txt', 'non-existing/relative/path')).toBe(undefined);
-  });
-
-  test('Starting at a relative path', () => {
-    expect(findUp('util.test.ts', __dirname)).toMatch(/.*\/test\/functions\/util.test.ts$/);
-  });
-});
-
-describe('findUpMultiple', () => {
-  test('Starting at process.cwd()', () => {
-    const files = findUpMultiple(['README.md', 'package.json']);
-    expect(files).toHaveLength(2);
-    expect(files[0]).toMatch(/kikoda-cdk-constructs\/README\.md$/);
-    expect(files[1]).toMatch(/kikoda-cdk-constructs\/package\.json$/);
-  });
-
-  test('Non existing files', () => {
-    expect(findUpMultiple(['non-existing-file.unknown', 'non-existing-file.unknown2'])).toEqual([]);
-  });
-
-  test('Existing and non existing files', () => {
-    const files = findUpMultiple(['non-existing-file.unknown', 'README.md']);
-    expect(files).toHaveLength(1);
-    expect(files[0]).toMatch(/kikoda-cdk-constructs\/README\.md$/);
-  });
-
-  test('Starting at a specific path', () => {
-    const files = findUpMultiple(['util.test.ts', 'typescript-function.test.ts'], __dirname);
-    expect(files).toHaveLength(2);
-    expect(files[0]).toMatch(/(.*)\/test\/functions\/util\.test\.ts$/);
-    expect(files[1]).toMatch(/.*\/test\/functions\/typescript-function\.test\.ts$/);
-  });
-
-  test('Non existing files starting at a non existing relative path', () => {
-    expect(
-      findUpMultiple(['not-to-be-found.txt', 'not-to-be-found2.txt'], 'non-existing/relative/path'),
-    ).toEqual([]);
-  });
-
-  test('Starting at a relative path', () => {
-    const files = findUpMultiple(['util.test.ts', 'typescript-function.test.ts'], __dirname);
-    expect(files).toHaveLength(2);
-    expect(files[0]).toMatch(/.*\/test\/functions\/util\.test\.ts$/);
-    expect(files[1]).toMatch(/.*\/test\/functions\/typescript-function\.test\.ts$/);
-  });
-
-  test('Files on multiple levels', () => {
-    const files = findUpMultiple(
-      ['README.md', 'util.test.ts'],
-      path.join(__dirname, 'integ-handlers'),
-    );
-    expect(files).toHaveLength(1);
-    expect(files[0]).toMatch(/.*\/test\/functions\/util\.test\.ts$/);
-  });
 });
 
 describe('exec', () => {

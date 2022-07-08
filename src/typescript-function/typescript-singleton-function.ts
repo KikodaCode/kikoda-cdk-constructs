@@ -8,7 +8,7 @@ import {
 } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
-import { findLockFile } from '../utils/package-manager';
+import { findLockFile } from '../package-manager';
 import { Bundling } from './bundling';
 import { TypescriptFunctionProps } from './typescript-function';
 import { findEntry } from './util';

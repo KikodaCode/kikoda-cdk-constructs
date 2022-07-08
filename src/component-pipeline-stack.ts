@@ -16,7 +16,7 @@ import { CodeSource, RepositoryConfig } from './code-source';
 import { CodeArtifactAuthTokenAccessRole } from './codeartifact-auth-token-access-role';
 import { PipelineEventNotificationRule } from './pipeline-event-notification-rule';
 import { TrimCloudAssemblyStep } from './trim-cloud-assembly-step';
-import { defineSynthCommands } from './utils/util';
+import { defineSynthCommands } from './util';
 
 /**
  * Configuration for the stage.

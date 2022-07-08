@@ -2,7 +2,7 @@ import { existsSync, statSync } from 'fs';
 import { platform } from 'os';
 import { basename, resolve } from 'path';
 import { LogLevel } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { findUpMultiple } from './file-utils';
+import { findUpMultiple } from './util';
 
 /**
  * PackageManager properties.

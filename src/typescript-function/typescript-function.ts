@@ -3,7 +3,7 @@ import { Architecture, Function, Runtime, RuntimeFamily, Tracing } from 'aws-cdk
 import { NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
-import { findLockFile } from '../utils/package-manager';
+import { findLockFile } from '../package-manager';
 import { Bundling, BundlingProps } from './bundling';
 import { findEntry } from './util';
 

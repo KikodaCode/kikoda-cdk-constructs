@@ -1,8 +1,8 @@
 import * as os from 'os';
 import { resolve } from 'path';
 import { LogLevel } from 'aws-cdk-lib/aws-lambda-nodejs';
-import * as fileUtils from '../../src/utils/file-utils';
-import { findLockFile, LockFile, PackageManager } from '../../src/utils/package-manager';
+import { findLockFile, LockFile, PackageManager } from '../src/package-manager';
+import * as fileUtils from '../src/util';
 
 test('from a package-lock.json', () => {
   const packageManager = PackageManager.fromLockFile('/path/to/package-lock.json');
@@ -66,11 +66,11 @@ test.skip('Windows', () => {
 
 describe('findLockFile', () => {
   it('finds a direct path lock file', () => {
-    expect(() => findLockFile(resolve(__dirname, '../test-configs/package.json'))).not.toThrow();
+    expect(() => findLockFile(resolve(__dirname, './test-configs/package.json'))).not.toThrow();
   });
 
   it('throws error on no existant file.', () => {
-    expect(() => findLockFile(resolve(__dirname, '../test-configs/package-bob.json'))).toThrow();
+    expect(() => findLockFile(resolve(__dirname, './test-configs/package-bob.json'))).toThrow();
   });
 
   it('throws error when it cannot find a lockfile.', () => {
