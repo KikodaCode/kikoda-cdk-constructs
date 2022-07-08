@@ -26,9 +26,7 @@ export function defineSynthCommands(
     commands.push(`cd ${baseDir}`);
   }
   if (installRequired) {
-    for (const cmd of pkgManager.installCommand) {
-      commands.push(cmd);
-    }
+    commands.push(pkgManager.installCommand.join(' '));
   }
   if (synthOutputDir) {
     commands.push(pkgManager.runScript('cdk synth', `-o ${synthOutputDir}`));
