@@ -10,7 +10,6 @@ import { findLockFile, PackageManager } from './package-manager';
  * @param {?string} [baseDir]
  * @param {?string} [assumeRoleArn]
  * @param {boolean} [installRequired=true]
- * @param {string} [pkgManager='yarn']
  * @returns {{}}
  */
 export function defineSynthCommands(

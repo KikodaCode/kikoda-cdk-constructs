@@ -66,14 +66,6 @@ export interface RepositoryConfig {
    * @default './out'
    */
   readonly synthOuputDir?: string;
-  /**
-   * Package manager used in your source project.
-   *
-   * @readonly
-   * @type {?string}
-   * @default 'yarn'
-   */
-  readonly packageManager?: 'npm' | 'yarn';
   readonly source: GitHubSourceConfig | CodeCommitSourceConfig;
 }
 

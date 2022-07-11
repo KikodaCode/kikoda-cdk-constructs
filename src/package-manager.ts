@@ -61,6 +61,12 @@ export enum LockFile {
   PNPM = 'pnpm-lock.yaml',
 }
 
+export enum PackageManagerBinary {
+  NPM = 'npm',
+  YARN = 'yarn',
+  PNPM = 'pnpm',
+}
+
 /**
  * Checks given lock file or searches for a lock file
  */
@@ -115,28 +121,30 @@ export class PackageManager {
           lockFile: LockFile.YARN,
           installCommand:
             logLevel && logLevel !== LogLevel.INFO
-              ? ['yarn', 'install', '--no-immutable', '--silent']
-              : ['yarn', 'install', '--no-immutable'],
-          runCommand: ['yarn', 'run'],
-          scriptCommand: ['yarn'],
+              ? [PackageManagerBinary.YARN, 'install', '--no-immutable', '--silent']
+              : [PackageManagerBinary.YARN, 'install', '--no-immutable'],
+          runCommand: [PackageManagerBinary.YARN, 'run'],
+          scriptCommand: [PackageManagerBinary.YARN],
         });
       case LockFile.PNPM:
         return new PackageManager({
           lockFile: LockFile.PNPM,
           installCommand:
             logLevel && logLevel !== LogLevel.INFO
-              ? ['pnpm', 'install', '--reporter', 'silent']
-              : ['pnpm', 'install'],
-          runCommand: ['pnpm', 'exec'],
-          scriptCommand: ['pnpm', 'run'],
+              ? [PackageManagerBinary.PNPM, 'install', '--reporter', 'silent']
+              : [PackageManagerBinary.PNPM, 'install'],
+          runCommand: [PackageManagerBinary.PNPM, 'exec'],
+          scriptCommand: [PackageManagerBinary.PNPM, 'run'],
           argsSeparator: '--',
         });
       default:
         return new PackageManager({
           lockFile: LockFile.NPM,
-          installCommand: logLevel ? ['npm', 'ci', '--loglevel', logLevel] : ['npm', 'ci'],
+          installCommand: logLevel
+            ? [PackageManagerBinary.NPM, 'ci', '--loglevel', logLevel]
+            : [PackageManagerBinary.NPM, 'ci'],
           runCommand: ['npx', '--no-install'],
-          scriptCommand: ['npm', 'run'],
+          scriptCommand: [PackageManagerBinary.NPM, 'run'],
           scriptArgFlag: '--',
         });
     }
