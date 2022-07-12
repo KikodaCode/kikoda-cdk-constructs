@@ -46,9 +46,9 @@
     "organization": true
   },
   "devDependencies": {
-    "@kikoda/projen-templates": "^0.1.28",
+    "@kikoda/projen-templates": "^0.1.29",
     "@types/fs-extra": "^9.0.13",
-    "@types/jest": "^27.5.2",
+    "@types/jest": "^27",
     "@types/lodash": "^4.14.182",
     "@types/md5": "^2.3.2",
     "@types/node": "^14",
@@ -74,7 +74,7 @@
     "json-schema": "^0.4.0",
     "npm-check-updates": "^12",
     "prettier": "^2.7.1",
-    "projen": "^0.58.21",
+    "projen": "^0.58.27",
     "standard-version": "^9",
     "ts-jest": "^27",
     "ts-node": "^10",
@@ -117,7 +117,7 @@
     ],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.ts?(x)",
-      "<rootDir>/(test|src)/**/?(*.)+(spec|test).ts?(x)"
+      "<rootDir>/(test|src)/**/*(*.)@(spec|test).ts?(x)"
     ],
     "clearMocks": true,
     "collectCoverage": true,
