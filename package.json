@@ -46,7 +46,7 @@
     "organization": true
   },
   "devDependencies": {
-    "@kikoda/projen-templates": "^0.1.38",
+    "@kikoda/projen-templates": "^0.1.39",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27",
     "@types/lodash": "^4.14.182",
@@ -74,7 +74,7 @@
     "json-schema": "^0.4.0",
     "npm-check-updates": "^15",
     "prettier": "^2.7.1",
-    "projen": "^0.59.3",
+    "projen": "^0.59.5",
     "standard-version": "^9",
     "ts-jest": "^27",
     "ts-node": "^10",
@@ -85,7 +85,7 @@
     "constructs": "^10.0.5"
   },
   "dependencies": {
-    "@yarnpkg/esbuild-plugin-pnp": "^2.0.2",
+    "@yarnpkg/esbuild-plugin-pnp": "^2.0.3",
     "esbuild": "~0.13",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
