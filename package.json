@@ -46,7 +46,7 @@
     "organization": true
   },
   "devDependencies": {
-    "@kikoda/projen-templates": "^0.1.40",
+    "@kikoda/projen-templates": "^0.1.41",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27",
     "@types/lodash": "^4.14.182",
@@ -74,7 +74,7 @@
     "json-schema": "^0.4.0",
     "npm-check-updates": "^15",
     "prettier": "^2.7.1",
-    "projen": "^0.59.6",
+    "projen": "^0.59.7",
     "standard-version": "^9",
     "ts-jest": "^27",
     "ts-node": "^10",
