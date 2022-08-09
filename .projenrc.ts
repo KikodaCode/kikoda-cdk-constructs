@@ -67,12 +67,6 @@ const project = new AwsCdkConstructLibrary({
 
 project.compileTask.exec('cp src/typescript-function/esbuild.js lib/typescript-function/');
 
-// Run Build workflow on push to main to update base code coverage
-const buildWorkflow = project.github?.tryFindWorkflow('build');
-buildWorkflow?.on({
-  push: { branches: ['main'] },
-});
-
 new YamlFile(project, 'codecov.yml', {
   obj: {
     coverage: {
