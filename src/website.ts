@@ -1,21 +1,11 @@
-import { AssetOptions, Stack } from 'aws-cdk-lib';
+import { AssetOptions } from 'aws-cdk-lib';
 import { OriginRequestPolicy, SecurityPolicyProtocol } from 'aws-cdk-lib/aws-cloudfront';
-import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
-import {
-  AwsCustomResource,
-  PhysicalResourceId,
-  AwsCustomResourcePolicy,
-} from 'aws-cdk-lib/custom-resources';
 import { Construct } from 'constructs';
 
-import { v4 as uuid } from 'uuid';
-import { GeneratedConfig } from './generated-config';
+import { IAdditionalConfig, GeneratedConfig } from './generated-config';
 import { SinglePageApp } from './single-page-app';
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const md5 = require('md5');
 
 /** Presets used for invalidation after deployments to Cloudfront Distributions */
 export const DistributionPathsConfig = {
@@ -105,6 +95,7 @@ export interface WebsiteProps {
 export class Website extends Construct {
   /** Full website endpoint w/protocol. */
   public readonly endpoint: string;
+  public readonly generatedWebConfig?: GeneratedConfig<IAdditionalConfig>;
 
   constructor(scope: Construct, id: string, props: WebsiteProps) {
     super(scope, id);
@@ -152,70 +143,29 @@ export class Website extends Construct {
     if (!!generateWebConfigProps) {
       // generate dynamic config
       const { configDir, additionalConfig } = generateWebConfigProps;
-      const generatedWebConfig = new GeneratedConfig({
+      this.generatedWebConfig = new GeneratedConfig({
         stage,
         servicePath: appDir,
         configDir,
         additionalConfig,
       });
 
-      const hashedContents = md5(JSON.stringify(generatedWebConfig.config));
-
-      const s3ActionConfigManifest = {
-        action: 'putObject',
-        parameters: {
-          Body: Stack.of(this).toJsonString({
+      const configManifest = new BucketDeployment(this, 'WebConfigManifest', {
+        sources: [
+          Source.jsonData('config-manifest.json', {
             files: {
-              'config.json': generatedWebConfig.fileName,
+              'config.json': this.generatedWebConfig.fileName,
             },
           }),
-          Bucket: website.websiteBucket.bucketName,
-          CacheControl: 'max-age=0, no-cache, no-store, must-revalidate',
-          ContentType: 'application/json',
-          Key: 'config-manifest.json',
-        },
-        /** Generate a unique uuid on every single deployment to ensure this file gets replaced
-         * every time
-         */
-        physicalResourceId: PhysicalResourceId.of(uuid()),
-        service: 'S3',
-      };
-
-      const configManifest = new AwsCustomResource(this, 'ConfigManifest', {
-        onCreate: s3ActionConfigManifest,
-        onUpdate: s3ActionConfigManifest,
-        policy: AwsCustomResourcePolicy.fromStatements([
-          new PolicyStatement({
-            actions: ['s3:PutObject'],
-            resources: [website.websiteBucket.arnForObjects('config-manifest.json')],
-          }),
-        ]),
+        ],
+        destinationBucket: website.websiteBucket,
       });
 
-      const s3Action = {
-        action: 'putObject',
-        parameters: {
-          Body: Stack.of(this).toJsonString(generatedWebConfig.config),
-          Bucket: website.websiteBucket.bucketName,
-          CacheControl: 'max-age=0, no-cache, no-store, must-revalidate',
-          ContentType: 'application/json',
-          Key: generatedWebConfig.fileName,
-        },
-        // hash the contents of the config file to use as physical id. This will ensure replacement
-        // when the contents change, even if the name does not.
-        physicalResourceId: PhysicalResourceId.of(`${hashedContents}-config-file`),
-        service: 'S3',
-      };
-
-      const configFile = new AwsCustomResource(this, 'ConfigFile', {
-        onCreate: s3Action,
-        onUpdate: s3Action,
-        policy: AwsCustomResourcePolicy.fromStatements([
-          new PolicyStatement({
-            actions: ['s3:PutObject'],
-            resources: [website.websiteBucket.arnForObjects(generatedWebConfig.fileName)],
-          }),
-        ]),
+      const configFile = new BucketDeployment(this, 'WebConfig', {
+        sources: [
+          Source.jsonData(this.generatedWebConfig.fileName, this.generatedWebConfig.config),
+        ],
+        destinationBucket: website.websiteBucket,
       });
 
       // Be sure to deploy the config file after the initial website deployment

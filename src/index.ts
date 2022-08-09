@@ -6,4 +6,5 @@ export * from './layered-config';
 export * from './stage-alarm-topic';
 export * from './typescript-function';
 export * from './website';
+export * from './generated-config';
 export * from './well-architected-aspects';

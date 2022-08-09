@@ -5,6 +5,10 @@
       "type": "build"
     },
     {
+      "name": "@types/adm-zip",
+      "type": "build"
+    },
+    {
       "name": "@types/fs-extra",
       "type": "build"
     },
@@ -24,6 +28,14 @@
     {
       "name": "@types/node",
       "version": "^14",
+      "type": "build"
+    },
+    {
+      "name": "@types/tmp",
+      "type": "build"
+    },
+    {
+      "name": "@types/unzipper",
       "type": "build"
     },
     {
@@ -146,7 +158,23 @@
       "type": "build"
     },
     {
+      "name": "@aws-sdk/client-s3",
+      "type": "bundled"
+    },
+    {
+      "name": "@aws-sdk/client-secrets-manager",
+      "type": "bundled"
+    },
+    {
       "name": "@yarnpkg/esbuild-plugin-pnp",
+      "type": "bundled"
+    },
+    {
+      "name": "adm-zip",
+      "type": "bundled"
+    },
+    {
+      "name": "cfn-lambda",
       "type": "bundled"
     },
     {
@@ -155,11 +183,31 @@
       "type": "bundled"
     },
     {
+      "name": "fs-extra",
+      "type": "bundled"
+    },
+    {
       "name": "lodash",
       "type": "bundled"
     },
     {
       "name": "md5",
+      "type": "bundled"
+    },
+    {
+      "name": "node-cache",
+      "type": "bundled"
+    },
+    {
+      "name": "promise-mysql",
+      "type": "bundled"
+    },
+    {
+      "name": "tmp-promise",
+      "type": "bundled"
+    },
+    {
+      "name": "unzipper",
       "type": "bundled"
     },
     {

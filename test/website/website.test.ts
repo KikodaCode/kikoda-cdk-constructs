@@ -89,29 +89,9 @@ describe('Given a Website', () => {
     },
   });
 
-  const generatedConfigTemplate = Template.fromStack(generatedConfigStack);
-
   test('Generated config with additionalConfig object should be deployed to S3', () => {
-    generatedConfigTemplate.hasResourceProperties('Custom::AWS', {
-      Create: {
-        'Fn::Join': [
-          '',
-          [Match.anyValue(), Match.anyValue(), Match.stringLikeRegexp('config-manifest.json')],
-        ],
-      },
-    });
-
-    generatedConfigTemplate.hasResourceProperties('Custom::AWS', {
-      Create: {
-        'Fn::Join': [
-          '',
-          [
-            Match.stringLikeRegexp('additionalConfig.*configValue'),
-            Match.anyValue(),
-            Match.anyValue(),
-          ],
-        ],
-      },
-    });
+    expect(
+      generatedConfigStack.website.generatedWebConfig?.config.additionalConfig?.configValue,
+    ).toBe(true);
   });
 });

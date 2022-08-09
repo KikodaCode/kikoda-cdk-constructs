@@ -201,6 +201,20 @@ test('throws with ESM and NODEJS_12_X', () => {
   ).toThrow(/ECMAScript module output format is not supported by the nodejs12.x runtime/);
 });
 
+// test for an exception when yarnPnP is used with PackageManager.NPM
+test('throws with yarnPnP and npm', () => {
+  expect(() =>
+    Bundling.bundle({
+      entry,
+      projectRoot,
+      depsLockFilePath: '/project/package-lock.json',
+      runtime: Runtime.NODEJS_12_X,
+      architecture: Architecture.X86_64,
+      yarnPnP: true,
+    }),
+  ).toThrow(/yarnPnP is only supported when using the yarn package manager/);
+});
+
 test('esbuild bundling source map default', () => {
   Bundling.bundle({
     entry,
