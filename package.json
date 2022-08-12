@@ -46,7 +46,7 @@
     "organization": true
   },
   "devDependencies": {
-    "@kikoda/projen-templates": "^0.1.58",
+    "@kikoda/projen-templates": "^0.1.59",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27",
     "@types/lodash": "^4.14.182",
