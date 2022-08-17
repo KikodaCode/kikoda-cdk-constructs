@@ -46,10 +46,10 @@
     "organization": true
   },
   "devDependencies": {
-    "@kikoda/projen-templates": "^0.1.63",
+    "@kikoda/projen-templates": "^0.1.64",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27",
-    "@types/lodash": "^4.14.182",
+    "@types/lodash": "^4.14.183",
     "@types/md5": "^2.3.2",
     "@types/node": "^14",
     "@types/uuid": "^8.3.4",
@@ -74,7 +74,7 @@
     "json-schema": "^0.4.0",
     "npm-check-updates": "^15",
     "prettier": "^2.7.1",
-    "projen": "^0.61.11",
+    "projen": "^0.61.12",
     "standard-version": "^9",
     "ts-jest": "^27",
     "ts-node": "^10",
