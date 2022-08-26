@@ -46,7 +46,7 @@
     "organization": true
   },
   "devDependencies": {
-    "@kikoda/projen-templates": "^0.1.72",
+    "@kikoda/projen-templates": "^0.1.73",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27",
     "@types/lodash": "^4.14.184",
@@ -74,11 +74,11 @@
     "json-schema": "^0.4.0",
     "npm-check-updates": "^15",
     "prettier": "^2.7.1",
-    "projen": "^0.61.27",
+    "projen": "^0.61.28",
     "standard-version": "^9",
     "ts-jest": "^27",
     "ts-node": "^10",
-    "typescript": "^4.7.4"
+    "typescript": "^4.8.2"
   },
   "peerDependencies": {
     "aws-cdk-lib": "^2.26.0",
