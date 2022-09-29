@@ -1,0 +1,58 @@
+import { ConfigManifest } from '@kikoda/generated-config';
+import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import { Construct } from 'constructs';
+import { SinglePageApp } from './single-page-app';
+
+export interface WebConfigProps<T> {
+  /**
+   * The SinglePageApp to deploy the config file to/for
+   *
+   * @readonly
+   * @type {SinglePageApp}
+   */
+  readonly spa: SinglePageApp;
+
+  /**
+   * The filename that should be used for the config file
+   *
+   * @readonly
+   * @type {string}
+   */
+  readonly configFileName: string;
+
+  /**
+   * The configuration object to be written to the config file
+   *
+   * @readonly
+   * @type {T}
+   */
+  readonly config: T;
+
+  /**
+   * Specify the paths to invalidate after deployment to Cloudfront Distribution
+   *
+   * @readonly
+   * @type {?string[]}
+   */
+  readonly cloudfrontInvalidationPaths?: string[];
+}
+
+export class WebConfig<T> extends Construct {
+  constructor(scope: Construct, id: string, props: WebConfigProps<T>) {
+    super(scope, id);
+
+    // deploy config manifest and config file to the SPA bucket
+    new BucketDeployment(this, 'WebConfigManifest', {
+      sources: [
+        Source.jsonData(
+          ConfigManifest.CONFIG_MANIFEST_FILENAME,
+          new ConfigManifest(props.configFileName),
+        ),
+        Source.jsonData(props.configFileName, props.config),
+      ],
+      destinationBucket: props.spa.websiteBucket,
+      distribution: props.spa.distribution,
+      distributionPaths: props.cloudfrontInvalidationPaths ?? ['/*'],
+    }).node.addDependency(props.spa); // add dependency to spa to ensure spa is deployed before config
+  }
+}

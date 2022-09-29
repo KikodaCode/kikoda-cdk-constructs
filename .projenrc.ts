@@ -38,7 +38,7 @@ const project = new AwsCdkConstructLibrary({
     include: ['src/typescript-function/esbuild.js'],
   },
   // deps: [],                /* Runtime dependencies of this module. */
-  bundledDeps: ['md5', 'uuid', 'lodash', 'esbuild@~0.13', '@yarnpkg/esbuild-plugin-pnp'],
+    '@kikoda/generated-config',
   devDeps: [
     '@types/md5',
     '@types/uuid',
