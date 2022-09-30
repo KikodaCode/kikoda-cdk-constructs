@@ -1,28 +1,18 @@
-import { AssetOptions, Stack } from 'aws-cdk-lib';
+import { ConfigManifest, GeneratedConfig, AdditionalConfigObject } from '@kikoda/generated-config';
+import { AssetOptions } from 'aws-cdk-lib';
 import { OriginRequestPolicy, SecurityPolicyProtocol } from 'aws-cdk-lib/aws-cloudfront';
-import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { HttpMethods } from 'aws-cdk-lib/aws-s3';
-import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
-import {
-  AwsCustomResource,
-  PhysicalResourceId,
-  AwsCustomResourcePolicy,
-} from 'aws-cdk-lib/custom-resources';
 import { Construct } from 'constructs';
 
-import { v4 as uuid } from 'uuid';
-import { GeneratedConfig } from './generated-config';
 import { SinglePageApp } from './single-page-app';
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const md5 = require('md5');
+import { WebConfig } from './web-config';
 
 /** Presets used for invalidation after deployments to Cloudfront Distributions */
 export const DistributionPathsConfig = {
   /** Typical React app build with Create React App/react-scripts
    * that includes a custom config file and config-manifest.json
    */
-  ReactApp: [
+  REACT_APP: [
     '/asset-manifest.json',
     '/config-manifest.json',
     '/index.html',
@@ -31,7 +21,7 @@ export const DistributionPathsConfig = {
   ],
 };
 
-export interface GenerateWebConfigProps {
+export interface GenerateWebConfigProps extends AdditionalConfigObject {
   /** The directory where base (optional) and stage level config (json) files are stored. This
    * should be relative to `appDir`. When using `generateConfig`, there needs to at least be a
    * `${stage}.config.json` in this directory. You can optionally include a `base.config.json`
@@ -39,11 +29,6 @@ export interface GenerateWebConfigProps {
    * in stage level configs if needed).
    */
   readonly configDir: string;
-
-  /** Provide any additional configuration items to add to the generated configuration file. This
-   * will be added to the config as the `additionalConfig` attribute.
-   */
-  readonly additionalConfig?: object;
 }
 
 export interface WebsiteProps {
@@ -105,6 +90,7 @@ export interface WebsiteProps {
 export class Website extends Construct {
   /** Full website endpoint w/protocol. */
   public readonly endpoint: string;
+  public readonly generatedWebConfig?: GeneratedConfig<AdditionalConfigObject>;
 
   constructor(scope: Construct, id: string, props: WebsiteProps) {
     super(scope, id);
@@ -124,12 +110,12 @@ export class Website extends Construct {
     // export endpoint
     this.endpoint = `https://${subdomain}.${baseDomain}`;
 
-    const website = new SinglePageApp(this, 'Spa', {
+    const spa = new SinglePageApp(this, 'Spa', {
       zoneName: baseDomain,
       subdomain,
       appDir,
       buildDir,
-      buildAssetExcludes: !!generateWebConfigProps ? ['config-manifest.json'] : undefined,
+      buildAssetExcludes: [ConfigManifest.CONFIG_MANIFEST_FILENAME, '*.config.json'],
       buildCommand,
       bundling,
       indexDoc: indexDoc ?? 'index.html',
@@ -152,88 +138,19 @@ export class Website extends Construct {
     if (!!generateWebConfigProps) {
       // generate dynamic config
       const { configDir, additionalConfig } = generateWebConfigProps;
-      const generatedWebConfig = new GeneratedConfig({
+      this.generatedWebConfig = new GeneratedConfig({
         stage,
-        servicePath: appDir,
+        srcPath: appDir,
         configDir,
         additionalConfig,
       });
 
-      const hashedContents = md5(JSON.stringify(generatedWebConfig.config));
-
-      const s3ActionConfigManifest = {
-        action: 'putObject',
-        parameters: {
-          Body: Stack.of(this).toJsonString({
-            files: {
-              'config.json': generatedWebConfig.fileName,
-            },
-          }),
-          Bucket: website.websiteBucket.bucketName,
-          CacheControl: 'max-age=0, no-cache, no-store, must-revalidate',
-          ContentType: 'application/json',
-          Key: 'config-manifest.json',
-        },
-        /** Generate a unique uuid on every single deployment to ensure this file gets replaced
-         * every time
-         */
-        physicalResourceId: PhysicalResourceId.of(uuid()),
-        service: 'S3',
-      };
-
-      const configManifest = new AwsCustomResource(this, 'ConfigManifest', {
-        onCreate: s3ActionConfigManifest,
-        onUpdate: s3ActionConfigManifest,
-        policy: AwsCustomResourcePolicy.fromStatements([
-          new PolicyStatement({
-            actions: ['s3:PutObject'],
-            resources: [website.websiteBucket.arnForObjects('config-manifest.json')],
-          }),
-        ]),
+      new WebConfig(this, 'WebConfig', {
+        spa,
+        config: this.generatedWebConfig.config,
+        configFileName: this.generatedWebConfig.fileName,
+        cloudfrontInvalidationPaths: props.cloudfrontInvalidationPaths ?? ['/*'],
       });
-
-      const s3Action = {
-        action: 'putObject',
-        parameters: {
-          Body: Stack.of(this).toJsonString(generatedWebConfig.config),
-          Bucket: website.websiteBucket.bucketName,
-          CacheControl: 'max-age=0, no-cache, no-store, must-revalidate',
-          ContentType: 'application/json',
-          Key: generatedWebConfig.fileName,
-        },
-        // hash the contents of the config file to use as physical id. This will ensure replacement
-        // when the contents change, even if the name does not.
-        physicalResourceId: PhysicalResourceId.of(`${hashedContents}-config-file`),
-        service: 'S3',
-      };
-
-      const configFile = new AwsCustomResource(this, 'ConfigFile', {
-        onCreate: s3Action,
-        onUpdate: s3Action,
-        policy: AwsCustomResourcePolicy.fromStatements([
-          new PolicyStatement({
-            actions: ['s3:PutObject'],
-            resources: [website.websiteBucket.arnForObjects(generatedWebConfig.fileName)],
-          }),
-        ]),
-      });
-
-      // Be sure to deploy the config file after the initial website deployment
-      configManifest.node.addDependency(website);
-      configFile.node.addDependency(website);
-
-      // Create an cloudfront invalidation.
-      new BucketDeployment(this, 'Invalidation', {
-        sources: [
-          Source.asset(`${appDir}/${buildDir}`, {
-            exclude: ['*', '!index.html'],
-          }),
-        ],
-        destinationBucket: website.websiteBucket,
-        prune: false,
-        distribution: website.distribution,
-        distributionPaths: props.cloudfrontInvalidationPaths ?? ['/*'],
-      }).node.addDependency(configFile);
     }
   }
 }

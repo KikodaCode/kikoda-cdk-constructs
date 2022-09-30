@@ -37,14 +37,20 @@ const project = new AwsCdkConstructLibrary({
     compilerOptions: { esModuleInterop: true },
     include: ['src/typescript-function/esbuild.js'],
   },
-  // deps: [],                /* Runtime dependencies of this module. */
-  bundledDeps: ['md5', 'uuid', 'lodash', 'esbuild@~0.13', '@yarnpkg/esbuild-plugin-pnp'],
+  deps: ['@kikoda/generated-config'] /* Runtime dependencies of this module. */,
+  peerDeps: ['@kikoda/generated-config'] /* Peer dependencies of this module. */,
+  bundledDeps: [
+    'esbuild@~0.13',
+    '@yarnpkg/esbuild-plugin-pnp',
+    'lodash',
+  ] /* Dependencies that must be bundled into this module. */,
   devDeps: [
+    '@kikoda/generated-config',
+    '@kikoda/projen-templates',
     '@types/md5',
     '@types/uuid',
     '@types/lodash',
     '@types/fs-extra',
-    '@kikoda/projen-templates',
     'delay',
   ] /* Build dependencies for this module. */,
   packageName: '@kikoda/cdk-constructs',
@@ -62,6 +68,10 @@ const project = new AwsCdkConstructLibrary({
     jestConfig: {
       coveragePathIgnorePatterns: ['/node_modules/', 'test/util.ts'],
     },
+  },
+  dotnet: {
+    dotNetNamespace: 'Kikoda.CdkConstructs',
+    packageId: 'Kikoda.CdkConstructs',
   },
 });
 

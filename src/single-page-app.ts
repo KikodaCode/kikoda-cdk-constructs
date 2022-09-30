@@ -17,7 +17,7 @@ import {
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { BlockPublicAccess, Bucket, BucketEncryption, CorsRule } from 'aws-cdk-lib/aws-s3';
 import { AssetOptions } from 'aws-cdk-lib/aws-s3-assets';
-import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import { BucketDeployment, ISource, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { Construct } from 'constructs';
 
 export interface SinglePageAppProps {
@@ -60,6 +60,8 @@ export interface SinglePageAppProps {
 export class SinglePageApp extends Construct {
   public readonly distribution: Distribution;
   public readonly websiteBucket: Bucket;
+  public bucketDeployment?: BucketDeployment;
+  public sourceAsset: ISource;
 
   constructor(scope: Construct, id: string, props: SinglePageAppProps) {
     super(scope, id);
@@ -150,8 +152,10 @@ export class SinglePageApp extends Construct {
       };
     }
 
-    new BucketDeployment(this, 'BucketDeployment', {
-      sources: [Source.asset(props.repoRoot || props.appDir, assetOpts)],
+    this.sourceAsset = Source.asset(props.repoRoot || props.appDir, assetOpts);
+
+    this.bucketDeployment = new BucketDeployment(this, 'BucketDeployment', {
+      sources: [this.sourceAsset],
       destinationBucket: this.websiteBucket,
       prune: false,
     });
@@ -161,5 +165,16 @@ export class SinglePageApp extends Construct {
       recordName: domainName,
       target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
     });
+  }
+
+  /**
+   * Disable the default bucket deployment. This method will return
+   * the source asset that would have been used for the deployment.
+   * This can be used to create a custom deployment.
+   */
+  public disableBucketDeployment() {
+    this.bucketDeployment = undefined;
+
+    return this.sourceAsset;
   }
 }
