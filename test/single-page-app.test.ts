@@ -97,7 +97,7 @@ describe('Given simple Single Page App', () => {
     });
   });
 
-  new SPAStack({
+  let spaStack1 = new SPAStack({
     appDir: __dirname,
     zoneName: givenZoneName,
     indexDoc: 'indexDoc',
@@ -107,5 +107,11 @@ describe('Given simple Single Page App', () => {
 
   test('local bundling', () => {
     expect(existsSync(`${__dirname}/spa_local_build_artifact`)).toBe(true);
+  });
+
+  test('disable default bucket deployment', () => {
+    spaStack1.singlePageApp.disableBucketDeployment();
+
+    expect(spaStack1.singlePageApp.bucketDeployment).toBeUndefined();
   });
 });

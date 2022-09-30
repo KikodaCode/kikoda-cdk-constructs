@@ -74,19 +74,14 @@ describe('findLockFile', () => {
   });
 
   it('throws error when it cannot find a lockfile.', () => {
-    const test = () => {
-      (fileUtils.findUpMultiple as jest.Mock).mockReturnValueOnce([]);
+    jest.spyOn(fileUtils, 'findUpMultiple').mockReturnValueOnce([]);
 
-      findLockFile();
-    };
-    expect(test).toThrow();
+    expect(findLockFile).toThrow();
   });
-  it('throws error when it finds multiple lockfiles.', () => {
-    const test = () => {
-      (fileUtils.findUpMultiple as jest.Mock).mockReturnValueOnce(['', '']);
 
-      findLockFile();
-    };
-    expect(test).toThrow();
+  it('throws error when it finds multiple lockfiles.', () => {
+    jest.spyOn(fileUtils, 'findUpMultiple').mockReturnValueOnce(['', '']);
+
+    expect(findLockFile).toThrow();
   });
 });
