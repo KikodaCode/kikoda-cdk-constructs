@@ -1,6 +1,10 @@
 {
   "dependencies": [
     {
+      "name": "@kikoda/generated-config",
+      "type": "build"
+    },
+    {
       "name": "@kikoda/projen-templates",
       "type": "build"
     },
@@ -146,10 +150,6 @@
       "type": "build"
     },
     {
-      "name": "@kikoda/generated-config",
-      "type": "bundled"
-    },
-    {
       "name": "@yarnpkg/esbuild-plugin-pnp",
       "type": "bundled"
     },
@@ -157,6 +157,29 @@
       "name": "esbuild",
       "version": "~0.13",
       "type": "bundled"
+    },
+    {
+      "name": "lodash",
+      "type": "bundled"
+    },
+    {
+      "name": "@types/prettier",
+      "version": "2.6.0",
+      "type": "override"
+    },
+    {
+      "name": "@types/responselike",
+      "version": "1.0.0",
+      "type": "override"
+    },
+    {
+      "name": "got",
+      "version": "12.3.1",
+      "type": "override"
+    },
+    {
+      "name": "@kikoda/generated-config",
+      "type": "peer"
     },
     {
       "name": "aws-cdk-lib",

@@ -1,4 +1,4 @@
-import { ConfigManifest, GeneratedConfig, IAdditionalConfig } from '@kikoda/generated-config';
+import { ConfigManifest, GeneratedConfig, AdditionalConfigObject } from '@kikoda/generated-config';
 import { AssetOptions } from 'aws-cdk-lib';
 import { OriginRequestPolicy, SecurityPolicyProtocol } from 'aws-cdk-lib/aws-cloudfront';
 import { HttpMethods } from 'aws-cdk-lib/aws-s3';
@@ -21,7 +21,7 @@ export const DistributionPathsConfig = {
   ],
 };
 
-export interface GenerateWebConfigProps extends IAdditionalConfig {
+export interface GenerateWebConfigProps extends AdditionalConfigObject {
   /** The directory where base (optional) and stage level config (json) files are stored. This
    * should be relative to `appDir`. When using `generateConfig`, there needs to at least be a
    * `${stage}.config.json` in this directory. You can optionally include a `base.config.json`
@@ -90,7 +90,7 @@ export interface WebsiteProps {
 export class Website extends Construct {
   /** Full website endpoint w/protocol. */
   public readonly endpoint: string;
-  public readonly generatedWebConfig?: GeneratedConfig<IAdditionalConfig>;
+  public readonly generatedWebConfig?: GeneratedConfig<AdditionalConfigObject>;
 
   constructor(scope: Construct, id: string, props: WebsiteProps) {
     super(scope, id);
@@ -147,7 +147,7 @@ export class Website extends Construct {
 
       new WebConfig(this, 'WebConfig', {
         spa,
-        config: this.generatedWebConfig,
+        config: this.generatedWebConfig.config,
         configFileName: this.generatedWebConfig.fileName,
         cloudfrontInvalidationPaths: props.cloudfrontInvalidationPaths ?? ['/*'],
       });

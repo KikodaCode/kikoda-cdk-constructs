@@ -604,10 +604,10 @@
   dependencies:
     ajv "^8.11.0"
 
-"@kikoda/generated-config@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@kikoda/generated-config/-/generated-config-0.4.0.tgz#91ef6b7b877cb8bdc2533ce8ab1a7baaa6ea6423"
-  integrity sha512-Ocv6Uov4FBM8IwrtLgXKsDco8zCvKBWzW5C7LufaAWrSssl+oIYqTjs1kfH3p7ZNNTAyQPUFlRdzoNjGPW6uxw==
+"@kikoda/generated-config@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@kikoda/generated-config/-/generated-config-0.5.0.tgz#0726794a88b9053c3c99dbca6825c7a09ef392ad"
+  integrity sha512-Ag9max0eiHGjyld+M0j3i10Zwy3vu1yqAWdwEqJIId+6x5mNAc1Ig3v5riT4wbnMEn6sdgHKAp7c/Ek2++G+Hw==
   dependencies:
     lodash "^4.17.21"
     md5 "^2.3.0"

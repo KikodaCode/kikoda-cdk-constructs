@@ -60,7 +60,7 @@ export interface SinglePageAppProps {
 export class SinglePageApp extends Construct {
   public readonly distribution: Distribution;
   public readonly websiteBucket: Bucket;
-  public bucketDeployment: BucketDeployment;
+  public bucketDeployment?: BucketDeployment;
   public sourceAsset: ISource;
 
   constructor(scope: Construct, id: string, props: SinglePageAppProps) {
@@ -155,7 +155,7 @@ export class SinglePageApp extends Construct {
     this.sourceAsset = Source.asset(props.repoRoot || props.appDir, assetOpts);
 
     this.bucketDeployment = new BucketDeployment(this, 'BucketDeployment', {
-      sources: [Source.asset(props.repoRoot || props.appDir, assetOpts)],
+      sources: [this.sourceAsset],
       destinationBucket: this.websiteBucket,
       prune: false,
     });
@@ -165,5 +165,16 @@ export class SinglePageApp extends Construct {
       recordName: domainName,
       target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
     });
+  }
+
+  /**
+   * Disable the default bucket deployment. This method will return
+   * the source asset that would have been used for the deployment.
+   * This can be used to create a custom deployment.
+   */
+  public disableBucketDeployment() {
+    this.bucketDeployment = undefined;
+
+    return this.sourceAsset;
   }
 }

@@ -3128,6 +3128,7 @@ Any object.
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.Website.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
 | <code><a href="#@kikoda/cdk-constructs.Website.property.endpoint">endpoint</a></code> | <code>string</code> | Full website endpoint w/protocol. |
+| <code><a href="#@kikoda/cdk-constructs.Website.property.generatedWebConfig">generatedWebConfig</a></code> | <code>@kikoda/generated-config.GeneratedConfig</code> | *No description.* |
 
 ---
 
@@ -3152,6 +3153,16 @@ public readonly endpoint: string;
 - *Type:* string
 
 Full website endpoint w/protocol.
+
+---
+
+##### `generatedWebConfig`<sup>Optional</sup> <a name="generatedWebConfig" id="@kikoda/cdk-constructs.Website.property.generatedWebConfig"></a>
+
+```typescript
+public readonly generatedWebConfig: GeneratedConfig;
+```
+
+- *Type:* @kikoda/generated-config.GeneratedConfig
 
 ---
 
@@ -3904,8 +3915,23 @@ const generateWebConfigProps: GenerateWebConfigProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps.property.additionalConfig">additionalConfig</a></code> | <code>any</code> | Provide any additional configuration items to add to the generated configuration file. |
 | <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps.property.configDir">configDir</a></code> | <code>string</code> | The directory where base (optional) and stage level config (json) files are stored. |
-| <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps.property.additionalConfig">additionalConfig</a></code> | <code>object</code> | Provide any additional configuration items to add to the generated configuration file. |
+
+---
+
+##### `additionalConfig`<sup>Optional</sup> <a name="additionalConfig" id="@kikoda/cdk-constructs.GenerateWebConfigProps.property.additionalConfig"></a>
+
+```typescript
+public readonly additionalConfig: any;
+```
+
+- *Type:* any
+
+Provide any additional configuration items to add to the generated configuration file.
+
+This
+will be added to the config as the `additionalConfig` attribute.
 
 ---
 
@@ -3924,21 +3950,6 @@ should be relative to `appDir`. When using `generateConfig`, there needs to at l
 `${stage}.config.json` in this directory. You can optionally include a `base.config.json`
 file that all stage configs will inherit from (likewise you can override base config values
 in stage level configs if needed).
-
----
-
-##### `additionalConfig`<sup>Optional</sup> <a name="additionalConfig" id="@kikoda/cdk-constructs.GenerateWebConfigProps.property.additionalConfig"></a>
-
-```typescript
-public readonly additionalConfig: object;
-```
-
-- *Type:* object
-
-Provide any additional configuration items to add to the generated configuration file.
-
-This
-will be added to the config as the `additionalConfig` attribute.
 
 ---
 
@@ -6093,41 +6104,6 @@ public readonly flagLevel: FlagLevel;
 - *Type:* <a href="#@kikoda/cdk-constructs.FlagLevel">FlagLevel</a>
 
 ---
-
-
-### LayeredConfig <a name="LayeredConfig" id="@kikoda/cdk-constructs.LayeredConfig"></a>
-
-This construct current only wraps the lodash.merge() functionality but is intended to be a placeholder for future logic like: global defaults, type enforcement and error handling, dynamic values (custom compute logic), etc.
-
-#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.LayeredConfig.Initializer"></a>
-
-```typescript
-import { LayeredConfig } from '@kikoda/cdk-constructs'
-
-new LayeredConfig(base: any, layers: any)
-```
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.LayeredConfig.Initializer.parameter.base">base</a></code> | <code>any</code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.LayeredConfig.Initializer.parameter.layers">layers</a></code> | <code>any</code> | *No description.* |
-
----
-
-##### `base`<sup>Required</sup> <a name="base" id="@kikoda/cdk-constructs.LayeredConfig.Initializer.parameter.base"></a>
-
-- *Type:* any
-
----
-
-##### `layers`<sup>Required</sup> <a name="layers" id="@kikoda/cdk-constructs.LayeredConfig.Initializer.parameter.layers"></a>
-
-- *Type:* any
-
----
-
-
-
 
 
 ### OperationalExcellenceAspects <a name="OperationalExcellenceAspects" id="@kikoda/cdk-constructs.OperationalExcellenceAspects"></a>

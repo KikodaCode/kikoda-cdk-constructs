@@ -41,16 +41,19 @@ export class WebConfig<T> extends Construct {
   constructor(scope: Construct, id: string, props: WebConfigProps<T>) {
     super(scope, id);
 
+    const spaSourceAsset = props.spa.disableBucketDeployment();
+
     // deploy config manifest and config file to the SPA bucket
-    props.spa.bucketDeployment = new BucketDeployment(this, 'WebConfigManifest', {
+    new BucketDeployment(this, 'WebConfigManifest', {
       sources: [
-        props.spa.sourceAsset,
+        spaSourceAsset,
         Source.jsonData(
           ConfigManifest.CONFIG_MANIFEST_FILENAME,
           new ConfigManifest(props.configFileName),
         ),
         Source.jsonData(props.configFileName, props.config),
       ],
+      prune: false,
       destinationBucket: props.spa.websiteBucket,
       distribution: props.spa.distribution,
       distributionPaths: props.cloudfrontInvalidationPaths ?? ['/*'],
