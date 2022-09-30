@@ -141,7 +141,7 @@
           "exec": "[ -d \"test/branch-pipelines.integ.snapshot\" ] || (echo \"No snapshot available for integration test 'branch-pipelines'. Run 'projen integ:branch-pipelines:deploy' to capture.\" && exit 1)"
         },
         {
-          "exec": "cdk synth --app \"ts-node -P tsconfig.dev.json test/branch-pipelines.integ.ts\" --no-version-reporting --no-asset-metadata --no-path-metadata -o test/.tmp/branch-pipelines.integ/assert.cdk.out > /dev/null"
+          "exec": "cdk synth --app \"ts-node -P tsconfig.dev.json test/branch-pipelines.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata -o test/.tmp/branch-pipelines.integ/assert.cdk.out > /dev/null"
         },
         {
           "exec": "diff -r -x asset.* -x cdk.out -x manifest.json -x tree.json test/branch-pipelines.integ.snapshot/ test/.tmp/branch-pipelines.integ/assert.cdk.out/"
@@ -156,7 +156,7 @@
           "exec": "rm -fr test/.tmp/branch-pipelines.integ/deploy.cdk.out"
         },
         {
-          "exec": "cdk deploy --app \"ts-node -P tsconfig.dev.json test/branch-pipelines.integ.ts\" --no-version-reporting --no-asset-metadata --no-path-metadata '**' --require-approval=never -o test/.tmp/branch-pipelines.integ/deploy.cdk.out"
+          "exec": "cdk deploy --app \"ts-node -P tsconfig.dev.json test/branch-pipelines.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata '**' --require-approval=never -o test/.tmp/branch-pipelines.integ/deploy.cdk.out"
         },
         {
           "exec": "rm -fr test/branch-pipelines.integ.snapshot"
@@ -183,7 +183,7 @@
       "description": "update snapshot for integration test \"branch-pipelines\"",
       "steps": [
         {
-          "exec": "cdk synth --app \"ts-node -P tsconfig.dev.json test/branch-pipelines.integ.ts\" --no-version-reporting --no-asset-metadata --no-path-metadata -o test/branch-pipelines.integ.snapshot > /dev/null"
+          "exec": "cdk synth --app \"ts-node -P tsconfig.dev.json test/branch-pipelines.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata -o test/branch-pipelines.integ.snapshot > /dev/null"
         }
       ]
     },
@@ -192,7 +192,7 @@
       "description": "watch integration test 'branch-pipelines' (without updating snapshots)",
       "steps": [
         {
-          "exec": "cdk watch --app \"ts-node -P tsconfig.dev.json test/branch-pipelines.integ.ts\" --no-version-reporting --no-asset-metadata --no-path-metadata '**' -o test/.tmp/branch-pipelines.integ/deploy.cdk.out"
+          "exec": "cdk watch --app \"ts-node -P tsconfig.dev.json test/branch-pipelines.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata '**' -o test/.tmp/branch-pipelines.integ/deploy.cdk.out"
         }
       ]
     },
@@ -216,7 +216,7 @@
           "exec": "[ -d \"test/functions/typescript-function.integ.snapshot\" ] || (echo \"No snapshot available for integration test 'typescript-function'. Run 'projen integ:typescript-function:deploy' to capture.\" && exit 1)"
         },
         {
-          "exec": "cdk synth --app \"ts-node -P tsconfig.dev.json test/functions/typescript-function.integ.ts\" --no-version-reporting --no-asset-metadata --no-path-metadata -o test/functions/.tmp/typescript-function.integ/assert.cdk.out > /dev/null"
+          "exec": "cdk synth --app \"ts-node -P tsconfig.dev.json test/functions/typescript-function.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata -o test/functions/.tmp/typescript-function.integ/assert.cdk.out > /dev/null"
         },
         {
           "exec": "diff -r -x asset.* -x cdk.out -x manifest.json -x tree.json test/functions/typescript-function.integ.snapshot/ test/functions/.tmp/typescript-function.integ/assert.cdk.out/"
@@ -231,7 +231,7 @@
           "exec": "rm -fr test/functions/.tmp/typescript-function.integ/deploy.cdk.out"
         },
         {
-          "exec": "cdk deploy --app \"ts-node -P tsconfig.dev.json test/functions/typescript-function.integ.ts\" --no-version-reporting --no-asset-metadata --no-path-metadata '**' --require-approval=never -o test/functions/.tmp/typescript-function.integ/deploy.cdk.out"
+          "exec": "cdk deploy --app \"ts-node -P tsconfig.dev.json test/functions/typescript-function.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata '**' --require-approval=never -o test/functions/.tmp/typescript-function.integ/deploy.cdk.out"
         },
         {
           "exec": "rm -fr test/functions/typescript-function.integ.snapshot"
@@ -258,7 +258,7 @@
       "description": "update snapshot for integration test \"typescript-function\"",
       "steps": [
         {
-          "exec": "cdk synth --app \"ts-node -P tsconfig.dev.json test/functions/typescript-function.integ.ts\" --no-version-reporting --no-asset-metadata --no-path-metadata -o test/functions/typescript-function.integ.snapshot > /dev/null"
+          "exec": "cdk synth --app \"ts-node -P tsconfig.dev.json test/functions/typescript-function.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata -o test/functions/typescript-function.integ.snapshot > /dev/null"
         }
       ]
     },
@@ -267,7 +267,7 @@
       "description": "watch integration test 'typescript-function' (without updating snapshots)",
       "steps": [
         {
-          "exec": "cdk watch --app \"ts-node -P tsconfig.dev.json test/functions/typescript-function.integ.ts\" --no-version-reporting --no-asset-metadata --no-path-metadata '**' -o test/functions/.tmp/typescript-function.integ/deploy.cdk.out"
+          "exec": "cdk watch --app \"ts-node -P tsconfig.dev.json test/functions/typescript-function.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata '**' -o test/functions/.tmp/typescript-function.integ/deploy.cdk.out"
         }
       ]
     },
