@@ -37,14 +37,18 @@ const project = new AwsCdkConstructLibrary({
     compilerOptions: { esModuleInterop: true },
     include: ['src/typescript-function/esbuild.js'],
   },
-  // deps: [],                /* Runtime dependencies of this module. */
+  deps: ['@kikoda/generated-config'] /* Runtime dependencies of this module. */,
+  bundledDeps: [
+    'esbuild@~0.13',
     '@kikoda/generated-config',
+    '@yarnpkg/esbuild-plugin-pnp',
+  ] /* Dependencies that must be bundled into this module. */,
   devDeps: [
+    '@kikoda/projen-templates',
     '@types/md5',
     '@types/uuid',
     '@types/lodash',
     '@types/fs-extra',
-    '@kikoda/projen-templates',
     'delay',
   ] /* Build dependencies for this module. */,
   packageName: '@kikoda/cdk-constructs',

@@ -42,8 +42,9 @@ export class WebConfig<T> extends Construct {
     super(scope, id);
 
     // deploy config manifest and config file to the SPA bucket
-    new BucketDeployment(this, 'WebConfigManifest', {
+    props.spa.bucketDeployment = new BucketDeployment(this, 'WebConfigManifest', {
       sources: [
+        props.spa.sourceAsset,
         Source.jsonData(
           ConfigManifest.CONFIG_MANIFEST_FILENAME,
           new ConfigManifest(props.configFileName),
@@ -53,6 +54,6 @@ export class WebConfig<T> extends Construct {
       destinationBucket: props.spa.websiteBucket,
       distribution: props.spa.distribution,
       distributionPaths: props.cloudfrontInvalidationPaths ?? ['/*'],
-    }).node.addDependency(props.spa); // add dependency to spa to ensure spa is deployed before config
+    });
   }
 }

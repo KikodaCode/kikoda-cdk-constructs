@@ -21,7 +21,7 @@ export const DistributionPathsConfig = {
   ],
 };
 
-export interface GenerateWebConfigProps {
+export interface GenerateWebConfigProps extends IAdditionalConfig {
   /** The directory where base (optional) and stage level config (json) files are stored. This
    * should be relative to `appDir`. When using `generateConfig`, there needs to at least be a
    * `${stage}.config.json` in this directory. You can optionally include a `base.config.json`
@@ -29,11 +29,6 @@ export interface GenerateWebConfigProps {
    * in stage level configs if needed).
    */
   readonly configDir: string;
-
-  /** Provide any additional configuration items to add to the generated configuration file. This
-   * will be added to the config as the `additionalConfig` attribute.
-   */
-  readonly additionalConfig?: object;
 }
 
 export interface WebsiteProps {
