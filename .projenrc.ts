@@ -69,6 +69,10 @@ const project = new AwsCdkConstructLibrary({
       coveragePathIgnorePatterns: ['/node_modules/', 'test/util.ts'],
     },
   },
+  dotnet: {
+    dotNetNamespace: 'Kikoda.CdkConstructs',
+    packageId: 'Kikoda.CdkConstructs',
+  },
 });
 
 project.compileTask.exec('cp src/typescript-function/esbuild.js lib/typescript-function/');

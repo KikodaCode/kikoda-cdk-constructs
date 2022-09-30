@@ -28,6 +28,7 @@
     "integ:typescript-function:watch": "npx projen integ:typescript-function:watch",
     "package": "npx projen package",
     "package-all": "npx projen package-all",
+    "package:dotnet": "npx projen package:dotnet",
     "package:js": "npx projen package:js",
     "post-compile": "npx projen post-compile",
     "post-upgrade": "npx projen post-upgrade",
@@ -46,7 +47,7 @@
     "organization": true
   },
   "devDependencies": {
-    "@kikoda/generated-config": "^0.5.0",
+    "@kikoda/generated-config": "0.5.1",
     "@kikoda/projen-templates": "^0.1.103",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27",
@@ -82,12 +83,12 @@
     "typescript": "^4.8.4"
   },
   "peerDependencies": {
-    "@kikoda/generated-config": "^0.5.0",
+    "@kikoda/generated-config": "^0.5.1",
     "aws-cdk-lib": "^2.26.0",
     "constructs": "^10.0.5"
   },
   "dependencies": {
-    "@kikoda/generated-config": "^0.5.0",
+    "@kikoda/generated-config": "^0.5.1",
     "@yarnpkg/esbuild-plugin-pnp": "^2.0.3",
     "esbuild": "~0.13",
     "lodash": "^4.17.21"
@@ -154,7 +155,12 @@
   "stability": "experimental",
   "jsii": {
     "outdir": "dist",
-    "targets": {},
+    "targets": {
+      "dotnet": {
+        "namespace": "Kikoda.CdkConstructs",
+        "packageId": "Kikoda.CdkConstructs"
+      }
+    },
     "tsc": {
       "outDir": "lib",
       "rootDir": "src"
