@@ -113,6 +113,7 @@ describe('getTsconfigCompilerOptions', () => {
         '--outDir ./',
         '--resolveJsonModule',
         '--rootDir ./',
+        '--skipLibCheck',
         '--strict',
         '--strictNullChecks',
         '--strictPropertyInitialization',
