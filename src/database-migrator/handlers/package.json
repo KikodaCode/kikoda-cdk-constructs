@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.131.0",
+    "@aws-sdk/client-secrets-manager": "^3.131.0",
+    "cfn-lambda": "^5.1.0",
+    "fs-extra": "^10.1.0",
+    "node-cache": "^5.1.2",
+    "promise-mysql": "^5.2.0",
+    "unzipper": "^0.10.11"
+  },
+  "devDependencies": {
+    "@types/tmp": "^0.2.3",
+    "@types/unzipper": "^0.10.5"
+  }
+}

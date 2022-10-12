@@ -4,7 +4,7 @@ import { AssetHashType, DockerImage, ILocalBundling, AssetStaging } from 'aws-cd
 import { Architecture, AssetCode, Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { BundlingOptions, OutputFormat, SourceMapMode } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { BuildOptions } from 'esbuild';
-import { PackageManager } from '../package-manager';
+import { LockFile, PackageManager } from '../package-manager';
 import { findUp } from '../util';
 import { PackageInstallation } from './package-installation';
 import { getTsconfigCompilerOptions, extractDependencies, exec } from './util';
@@ -46,7 +46,10 @@ export interface BundlingProps extends BundlingOptions {
   readonly preCompilation?: boolean;
 
   /**
-   * Enable esbuild Yarn PnP support through `@yarnpkg/esbuild-plugin-pnp`
+   * Enable esbuild Yarn PnP support through `@yarnpkg/esbuild-plugin-pnp`. This is only
+   * supported when using the `yarn` package manager.
+   *
+   * @default false
    */
   readonly yarnPnP?: boolean;
 }
@@ -123,6 +126,11 @@ export class Bundling implements BundlingOptions {
       throw new Error(
         `ECMAScript module output format is not supported by the ${props.runtime.name} runtime`,
       );
+    }
+
+    // Pnp support is only supported for yarn
+    if (props.yarnPnP && this.packageManager.lockFile !== LockFile.YARN) {
+      throw new Error('yarnPnP is only supported when using the yarn package manager');
     }
 
     this.externals = [

@@ -9,7 +9,10 @@ import { findEntry } from './util';
 
 export interface TypescriptFunctionProps extends NodejsFunctionProps {
   /**
-   * Enable esbuild Yarn PnP support through `@yarnpkg/esbuild-plugin-pnp`
+   * Enable esbuild Yarn PnP support through @yarnpkg/esbuild-plugin-pnp. This is
+   * only supported when using the yarn package manager.
+   *
+   * @default false
    */
   readonly yarnPnP?: BundlingProps['yarnPnP'];
 }
