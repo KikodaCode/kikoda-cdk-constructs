@@ -1,8 +1,9 @@
 [<img src="https://kikoda.com/wp-content/uploads/2019/07/Logo_White_bg.svg" width="300"/>](https://kikoda.com)
 # Kikoda CDK Constructs Library
 
-[![NPM](https://img.shields.io/npm/v/@kikoda/cdk-constructs?color=39a356&label=npm+cdk+v2)](https://www.npmjs.com/package/@kikoda/cdk-constructs)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/KikodaCode/kikoda-constructs/blob/main/LICENSE)
+[![npm version](https://badge.fury.io/js/@kikoda%2Fcdk-constructs.svg)](https://badge.fury.io/js/@kikoda%2Fcdk-constructs)
+[![NuGet version](https://badge.fury.io/nu/Kikoda.CdkConstructs.svg)](https://badge.fury.io/nu/Kikoda.CdkConstructs)
 
 Use this Kikoda CDK Constructs Library to architect and model modern applications deployed with AWS CDK.
 
