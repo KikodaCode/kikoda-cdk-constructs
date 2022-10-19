@@ -1,5 +1,7 @@
 import { Stage, StageProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
+import { Construct, IConstruct } from 'constructs';
+
+const CONFIGURED_STAGE_SYMBOL = Symbol.for('@kikoda/cdk-constructs.ConifiguredStage');
 
 /**
  * Configured Stage Properties.
@@ -26,11 +28,31 @@ export interface ConfiguredStageProps<T> extends StageProps {
  */
 export class ConfiguredStage<TConfig> extends Stage {
   /**
+   * Return the `ConfiguredStage` this construct is contained with, if available. If called
+   * on a nested stage, returns its parent. This method is most useful when you need to
+   * load the configuration in a nested construct. This works exactly like Stage.of() but
+   * returns the ConfiguredStage instead of the Stage.
+   *
+   */
+  public static extOf<K>(construct: IConstruct): ConfiguredStage<K> | undefined {
+    return construct.node.scopes.reverse().slice(1).find(ConfiguredStage.isConfiguredStage);
+  }
+
+  /**
+   * Test whether the given construct is a ConfiguredStage.
+   *
+   */
+  public static isConfiguredStage(x: any): x is ConfiguredStage<any> {
+    return x !== null && typeof x === 'object' && CONFIGURED_STAGE_SYMBOL in x;
+  }
+
+  /**
    * The configuration for the stage.
    *
    * @readonly
    */
   readonly config: TConfig;
+
   /**
    * Configured Stage construct to be used with the Deployment Piplelines construct.
    * This stage allows for use of the specified generic type to be made available as the config property.
@@ -42,6 +64,7 @@ export class ConfiguredStage<TConfig> extends Stage {
    */
   constructor(scope: Construct, id: string, props: ConfiguredStageProps<TConfig>) {
     super(scope, id, props);
+    Object.defineProperty(this, CONFIGURED_STAGE_SYMBOL, { value: true });
     this.config = props.config;
   }
 }

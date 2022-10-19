@@ -36,6 +36,66 @@ const website = new Website(this, 'Website', {
 });
 ```
 
+#### Configured Stages
+With the `ConfiguredStage` construct you can pass arbitrary environmental configuration to your CDK App. This is useful when you want to define and use a configuration object in your nested Stacks and Constructs.
+
+```typescript
+import { CodePipeline } from 'aws-cdk-lib/pipeines';
+import { ConfiguredStage } from '@kikoda/cdk-constructs';
+
+interface Config {
+  foo: string;
+}
+
+class MyStack extends Stack {
+  constructor(scope: Construct, id: string) {
+    super(scope, id, props);
+
+    /*
+     * Get a config value in a child stack or construct
+     */
+    const stage = ConfiguredStage.extOf(this) as ConfiguredStage<Config>;
+
+    const new MyConstruct(this, 'MyConstruct', {
+      foo: stage.config.foo,
+    });
+  }
+}
+
+class MyStage<T> extends ConfiguredStage<T> {
+  constructor(scope: Construct, id: string, props: ConfiguredStageProps<T>) {
+    super(scope, id, props);
+  }
+
+  new MyStack(this, 'MyStack');
+}
+
+/*
+ * Use the stage with CDK Pipelines
+ */
+const stage = new MyStage<Config>(this, 'DevStage', {
+  stageName: 'dev',
+  config: {
+    foo: 'bar',
+  },
+});
+
+const pipeline = new CodePipeline(this, 'Pipeline', {
+  synth: new ShellStep('Synth', {
+    input: CodePipelineSource.gitHub('owner/repo', 'main'),
+    commands: [
+      'yarn install',
+      'yarn build',
+      'npx cdk synth',
+    ],
+  }),
+});
+
+pipeline.addStage(stage);
+```
+```
+```
+
 ## Opening Issues
 
 If you encounter a bug with this package, we want to hear about it. Before opening a new issue, search the existing issues to avoid duplicates.

@@ -1015,6 +1015,8 @@ calls will return the same assembly.
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.isStage">isStage</a></code> | Test whether the given construct is a stage. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.of">of</a></code> | Return the stage this construct is contained with, if available. |
+| <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.extOf">extOf</a></code> | Return the `ConfiguredStage` this construct is contained with, if available. |
+| <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.isConfiguredStage">isConfiguredStage</a></code> | Test whether the given construct is a ConfiguredStage. |
 
 ---
 
@@ -1068,6 +1070,43 @@ on a nested stage, returns its parent.
 ###### `construct`<sup>Required</sup> <a name="construct" id="@kikoda/cdk-constructs.ConfiguredStage.of.parameter.construct"></a>
 
 - *Type:* constructs.IConstruct
+
+---
+
+##### `extOf` <a name="extOf" id="@kikoda/cdk-constructs.ConfiguredStage.extOf"></a>
+
+```typescript
+import { ConfiguredStage } from '@kikoda/cdk-constructs'
+
+ConfiguredStage.extOf(construct: IConstruct)
+```
+
+Return the `ConfiguredStage` this construct is contained with, if available.
+
+If called
+on a nested stage, returns its parent. This method is most useful when you need to
+load the configuration in a nested construct. This works exactly like Stage.of() but
+returns the ConfiguredStage instead of the Stage.
+
+###### `construct`<sup>Required</sup> <a name="construct" id="@kikoda/cdk-constructs.ConfiguredStage.extOf.parameter.construct"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+##### `isConfiguredStage` <a name="isConfiguredStage" id="@kikoda/cdk-constructs.ConfiguredStage.isConfiguredStage"></a>
+
+```typescript
+import { ConfiguredStage } from '@kikoda/cdk-constructs'
+
+ConfiguredStage.isConfiguredStage(x: any)
+```
+
+Test whether the given construct is a ConfiguredStage.
+
+###### `x`<sup>Required</sup> <a name="x" id="@kikoda/cdk-constructs.ConfiguredStage.isConfiguredStage.parameter.x"></a>
+
+- *Type:* any
 
 ---
 
