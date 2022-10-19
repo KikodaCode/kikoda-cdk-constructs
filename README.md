@@ -49,7 +49,7 @@ interface Config {
 
 class MyStack extends Stack {
   constructor(scope: Construct, id: string) {
-    super(scope, id, props);
+    super(scope, id);
 
     /*
      * Get a config value in a child stack or construct
@@ -65,9 +65,9 @@ class MyStack extends Stack {
 class MyStage<T> extends ConfiguredStage<T> {
   constructor(scope: Construct, id: string, props: ConfiguredStageProps<T>) {
     super(scope, id, props);
-  }
 
-  new MyStack(this, 'MyStack');
+    new MyStack(this, 'MyStack');
+  }
 }
 
 /*
