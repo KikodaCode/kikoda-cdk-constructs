@@ -205,6 +205,9 @@
         },
         {
           "spawn": "integ:typescript-function:snapshot"
+        },
+        {
+          "spawn": "integ:website:snapshot"
         }
       ]
     },
@@ -268,6 +271,69 @@
       "steps": [
         {
           "exec": "cdk watch --app \"ts-node -P tsconfig.dev.json test/functions/typescript-function.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata '**' -o test/functions/.tmp/typescript-function.integ/deploy.cdk.out"
+        }
+      ]
+    },
+    "integ:website:assert": {
+      "name": "integ:website:assert",
+      "description": "assert the snapshot of integration test 'website'",
+      "steps": [
+        {
+          "exec": "[ -d \"test/website/website.integ.snapshot\" ] || (echo \"No snapshot available for integration test 'website'. Run 'projen integ:website:deploy' to capture.\" && exit 1)"
+        },
+        {
+          "exec": "cdk synth --app \"ts-node -P tsconfig.dev.json test/website/website.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata -o test/website/.tmp/website.integ/assert.cdk.out > /dev/null"
+        },
+        {
+          "exec": "diff -r -x asset.* -x cdk.out -x manifest.json -x tree.json test/website/website.integ.snapshot/ test/website/.tmp/website.integ/assert.cdk.out/"
+        }
+      ]
+    },
+    "integ:website:deploy": {
+      "name": "integ:website:deploy",
+      "description": "deploy integration test 'website' and capture snapshot",
+      "steps": [
+        {
+          "exec": "rm -fr test/website/.tmp/website.integ/deploy.cdk.out"
+        },
+        {
+          "exec": "cdk deploy --app \"ts-node -P tsconfig.dev.json test/website/website.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata '**' --require-approval=never -o test/website/.tmp/website.integ/deploy.cdk.out"
+        },
+        {
+          "exec": "rm -fr test/website/website.integ.snapshot"
+        },
+        {
+          "exec": "mv test/website/.tmp/website.integ/deploy.cdk.out test/website/website.integ.snapshot"
+        },
+        {
+          "spawn": "integ:website:destroy"
+        }
+      ]
+    },
+    "integ:website:destroy": {
+      "name": "integ:website:destroy",
+      "description": "destroy integration test 'website'",
+      "steps": [
+        {
+          "exec": "cdk destroy --app test/website/website.integ.snapshot '**' --no-version-reporting"
+        }
+      ]
+    },
+    "integ:website:snapshot": {
+      "name": "integ:website:snapshot",
+      "description": "update snapshot for integration test \"website\"",
+      "steps": [
+        {
+          "exec": "cdk synth --app \"ts-node -P tsconfig.dev.json test/website/website.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata -o test/website/website.integ.snapshot > /dev/null"
+        }
+      ]
+    },
+    "integ:website:watch": {
+      "name": "integ:website:watch",
+      "description": "watch integration test 'website' (without updating snapshots)",
+      "steps": [
+        {
+          "exec": "cdk watch --app \"ts-node -P tsconfig.dev.json test/website/website.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata '**' -o test/website/.tmp/website.integ/deploy.cdk.out"
         }
       ]
     },
@@ -366,6 +432,9 @@
         },
         {
           "spawn": "integ:typescript-function:assert"
+        },
+        {
+          "spawn": "integ:website:assert"
         }
       ]
     },

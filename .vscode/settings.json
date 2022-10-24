@@ -1,0 +1,7 @@
+{
+  "files.autoSave": "afterDelay",
+  "editor.codeActionsOnSave": {
+      // "source.organizeImports": true, // conflicts with eslint/prettier
+      "source.fixAll.eslint": true,
+  },
+}

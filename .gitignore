@@ -72,6 +72,15 @@ test/functions/typescript-function.integ.snapshot/manifest.json
 test/functions/typescript-function.integ.snapshot/**/manifest.json
 test/functions/typescript-function.integ.snapshot/tree.json
 test/functions/typescript-function.integ.snapshot/**/tree.json
+test/website/.tmp
+test/website/website.integ.snapshot/asset.*
+test/website/website.integ.snapshot/**/asset.*
+test/website/website.integ.snapshot/cdk.out
+test/website/website.integ.snapshot/**/cdk.out
+test/website/website.integ.snapshot/manifest.json
+test/website/website.integ.snapshot/**/manifest.json
+test/website/website.integ.snapshot/tree.json
+test/website/website.integ.snapshot/**/tree.json
 !/codecov.yml
 !/NOTICE
 !/.github/pull_request_template.md

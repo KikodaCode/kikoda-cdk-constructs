@@ -1,6 +1,10 @@
 import { execSync, ExecSyncOptions } from 'child_process';
-import { AssetStaging, DockerImage, FileCopyOptions } from 'aws-cdk-lib';
-import { DnsValidatedCertificate } from 'aws-cdk-lib/aws-certificatemanager';
+import { ArnFormat, AssetStaging, DockerImage, FileCopyOptions, Stack, Token } from 'aws-cdk-lib';
+import {
+  Certificate,
+  DnsValidatedCertificate,
+  ICertificate,
+} from 'aws-cdk-lib/aws-certificatemanager';
 import {
   SecurityPolicyProtocol,
   Distribution,
@@ -8,21 +12,38 @@ import {
   IOriginRequestPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
-import {
-  HostedZone,
-  ARecord,
-  RecordTarget,
-  HostedZoneProviderProps,
-} from 'aws-cdk-lib/aws-route53';
+import { HostedZone, ARecord, RecordTarget, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { BlockPublicAccess, Bucket, BucketEncryption, CorsRule } from 'aws-cdk-lib/aws-s3';
 import { AssetOptions } from 'aws-cdk-lib/aws-s3-assets';
 import { BucketDeployment, ISource, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { Construct } from 'constructs';
+import { copySync } from 'fs-extra';
 
 export interface SinglePageAppProps {
-  readonly zoneName: HostedZoneProviderProps['domainName'];
+  /**
+   * Provide an existing Hosted Zone to use for the domain.
+   */
+  readonly hostedZone?: IHostedZone;
+
+  /**
+   * If you don't provide an existing Hosted Zone, you can provide the domain name
+   * and the this construct will first try to find an existing Hosted Zone for the
+   * domain. If it can't find one, it will create a new one.
+   */
+  readonly zoneName?: string;
+
+  /**
+   * Optionally provide a subdomain to use for the site.
+   */
   readonly subdomain?: string;
+
+  /**
+   * Specify an ARN of an ACM certificate to use for the Cloudfront Distribution. This is
+   * useful when you are deploying to a region other than `us-east-1`, as Cloudfront
+   * requires the certificate to be in `us-east-1`.
+   */
+  readonly acmCertificateArn?: string;
   readonly indexDoc: string;
   readonly errorDoc?: string;
 
@@ -54,8 +75,9 @@ export interface SinglePageAppProps {
 }
 
 /**
- * S3 Deployment, cloudfront distribution, ssl cert and error forwarding auto
- * configured by using the details in the hosted zone provided
+ * A construct that deploys a Single Page App using S3 and Cloudfront. This construct
+ * will create a S3 bucket, deploy the contents of the specified directory to the bucket,
+ * and create a Cloudfront distribution that serves the contents of the bucket.
  */
 export class SinglePageApp extends Construct {
   public readonly distribution: Distribution;
@@ -66,16 +88,48 @@ export class SinglePageApp extends Construct {
   constructor(scope: Construct, id: string, props: SinglePageAppProps) {
     super(scope, id);
 
-    const hostedZone = HostedZone.fromLookup(this, 'HostedZone', {
-      domainName: props.zoneName,
-    });
+    let hostedZone: IHostedZone;
 
-    const domainName = props.subdomain ? `${props.subdomain}.${props.zoneName}` : props.zoneName;
+    if (props.hostedZone) {
+      hostedZone = props.hostedZone;
+    } else if (!props.hostedZone && props.zoneName) {
+      try {
+        hostedZone = HostedZone.fromLookup(this, 'HostedZone', {
+          domainName: props.zoneName,
+        });
+      } catch {
+        hostedZone = new HostedZone(this, 'HostedZone', {
+          zoneName: props.zoneName,
+        });
+      }
+    } else {
+      throw new Error('Either `hostedZone` or `zoneName` must be provided.');
+    }
 
-    const cert = new DnsValidatedCertificate(this, 'Certificate', {
-      hostedZone,
-      domainName,
-    });
+    const domainName = props.subdomain ? `${props.subdomain}.${props.zoneName}` : props.zoneName!;
+
+    // Resolve the ACM certificate if provided or create one
+    let certificate: ICertificate;
+    if (props.acmCertificateArn) {
+      const certificateRegion = Stack.of(this).splitArn(
+        props.acmCertificateArn,
+        ArnFormat.SLASH_RESOURCE_NAME,
+      ).region;
+
+      if (!Token.isUnresolved(certificateRegion) && certificateRegion !== 'us-east-1') {
+        throw new Error(
+          `The certificate must be in the us-east-1 region and the certificate you provided is in ${certificateRegion}.`,
+        );
+      }
+
+      certificate = Certificate.fromCertificateArn(this, 'Certificate', props.acmCertificateArn);
+    } else {
+      certificate = new DnsValidatedCertificate(this, 'Certificate', {
+        region: 'us-east-1',
+        hostedZone,
+        domainName,
+      });
+    }
 
     this.websiteBucket = new Bucket(this, 'WebsiteBucket', {
       publicReadAccess: false,
@@ -108,7 +162,7 @@ export class SinglePageApp extends Construct {
         },
       ],
       domainNames: [domainName],
-      certificate: cert,
+      certificate,
       minimumProtocolVersion: props.securityPolicy ?? SecurityPolicyProtocol.TLS_V1_2_2021,
     });
     // console.log(this.distribution);
@@ -137,7 +191,14 @@ export class SinglePageApp extends Construct {
                 return false;
               }
 
-              execSync(`${buildCmd} && cp -a ${props.buildDir}/* ${outputDir}/`, execOptions);
+              execSync(buildCmd, execOptions);
+              copySync(props.buildDir!, outputDir, {
+                dereference: true,
+                filter: (src: string) => {
+                  return !props.buildAssetExcludes?.includes(src);
+                },
+              });
+
               return true;
             },
           },

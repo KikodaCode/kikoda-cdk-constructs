@@ -26,6 +26,11 @@
     "integ:typescript-function:destroy": "npx projen integ:typescript-function:destroy",
     "integ:typescript-function:snapshot": "npx projen integ:typescript-function:snapshot",
     "integ:typescript-function:watch": "npx projen integ:typescript-function:watch",
+    "integ:website:assert": "npx projen integ:website:assert",
+    "integ:website:deploy": "npx projen integ:website:deploy",
+    "integ:website:destroy": "npx projen integ:website:destroy",
+    "integ:website:snapshot": "npx projen integ:website:snapshot",
+    "integ:website:watch": "npx projen integ:website:watch",
     "package": "npx projen package",
     "package-all": "npx projen package-all",
     "package:dotnet": "npx projen package:dotnet",
@@ -90,11 +95,13 @@
     "@kikoda/generated-config": "^0.5.1",
     "@yarnpkg/esbuild-plugin-pnp": "^2.0.3",
     "esbuild": "~0.13",
+    "fs-extra": "^10.1.0",
     "lodash": "^4.17.21"
   },
   "bundledDependencies": [
     "@yarnpkg/esbuild-plugin-pnp",
     "esbuild",
+    "fs-extra",
     "lodash"
   ],
   "keywords": [

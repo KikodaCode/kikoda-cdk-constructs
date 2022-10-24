@@ -50,6 +50,13 @@ export interface WebsiteProps {
   /** Path to the build output, relative to the `appDir` */
   readonly buildDir?: string;
 
+  /**
+   * Provide an array of filenames to exclude from the build output. This is useful if you have
+   * files that are generated during the build process that you don't want to include in the
+   * final build output.
+   */
+  readonly buildAssetExcludes?: string[];
+
   readonly bundling?: AssetOptions['bundling'];
 
   /** The name of the index document to load, typically 'index.html'
@@ -115,7 +122,10 @@ export class Website extends Construct {
       subdomain,
       appDir,
       buildDir,
-      buildAssetExcludes: [ConfigManifest.CONFIG_MANIFEST_FILENAME, '*.config.json'],
+      buildAssetExcludes: [
+        ...(props.buildAssetExcludes ?? []),
+        ...[ConfigManifest.CONFIG_MANIFEST_FILENAME, '*.config.json'],
+      ],
       buildCommand,
       bundling,
       indexDoc: indexDoc ?? 'index.html',

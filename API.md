@@ -5794,6 +5794,7 @@ const websiteProps: WebsiteProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.baseDomain">baseDomain</a></code> | <code>string</code> | Top level domain for the site. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.stage">stage</a></code> | <code>string</code> | String indicator of which environment/stage is being deployed ex. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.subdomain">subdomain</a></code> | <code>string</code> | Sub-domain for the site. |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildAssetExcludes">buildAssetExcludes</a></code> | <code>string[]</code> | Provide an array of filenames to exclude from the build output. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildCommand">buildCommand</a></code> | <code>string</code> | The command for building the website (e.g. "yarn run build"). |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildDir">buildDir</a></code> | <code>string</code> | Path to the build output, relative to the `appDir`. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.bundling">bundling</a></code> | <code>aws-cdk-lib.BundlingOptions</code> | *No description.* |
@@ -5857,6 +5858,22 @@ public readonly subdomain: string;
 Sub-domain for the site.
 
 eg <subdomain>.example.com
+
+---
+
+##### `buildAssetExcludes`<sup>Optional</sup> <a name="buildAssetExcludes" id="@kikoda/cdk-constructs.WebsiteProps.property.buildAssetExcludes"></a>
+
+```typescript
+public readonly buildAssetExcludes: string[];
+```
+
+- *Type:* string[]
+
+Provide an array of filenames to exclude from the build output.
+
+This is useful if you have
+files that are generated during the build process that you don't want to include in the
+final build output.
 
 ---
 
