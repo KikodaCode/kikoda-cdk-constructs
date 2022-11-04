@@ -192,7 +192,7 @@ export class SinglePageApp extends Construct {
               }
 
               execSync(buildCmd, execOptions);
-              copySync(props.buildDir!, outputDir, {
+              copySync(`${props.appDir}/${props.buildDir}`, outputDir, {
                 dereference: true,
                 filter: (src: string) => {
                   return !props.buildAssetExcludes?.includes(src);
