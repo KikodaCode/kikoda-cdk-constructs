@@ -5791,9 +5791,8 @@ const websiteProps: WebsiteProps = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.appDir">appDir</a></code> | <code>string</code> | The full absolute path of the Single Page App. |
-| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.baseDomain">baseDomain</a></code> | <code>string</code> | Top level domain for the site. |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.domainName">domainName</a></code> | <code>string</code> | Specify a domain name to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.stage">stage</a></code> | <code>string</code> | String indicator of which environment/stage is being deployed ex. |
-| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.subdomain">subdomain</a></code> | <code>string</code> | Sub-domain for the site. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildAssetExcludes">buildAssetExcludes</a></code> | <code>string[]</code> | Provide an array of glob patterns to exclude from the build output. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildCommand">buildCommand</a></code> | <code>string</code> | The command for building the website (e.g. "yarn run build"). |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildDir">buildDir</a></code> | <code>string</code> | Path to the build output, relative to the `appDir`. |
@@ -5802,6 +5801,7 @@ const websiteProps: WebsiteProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.corsAllowedOrigins">corsAllowedOrigins</a></code> | <code>string[]</code> | Specify a list of allowed request origins to use when configuring CORS (must also specify `enableCors`). |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.enableCors">enableCors</a></code> | <code>boolean</code> | Setup S3 bucket and Cloudfront distribution to allow CORS requests. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.generateWebConfigProps">generateWebConfigProps</a></code> | <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps">GenerateWebConfigProps</a></code> | Specify options for gernerating a web config from base and stage level configs. |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | Specify an existing hosted zone to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.indexDoc">indexDoc</a></code> | <code>string</code> | The name of the index document to load, typically 'index.html'. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.repoRoot">repoRoot</a></code> | <code>string</code> | This should be the root directory of the git repository. |
 
@@ -5819,17 +5819,15 @@ The full absolute path of the Single Page App.
 
 ---
 
-##### `baseDomain`<sup>Required</sup> <a name="baseDomain" id="@kikoda/cdk-constructs.WebsiteProps.property.baseDomain"></a>
+##### `domainName`<sup>Required</sup> <a name="domainName" id="@kikoda/cdk-constructs.WebsiteProps.property.domainName"></a>
 
 ```typescript
-public readonly baseDomain: string;
+public readonly domainName: string;
 ```
 
 - *Type:* string
 
-Top level domain for the site.
-
-This should match an existing hosted zone in R53. eg. example.com
+Specify a domain name to use for the website.
 
 ---
 
@@ -5844,20 +5842,6 @@ public readonly stage: string;
 String indicator of which environment/stage is being deployed ex.
 
 'dev', 'test', 'prod'
-
----
-
-##### `subdomain`<sup>Required</sup> <a name="subdomain" id="@kikoda/cdk-constructs.WebsiteProps.property.subdomain"></a>
-
-```typescript
-public readonly subdomain: string;
-```
-
-- *Type:* string
-
-Sub-domain for the site.
-
-eg <subdomain>.example.com
 
 ---
 
@@ -5963,6 +5947,19 @@ Specify options for gernerating a web config from base and stage level configs.
 
 Must
 enable `generateWebConfig`
+
+---
+
+##### `hostedZone`<sup>Optional</sup> <a name="hostedZone" id="@kikoda/cdk-constructs.WebsiteProps.property.hostedZone"></a>
+
+```typescript
+public readonly hostedZone: IHostedZone;
+```
+
+- *Type:* aws-cdk-lib.aws_route53.IHostedZone
+- *Default:* This construct will try to lookup an existing hosted zone for the domain name provided.
+
+Specify an existing hosted zone to use for the website.
 
 ---
 

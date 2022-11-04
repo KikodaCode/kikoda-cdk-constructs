@@ -21,7 +21,7 @@ npm install @kikoda/cdk-constructs --save-dev
 ### AWS CDK
 The Kikoda Constructs library currently only supports AWS CDK v2.
 
-Add this to your CDK stack:
+Add this to your CDK stack to create a new Cloudfront/S3 backed website:
 
 ```typescript
 import { Website } from '@kikoda/cdk-constructs';
@@ -31,8 +31,7 @@ const website = new Website(this, 'Website', {
   appDir: resolve(__dirname, <RELATIVE_PATH_TO_WEB_ASSETS>),
   buildDir: <BUILD_DIR_RELATIVE_TO_APP_DIR>,
   buildCommand: <CMD_TO_BUILD_APP>,
-  subdomain: <SUBDOMAIN>, // eg. dev
-  baseDomain: <BASE_DOMAIN_NAME>, // eg. example.com
+  domainName: <DOMAIN_NAME>,
 });
 ```
 
