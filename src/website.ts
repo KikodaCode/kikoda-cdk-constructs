@@ -1,6 +1,7 @@
 import { ConfigManifest, GeneratedConfig, AdditionalConfigObject } from '@kikoda/generated-config';
 import { AssetOptions } from 'aws-cdk-lib';
 import { OriginRequestPolicy, SecurityPolicyProtocol } from 'aws-cdk-lib/aws-cloudfront';
+import { HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 
@@ -70,11 +71,17 @@ export interface WebsiteProps {
    */
   readonly generateWebConfigProps?: GenerateWebConfigProps;
 
-  /** Top level domain for the site. This should match an existing hosted zone in R53. eg. example.com */
-  readonly baseDomain: string;
+  /**
+   * Specify a domain name to use for the website.
+   */
+  readonly domainName: string;
 
-  /** Sub-domain for the site. eg <subdomain>.example.com */
-  readonly subdomain: string;
+  /**
+   * Specify an existing hosted zone to use for the website.
+   *
+   * @default - This construct will try to lookup an existing hosted zone for the domain name provided.
+   */
+  readonly hostedZone?: IHostedZone;
 
   /** Setup S3 bucket and Cloudfront distribution to allow CORS requests. Optionally specificy the allowed Origins with `corsAllowedOrigins` */
   readonly enableCors?: boolean;
@@ -104,8 +111,8 @@ export class Website extends Construct {
 
     const {
       stage,
-      baseDomain,
-      subdomain,
+      domainName,
+      hostedZone,
       appDir,
       buildDir,
       indexDoc,
@@ -115,11 +122,11 @@ export class Website extends Construct {
     } = props;
 
     // export endpoint
-    this.endpoint = `https://${subdomain}.${baseDomain}`;
+    this.endpoint = `https://${domainName}`;
 
     const spa = new SinglePageApp(this, 'Spa', {
-      zoneName: baseDomain,
-      subdomain,
+      hostedZone: hostedZone ?? HostedZone.fromLookup(this, 'HostedZone', { domainName }),
+      domainName,
       appDir,
       buildDir,
       buildAssetExcludes: [

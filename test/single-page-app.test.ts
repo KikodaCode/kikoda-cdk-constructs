@@ -1,7 +1,7 @@
 import { existsSync } from 'fs';
 import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
-import { HostedZoneProviderProps } from 'aws-cdk-lib/aws-route53';
+import { HostedZone, HostedZoneProviderProps, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { CorsRule, HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 import { SinglePageApp, SinglePageAppProps } from '../src/single-page-app';
@@ -22,15 +22,25 @@ jest.mock('aws-cdk-lib/aws-route53', () => {
   };
 });
 
+const givenZoneName = 'example.com';
+
 describe('Given simple Single Page App', () => {
   class SPAStack extends Stack {
     public singlePageApp: SinglePageApp;
-    constructor(props: SinglePageAppProps) {
+    constructor(props: Omit<SinglePageAppProps, 'hostedZone'>) {
       super();
-      this.singlePageApp = new SinglePageApp(this, 'spa', props);
+
+      const givenZone: IHostedZone = HostedZone.fromLookup(this, 'HostedZone', {
+        domainName: givenZoneName,
+      });
+
+      this.singlePageApp = new SinglePageApp(this, 'spa', {
+        ...props,
+        hostedZone: givenZone,
+      });
     }
   }
-  const givenZoneName: string = 'zoneName';
+
   const corsRules = [
     {
       allowedHeaders: ['*'],
@@ -42,7 +52,7 @@ describe('Given simple Single Page App', () => {
   ];
   const spaStack = new SPAStack({
     appDir: __dirname,
-    zoneName: givenZoneName,
+    domainName: 'test.example.com',
     indexDoc: 'indexDoc',
     bucketCorsRules: corsRules,
   });
@@ -80,26 +90,25 @@ describe('Given simple Single Page App', () => {
     });
   });
 
-  const subDomain: string = 'subDomain';
-  const subDomainSpaStack = new SPAStack({
+  const domainName: string = 'test.example.com';
+  const domainNameSpaStack = new SPAStack({
     appDir: __dirname,
-    zoneName: givenZoneName,
-    subdomain: subDomain,
+    domainName,
     indexDoc: 'indexDoc',
   });
-  const subDomainTemplate = Template.fromStack(subDomainSpaStack);
+  const domainNameTemplate = Template.fromStack(domainNameSpaStack);
 
-  test(`CF Distribution Alias contains ${subDomain}`, () => {
-    subDomainTemplate.hasResourceProperties('AWS::CloudFront::Distribution', {
+  test(`CF Distribution Alias contains ${domainName}`, () => {
+    domainNameTemplate.hasResourceProperties('AWS::CloudFront::Distribution', {
       DistributionConfig: {
-        Aliases: [Match.stringLikeRegexp(`(?=.*${subDomain})(?=.*${givenZoneName}).*`)],
+        Aliases: [Match.stringLikeRegexp(`(?=.*${domainName})`)],
       },
     });
   });
 
   let spaStack1 = new SPAStack({
     appDir: __dirname,
-    zoneName: givenZoneName,
+    domainName: 'test.example.com',
     indexDoc: 'indexDoc',
     buildCommand: 'rm -rf dist && mkdir -p dist && touch dist/spa_local_build_artifact',
     buildDir: 'dist',

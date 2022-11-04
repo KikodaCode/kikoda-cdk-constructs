@@ -44,8 +44,7 @@ describe('Given a Website', () => {
   const webStack = new WebStack({
     stage: 'test',
     appDir: __dirname,
-    subdomain: subDomain,
-    baseDomain: baseDomain,
+    domainName: `${subDomain}.${baseDomain}`,
     enableCors: true,
   });
 
@@ -78,8 +77,7 @@ describe('Given a Website', () => {
   const generatedConfigStack = new WebStack({
     stage: 'test',
     appDir: __dirname,
-    subdomain: subDomain,
-    baseDomain: baseDomain,
+    domainName: `${subDomain}.${baseDomain}`,
     buildDir: '',
     generateWebConfigProps: {
       configDir: 'config',

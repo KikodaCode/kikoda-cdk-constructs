@@ -12,7 +12,7 @@ import {
   IOriginRequestPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
-import { HostedZone, ARecord, RecordTarget, IHostedZone } from 'aws-cdk-lib/aws-route53';
+import { ARecord, RecordTarget, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { BlockPublicAccess, Bucket, BucketEncryption, CorsRule } from 'aws-cdk-lib/aws-s3';
 import { AssetOptions } from 'aws-cdk-lib/aws-s3-assets';
@@ -26,19 +26,12 @@ export interface SinglePageAppProps {
   /**
    * Provide an existing Hosted Zone to use for the domain.
    */
-  readonly hostedZone?: IHostedZone;
+  readonly hostedZone: IHostedZone;
 
   /**
-   * If you don't provide an existing Hosted Zone, you can provide the domain name
-   * and the this construct will first try to find an existing Hosted Zone for the
-   * domain. If it can't find one, it will create a new one.
+   * The domain name to use for the SPA
    */
-  readonly zoneName?: string;
-
-  /**
-   * Optionally provide a subdomain to use for the site.
-   */
-  readonly subdomain?: string;
+  readonly domainName: string;
 
   /**
    * Specify an ARN of an ACM certificate to use for the Cloudfront Distribution. This is
@@ -90,26 +83,6 @@ export class SinglePageApp extends Construct {
   constructor(scope: Construct, id: string, props: SinglePageAppProps) {
     super(scope, id);
 
-    let hostedZone: IHostedZone;
-
-    if (props.hostedZone) {
-      hostedZone = props.hostedZone;
-    } else if (!props.hostedZone && props.zoneName) {
-      try {
-        hostedZone = HostedZone.fromLookup(this, 'HostedZone', {
-          domainName: props.zoneName,
-        });
-      } catch {
-        hostedZone = new HostedZone(this, 'HostedZone', {
-          zoneName: props.zoneName,
-        });
-      }
-    } else {
-      throw new Error('Either `hostedZone` or `zoneName` must be provided.');
-    }
-
-    const domainName = props.subdomain ? `${props.subdomain}.${props.zoneName}` : props.zoneName!;
-
     // Resolve the ACM certificate if provided or create one
     let certificate: ICertificate;
     if (props.acmCertificateArn) {
@@ -128,8 +101,8 @@ export class SinglePageApp extends Construct {
     } else {
       certificate = new DnsValidatedCertificate(this, 'Certificate', {
         region: 'us-east-1',
-        hostedZone,
-        domainName,
+        hostedZone: props.hostedZone,
+        domainName: props.domainName,
       });
     }
 
@@ -163,7 +136,7 @@ export class SinglePageApp extends Construct {
           responseHttpStatus: 200,
         },
       ],
-      domainNames: [domainName],
+      domainNames: [props.domainName],
       certificate,
       minimumProtocolVersion: props.securityPolicy ?? SecurityPolicyProtocol.TLS_V1_2_2021,
     });
@@ -235,8 +208,8 @@ export class SinglePageApp extends Construct {
     });
 
     new ARecord(this, 'Alias', {
-      zone: hostedZone,
-      recordName: domainName,
+      zone: props.hostedZone,
+      recordName: props.domainName,
       target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
     });
   }

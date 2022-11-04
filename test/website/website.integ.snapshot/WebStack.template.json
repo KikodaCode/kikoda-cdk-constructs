@@ -1,9 +1,9 @@
 {
  "Resources": {
-  "WebsiteSpaHostedZoneC7E1B74D": {
+  "HostedZoneDB99F866": {
    "Type": "AWS::Route53::HostedZone",
    "Properties": {
-    "Name": "baseDomain."
+    "Name": "example.com."
    }
   },
   "WebsiteSpaCertificateCertificateRequestorFunctionServiceRole0BD28A9D": {
@@ -70,7 +70,7 @@
           },
           ":route53:::hostedzone/",
           {
-           "Ref": "WebsiteSpaHostedZoneC7E1B74D"
+           "Ref": "HostedZoneDB99F866"
           }
          ]
         ]
@@ -120,9 +120,9 @@
       "Arn"
      ]
     },
-    "DomainName": "subDomain.baseDomain",
+    "DomainName": "test.example.com",
     "HostedZoneId": {
-     "Ref": "WebsiteSpaHostedZoneC7E1B74D"
+     "Ref": "HostedZoneDB99F866"
     },
     "Region": "us-east-1"
    },
@@ -203,7 +203,7 @@
    "Properties": {
     "DistributionConfig": {
      "Aliases": [
-      "subDomain.baseDomain"
+      "test.example.com"
      ],
      "CustomErrorResponses": [
       {
@@ -303,7 +303,7 @@
   "WebsiteSpaAliasC1201051": {
    "Type": "AWS::Route53::RecordSet",
    "Properties": {
-    "Name": "subDomain.baseDomain.",
+    "Name": "test.example.com.",
     "Type": "A",
     "AliasTarget": {
      "DNSName": {
@@ -323,7 +323,7 @@
      }
     },
     "HostedZoneId": {
-     "Ref": "WebsiteSpaHostedZoneC7E1B74D"
+     "Ref": "HostedZoneDB99F866"
     }
    }
   },
