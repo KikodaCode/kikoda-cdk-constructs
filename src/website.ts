@@ -51,7 +51,7 @@ export interface WebsiteProps {
   readonly buildDir?: string;
 
   /**
-   * Provide an array of filenames to exclude from the build output. This is useful if you have
+   * Provide an array of glob patterns to exclude from the build output. This is useful if you have
    * files that are generated during the build process that you don't want to include in the
    * final build output.
    */

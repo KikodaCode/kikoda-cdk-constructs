@@ -42,8 +42,9 @@ const project = new AwsCdkConstructLibrary({
   bundledDeps: [
     'esbuild@~0.13',
     '@yarnpkg/esbuild-plugin-pnp',
-    'lodash',
+    'lodash@4.17.21',
     'fs-extra',
+    'minimatch',
   ] /* Dependencies that must be bundled into this module. */,
   devDeps: [
     '@kikoda/generated-config',

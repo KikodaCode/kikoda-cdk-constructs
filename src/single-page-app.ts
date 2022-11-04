@@ -19,6 +19,8 @@ import { AssetOptions } from 'aws-cdk-lib/aws-s3-assets';
 import { BucketDeployment, ISource, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { Construct } from 'constructs';
 import { copySync } from 'fs-extra';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+import minimatch = require('minimatch');
 
 export interface SinglePageAppProps {
   /**
@@ -47,7 +49,7 @@ export interface SinglePageAppProps {
   readonly indexDoc: string;
   readonly errorDoc?: string;
 
-  /** list of files to exclude from the build artifact when deploying */
+  /** list of glob patterns to exclude from the build artifact when deploying */
   readonly buildAssetExcludes?: FileCopyOptions['exclude'];
 
   /** This should be the full absolute path of root directory of the git repository. Dependending on your repository setup
@@ -195,7 +197,18 @@ export class SinglePageApp extends Construct {
               copySync(`${props.appDir}/${props.buildDir}`, outputDir, {
                 dereference: true,
                 filter: (src: string) => {
-                  return !props.buildAssetExcludes?.includes(src);
+                  // remove the appDir from the path
+                  const relativePath = src.replace(`${props.appDir}/${props.buildDir}/`, '');
+
+                  // check to see if props.buildAssetExcludes includes the glob pattern for src
+                  if (props.buildAssetExcludes) {
+                    for (const pattern of props.buildAssetExcludes) {
+                      if (minimatch(relativePath, pattern)) {
+                        return false;
+                      }
+                    }
+                  }
+                  return true;
                 },
               });
 

@@ -164,6 +164,11 @@
     },
     {
       "name": "lodash",
+      "version": "4.17.21",
+      "type": "bundled"
+    },
+    {
+      "name": "minimatch",
       "type": "bundled"
     },
     {
