@@ -101,12 +101,12 @@ describe('Given simple Single Page App', () => {
     appDir: __dirname,
     zoneName: givenZoneName,
     indexDoc: 'indexDoc',
-    buildCommand: 'touch spa_local_build_artifact',
-    buildDir: __dirname,
+    buildCommand: 'rm -rf dist && mkdir -p dist && touch dist/spa_local_build_artifact',
+    buildDir: 'dist',
   });
 
   test('local bundling', () => {
-    expect(existsSync(`${__dirname}/spa_local_build_artifact`)).toBe(true);
+    expect(existsSync(`${__dirname}/dist/spa_local_build_artifact`)).toBe(true);
   });
 
   test('disable default bucket deployment', () => {

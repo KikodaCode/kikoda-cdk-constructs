@@ -55,7 +55,7 @@ const project = new AwsCdkConstructLibrary({
     'delay',
   ] /* Build dependencies for this module. */,
   packageName: '@kikoda/cdk-constructs',
-  gitignore: ['spa_local_build_artifact'],
+  gitignore: ['test/dist/spa_local_build_artifact'],
   githubOptions: {
     projenCredentials: GithubCredentials.fromApp(),
   },
