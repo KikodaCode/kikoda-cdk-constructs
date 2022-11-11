@@ -607,12 +607,12 @@
     lodash "^4.17.21"
     md5 "^2.3.0"
 
-"@kikoda/projen-templates@^0.1.145":
-  version "0.1.145"
-  resolved "https://registry.yarnpkg.com/@kikoda/projen-templates/-/projen-templates-0.1.145.tgz#5ebcfc792871e49741faa5bbe12f62cf6ab99f9b"
-  integrity sha512-Dv2k6OZJu6XLaoxz5Fx5LmOhMcLK4inFxYoTDk3JXZEPY4f1TWfslAj1ly3+h2V2ujgH4PTh5JgCJYH5T+xCsQ==
+"@kikoda/projen-templates@^0.1.146":
+  version "0.1.146"
+  resolved "https://registry.yarnpkg.com/@kikoda/projen-templates/-/projen-templates-0.1.146.tgz#3bd1ae8251917955b9379e3c203e8734996843ac"
+  integrity sha512-qiBOVpYTCiUX03DHP1rNqdVzJlRwVH6iToVTI8tavmGwkK6M9x59iNQWaAA4Xla3OMdouKQ+3pB0yE1DzGCgVA==
   dependencies:
-    projen "^0.65.18"
+    projen "^0.65.19"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -5167,10 +5167,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.65.18:
-  version "0.65.18"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.65.18.tgz#1e1f1dc52a4e3e446d2c41e2a66fc0633d94804c"
-  integrity sha512-tzoj7Exz8oOenb9Pab453HajGI3nVv3fT++QUKPT2WTbe5oJ11XFBcgN4i3hhArzncfpNnZmOZck3yBnJIvzsA==
+projen@^0.65.19:
+  version "0.65.19"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.65.19.tgz#b89dab211b21a01427ee7c4654f114eb51b8dd87"
+  integrity sha512-5pNvS2eeKjp/bqM+ArTb8b1dWlqSVnpYP031ZOByqrJ9BOhgTmthR+mzj8Ij6/UQUmgSJ60H28hxdASFLIgD/w==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
