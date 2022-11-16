@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@kikoda/generated-config": "0.5.1",
-    "@kikoda/projen-templates": "^0.1.150",
+    "@kikoda/projen-templates": "^0.1.151",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27",
     "@types/lodash": "^4.14.189",
@@ -80,11 +80,11 @@
     "json-schema": "^0.4.0",
     "npm-check-updates": "^16",
     "prettier": "^2.7.1",
-    "projen": "^0.65.22",
+    "projen": "^0.65.23",
     "standard-version": "^9",
     "ts-jest": "^27",
     "ts-node": "^10",
-    "typescript": "^4.8.4"
+    "typescript": "^4.9.3"
   },
   "peerDependencies": {
     "@kikoda/generated-config": "^0.5.1",
