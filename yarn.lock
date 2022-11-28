@@ -607,10 +607,10 @@
     lodash "^4.17.21"
     md5 "^2.3.0"
 
-"@kikoda/projen-templates@^0.1.162":
-  version "0.1.162"
-  resolved "https://registry.yarnpkg.com/@kikoda/projen-templates/-/projen-templates-0.1.162.tgz#7587cdef753726c13b10f86ff3559f4c183b3f9d"
-  integrity sha512-hTnuXE8+macarsktmlOfA3axbanodeoXS1Jb54xYXvxBQ3zIERa4+ZFozAoe0dCP27dhcpjpOhvZTyqkFR7UPA==
+"@kikoda/projen-templates@^0.1.163":
+  version "0.1.163"
+  resolved "https://registry.yarnpkg.com/@kikoda/projen-templates/-/projen-templates-0.1.163.tgz#8e8b3fabe15a576bb3fbaa6de25f818cc29c458e"
+  integrity sha512-okWQXuReug5DdN0JjttZuk4EMMtHMkTHRHx6gv4rLiTFW3goibVi55JAPfNL9IhMGLLrk/VGzTOto1NT+IHsEQ==
   dependencies:
     projen "^0.65.36"
 
@@ -1311,9 +1311,9 @@ aws-cdk-lib@2.26.0:
     yaml "1.10.2"
 
 aws-cdk@^2:
-  version "2.51.1"
-  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.51.1.tgz#f836e97b27b3493c2c9c3e36b62f2df6a7d3b946"
-  integrity sha512-c60bIcMfe/gn4qkw/TZvqw+DxVGFn25D624RcciLxIAI/t9v2taaPfIdlCVXDSr3qfy0Oc7GpEh3jL9I/RpVFw==
+  version "2.52.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.52.0.tgz#432820388bbf981a3c16004333cf7337bd615de1"
+  integrity sha512-48MO8W2l+m+vGWmV3yPO67MBP/U1AjmNDhiWpxvGUcPuHHNe6C86/m5yhieXmB8j/WeMxG6p7GsLcjQtwoFvTA==
   optionalDependencies:
     fsevents "2.3.2"
 
@@ -3234,9 +3234,9 @@ ignore-walk@^6.0.0:
     minimatch "^5.0.1"
 
 ignore@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.2.0.tgz#6d3bac8fa7fe0d45d9f9be7bac2fc279577e345a"
-  integrity sha512-CmxgYGiEPCLhfLnpPp1MoRmifwEIOgjcHXxOBjv7mY96c+eWScsOP9c112ZyLdWHi0FxHjI+4uVhKYp/gcdRmQ==
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.2.1.tgz#c2b1f76cb999ede1502f3a226a9310fdfe88d46c"
+  integrity sha512-d2qQLzTJ9WxQftPAuEQpSPmKqzxePjzVbpAVv62AQ64NTL+wR4JkrVqR/LqFsFEUsHDAiId52mJteHDFuDkElA==
 
 import-fresh@^3.0.0, import-fresh@^3.2.1:
   version "3.3.0"
