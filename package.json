@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@kikoda/generated-config": "0.5.1",
-    "@kikoda/projen-templates": "^0.1.185",
+    "@kikoda/projen-templates": "^0.1.186",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27",
     "@types/lodash": "^4.14.191",
@@ -80,7 +80,7 @@
     "json-schema": "^0.4.0",
     "npm-check-updates": "^16",
     "prettier": "^2.8.1",
-    "projen": "^0.65.66",
+    "projen": "^0.65.67",
     "standard-version": "^9",
     "ts-jest": "^27",
     "ts-node": "^10",
@@ -97,7 +97,7 @@
     "esbuild": "~0.13",
     "fs-extra": "^10.1.0",
     "lodash": "4.17.21",
-    "minimatch": "^5.1.1"
+    "minimatch": "^5.1.2"
   },
   "bundledDependencies": [
     "@yarnpkg/esbuild-plugin-pnp",
