@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@kikoda/generated-config": "0.5.1",
-    "@kikoda/projen-templates": "^0.1.202",
+    "@kikoda/projen-templates": "^0.1.203",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27",
     "@types/lodash": "^4.14.191",
@@ -79,7 +79,7 @@
     "jsii-pacmak": "^1.73.0",
     "json-schema": "^0.4.0",
     "npm-check-updates": "^16",
-    "prettier": "^2.8.1",
+    "prettier": "^2.8.2",
     "projen": "^0.66.7",
     "standard-version": "^9",
     "ts-jest": "^27",
