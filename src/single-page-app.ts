@@ -22,7 +22,7 @@ import { copySync } from 'fs-extra';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import minimatch = require('minimatch');
 
-interface SinglePageAppCoreProps {
+export interface SinglePageAppProps {
   /**
    * Provide an existing Hosted Zone to use for the domain.
    */
@@ -44,6 +44,10 @@ interface SinglePageAppCoreProps {
 
   /** list of glob patterns to exclude from the build artifact when deploying */
   readonly buildAssetExcludes?: FileCopyOptions['exclude'];
+
+  readonly bundling?: AssetOptions['bundling'];
+
+  readonly bundlingEnvironment?: NonNullable<AssetOptions['bundling']>['environment'];
 
   /** This should be the full absolute path of root directory of the git repository. Dependending on your repository setup
    * this may be required for Docker-based bundling. This path, if provided will be used as the mount point
@@ -67,20 +71,6 @@ interface SinglePageAppCoreProps {
   readonly securityPolicy?: SecurityPolicyProtocol;
   readonly originRequestPolicy?: IOriginRequestPolicy;
 }
-
-interface SinglePageAppPropsCustomBundling extends SinglePageAppCoreProps {
-  readonly bundling?: AssetOptions['bundling'];
-  readonly bundlingEnvironment?: never;
-}
-
-interface SinglePageAppPropsDefaultBundling extends SinglePageAppCoreProps {
-  readonly bundling?: never;
-  readonly bundlingEnvironment?: NonNullable<AssetOptions['bundling']>['environment'];
-}
-
-export type SinglePageAppProps =
-  | SinglePageAppPropsCustomBundling
-  | SinglePageAppPropsDefaultBundling;
 
 /**
  * A construct that deploys a Single Page App using S3 and Cloudfront. This construct

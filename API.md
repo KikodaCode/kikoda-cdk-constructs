@@ -5796,7 +5796,8 @@ const websiteProps: WebsiteProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildAssetExcludes">buildAssetExcludes</a></code> | <code>string[]</code> | Provide an array of glob patterns to exclude from the build output. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildCommand">buildCommand</a></code> | <code>string</code> | The command for building the website (e.g. "yarn run build"). |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildDir">buildDir</a></code> | <code>string</code> | Path to the build output, relative to the `appDir`. |
-| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.bundling">bundling</a></code> | <code>aws-cdk-lib.BundlingOptions</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.bundling">bundling</a></code> | <code>aws-cdk-lib.BundlingOptions</code> | Specify a custom bundling set up. |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.bundlingEnvironment">bundlingEnvironment</a></code> | <code>{[ key: string ]: string}</code> | Specify bundling environment variables when using the default bundling. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.cloudfrontInvalidationPaths">cloudfrontInvalidationPaths</a></code> | <code>string[]</code> | Specify the paths to be invalidated in the Cloudfront Distribution at the end of the deployment. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.corsAllowedOrigins">corsAllowedOrigins</a></code> | <code>string[]</code> | Specify a list of allowed request origins to use when configuring CORS (must also specify `enableCors`). |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.enableCors">enableCors</a></code> | <code>boolean</code> | Setup S3 bucket and Cloudfront distribution to allow CORS requests. |
@@ -5892,6 +5893,24 @@ public readonly bundling: BundlingOptions;
 ```
 
 - *Type:* aws-cdk-lib.BundlingOptions
+
+Specify a custom bundling set up.
+
+If you only need to specify environment variables use the `bundlingEnvironment` property.
+
+---
+
+##### `bundlingEnvironment`<sup>Optional</sup> <a name="bundlingEnvironment" id="@kikoda/cdk-constructs.WebsiteProps.property.bundlingEnvironment"></a>
+
+```typescript
+public readonly bundlingEnvironment: {[ key: string ]: string};
+```
+
+- *Type:* {[ key: string ]: string}
+
+Specify bundling environment variables when using the default bundling.
+
+If you require custom bundling use the `bundling` property.
 
 ---
 

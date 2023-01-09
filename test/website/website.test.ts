@@ -1,10 +1,9 @@
-import { DockerImage, Stack } from 'aws-cdk-lib';
+import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { HostedZoneProviderProps } from 'aws-cdk-lib/aws-route53';
 import { CorsRule, HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 import { Website, WebsiteProps } from '../../src/website';
-import { LinuxBuildImage } from 'aws-cdk-lib/aws-codebuild';
 
 jest.mock('aws-cdk-lib/aws-route53', () => {
   const original = jest.requireActual('aws-cdk-lib/aws-route53');

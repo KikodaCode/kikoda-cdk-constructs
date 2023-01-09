@@ -1,5 +1,4 @@
 import { ConfigManifest, GeneratedConfig, AdditionalConfigObject } from '@kikoda/generated-config';
-import { AssetOptions } from 'aws-cdk-lib';
 import { OriginRequestPolicy, SecurityPolicyProtocol } from 'aws-cdk-lib/aws-cloudfront';
 import { HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { HttpMethods } from 'aws-cdk-lib/aws-s3';
@@ -32,7 +31,7 @@ export interface GenerateWebConfigProps extends AdditionalConfigObject {
   readonly configDir: string;
 }
 
-interface WebsitePropsCore {
+export interface WebsiteProps {
   /** String indicator of which environment/stage is being deployed ex. 'dev', 'test', 'prod' */
   readonly stage: string;
 
@@ -57,6 +56,12 @@ interface WebsitePropsCore {
    * final build output.
    */
   readonly buildAssetExcludes?: string[];
+
+  /** Specify a custom bundling set up. If you only need to specify environment variables use the `bundlingEnvironment` property. */
+  readonly bundling?: SinglePageAppProps['bundling'];
+
+  /** Specify bundling environment variables when using the default bundling. If you require custom bundling use the `bundling` property. */
+  readonly bundlingEnvironment?: SinglePageAppProps['bundlingEnvironment'];
 
   /** The name of the index document to load, typically 'index.html'
    *
@@ -94,20 +99,6 @@ interface WebsitePropsCore {
    */
   readonly cloudfrontInvalidationPaths?: string[];
 }
-
-interface WebsitePropsCustomBundling extends WebsitePropsCore {
-  /** Specify a custom bundling set up. If you only need to specify environment variables use the `bundlingEnvironment` property. */
-  readonly bundling?: SinglePageAppProps['bundling'];
-  readonly bundlingEnvironment?: never;
-}
-
-interface WebsitePropsDefaultBundling extends WebsitePropsCore {
-  readonly bundling?: never;
-  /** Specify bundling environment variables when using the default bundling. If you require custom bundling use the `bundling` property. */
-  readonly bundlingEnvironment?: SinglePageAppProps['bundlingEnvironment'];
-}
-
-export type WebsiteProps = WebsitePropsCustomBundling | WebsitePropsDefaultBundling;
 
 /** Deploy a single page app with a standard static website architecture to AWS using CloudFront, S3, and Route53. This is typically
  * coupled with the `configProvider` hooks in the `@kikoda/delivery-hooks` package using the `generateWebConfig`
