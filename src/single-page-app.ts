@@ -47,8 +47,6 @@ export interface SinglePageAppProps {
 
   readonly bundling?: AssetOptions['bundling'];
 
-  readonly bundlingEnvironment?: NonNullable<AssetOptions['bundling']>['environment'];
-
   /** This should be the full absolute path of root directory of the git repository. Dependending on your repository setup
    * this may be required for Docker-based bundling. This path, if provided will be used as the mount point
    * for the Docker container during bundling. If this is not provided, the `appDir` path will be used.
@@ -191,7 +189,6 @@ export class SinglePageApp extends Construct {
               return true;
             },
           },
-          environment: props.bundlingEnvironment,
           image: DockerImage.fromRegistry('node:16'),
           command: [
             'bash',

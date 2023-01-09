@@ -76,11 +76,23 @@ export interface PipelineConfig {
   readonly codeArtifactRepositoryArn?: string;
   /**
    *
-   *
    * @readonly
    * @type {?string}
    */
   readonly notificationTopicArn?: string;
+
+  /**
+   * The environment variables that your builds can use.
+   * @readonly
+   */
+  readonly environment?: NonNullable<CodeBuildOptions['buildEnvironment']>['environmentVariables'];
+
+  /**
+   *
+   * @readonly
+   * @type {?string}
+   */
+  readonly roles?: CodeBuildOptions['rolePolicy'];
 }
 
 /**
@@ -141,6 +153,8 @@ export class ComponentPipelineStack<
       pruneCloudAssembly = true,
       codeArtifactRepositoryArn,
       notificationTopicArn,
+      environment,
+      roles,
     } = props.pipelineConfig;
 
     const { source, synthOuputDir = 'out', baseDir = '.' } = props.repository;
@@ -150,7 +164,12 @@ export class ComponentPipelineStack<
 
     // Branch-based pipeline name
     const pipelineName = `${componentName}-${branchName.replace('/', '-')}`;
-    let assetPublishingCodeBuildDefaults: CodeBuildOptions = {};
+    let assetPublishingCodeBuildDefaults: CodeBuildOptions = {
+      buildEnvironment: {
+        environmentVariables: environment,
+      },
+      rolePolicy: roles,
+    };
 
     if (codeArtifactRepositoryArn) {
       const roleName = 'code-artifacts-access-role';

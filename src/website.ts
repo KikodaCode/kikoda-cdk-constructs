@@ -57,11 +57,7 @@ export interface WebsiteProps {
    */
   readonly buildAssetExcludes?: string[];
 
-  /** Specify a custom bundling set up. If you only need to specify environment variables use the `bundlingEnvironment` property. */
   readonly bundling?: SinglePageAppProps['bundling'];
-
-  /** Specify bundling environment variables when using the default bundling. If you require custom bundling use the `bundling` property. */
-  readonly bundlingEnvironment?: SinglePageAppProps['bundlingEnvironment'];
 
   /** The name of the index document to load, typically 'index.html'
    *

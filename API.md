@@ -4054,8 +4054,10 @@ const pipelineConfig: PipelineConfig = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.codeArtifactRepositoryArn">codeArtifactRepositoryArn</a></code> | <code>string</code> | Specifying a codeartifact ARN here will enable asset phase of the pipeline to access that codeartifact repository. |
+| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.environment">environment</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_codebuild.BuildEnvironmentVariable}</code> | The environment variables that your builds can use. |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.notificationTopicArn">notificationTopicArn</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.pruneCloudAssembly">pruneCloudAssembly</a></code> | <code>boolean</code> | Add a step to pull down and remove asset zips from the cloud assembly output from the Synth step. |
+| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.roles">roles</a></code> | <code>aws-cdk-lib.aws_iam.PolicyStatement[]</code> | *No description.* |
 
 ---
 
@@ -4070,6 +4072,18 @@ public readonly codeArtifactRepositoryArn: string;
 Specifying a codeartifact ARN here will enable asset phase of the pipeline to access that codeartifact repository.
 
 This includes adding approprate roles and leveraging an assumed role for the docker build so that the docker build can pull from codeartifact.
+
+---
+
+##### `environment`<sup>Optional</sup> <a name="environment" id="@kikoda/cdk-constructs.PipelineConfig.property.environment"></a>
+
+```typescript
+public readonly environment: {[ key: string ]: BuildEnvironmentVariable};
+```
+
+- *Type:* {[ key: string ]: aws-cdk-lib.aws_codebuild.BuildEnvironmentVariable}
+
+The environment variables that your builds can use.
 
 ---
 
@@ -4095,6 +4109,16 @@ Add a step to pull down and remove asset zips from the cloud assembly output fro
 
 This is usefull when you have a lot of resources and are hitting the CFN limit for input
 artifact size.
+
+---
+
+##### `roles`<sup>Optional</sup> <a name="roles" id="@kikoda/cdk-constructs.PipelineConfig.property.roles"></a>
+
+```typescript
+public readonly roles: PolicyStatement[];
+```
+
+- *Type:* aws-cdk-lib.aws_iam.PolicyStatement[]
 
 ---
 
@@ -5796,8 +5820,7 @@ const websiteProps: WebsiteProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildAssetExcludes">buildAssetExcludes</a></code> | <code>string[]</code> | Provide an array of glob patterns to exclude from the build output. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildCommand">buildCommand</a></code> | <code>string</code> | The command for building the website (e.g. "yarn run build"). |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildDir">buildDir</a></code> | <code>string</code> | Path to the build output, relative to the `appDir`. |
-| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.bundling">bundling</a></code> | <code>aws-cdk-lib.BundlingOptions</code> | Specify a custom bundling set up. |
-| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.bundlingEnvironment">bundlingEnvironment</a></code> | <code>{[ key: string ]: string}</code> | Specify bundling environment variables when using the default bundling. |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.bundling">bundling</a></code> | <code>aws-cdk-lib.BundlingOptions</code> | *No description.* |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.cloudfrontInvalidationPaths">cloudfrontInvalidationPaths</a></code> | <code>string[]</code> | Specify the paths to be invalidated in the Cloudfront Distribution at the end of the deployment. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.corsAllowedOrigins">corsAllowedOrigins</a></code> | <code>string[]</code> | Specify a list of allowed request origins to use when configuring CORS (must also specify `enableCors`). |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.enableCors">enableCors</a></code> | <code>boolean</code> | Setup S3 bucket and Cloudfront distribution to allow CORS requests. |
@@ -5893,24 +5916,6 @@ public readonly bundling: BundlingOptions;
 ```
 
 - *Type:* aws-cdk-lib.BundlingOptions
-
-Specify a custom bundling set up.
-
-If you only need to specify environment variables use the `bundlingEnvironment` property.
-
----
-
-##### `bundlingEnvironment`<sup>Optional</sup> <a name="bundlingEnvironment" id="@kikoda/cdk-constructs.WebsiteProps.property.bundlingEnvironment"></a>
-
-```typescript
-public readonly bundlingEnvironment: {[ key: string ]: string};
-```
-
-- *Type:* {[ key: string ]: string}
-
-Specify bundling environment variables when using the default bundling.
-
-If you require custom bundling use the `bundling` property.
 
 ---
 
