@@ -22,7 +22,7 @@ import { copySync } from 'fs-extra';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import minimatch = require('minimatch');
 
-export interface SinglePageAppProps {
+interface SinglePageAppCoreProps {
   /**
    * Provide an existing Hosted Zone to use for the domain.
    */
@@ -61,13 +61,26 @@ export interface SinglePageAppProps {
 
   /** Specify a build command to use with the default bundling options, or specify the `bundling` prop */
   readonly buildCommand?: string;
-  readonly bundling?: AssetOptions['bundling'];
   readonly blockPublicAccess?: BlockPublicAccess;
   readonly bucketCorsRules?: CorsRule[];
   readonly viewerProtocolPolicy?: ViewerProtocolPolicy;
   readonly securityPolicy?: SecurityPolicyProtocol;
   readonly originRequestPolicy?: IOriginRequestPolicy;
 }
+
+interface SinglePageAppPropsCustomBundling extends SinglePageAppCoreProps {
+  readonly bundling?: AssetOptions['bundling'];
+  readonly bundlingEnvironment?: never;
+}
+
+interface SinglePageAppPropsDefaultBundling extends SinglePageAppCoreProps {
+  readonly bundling?: never;
+  readonly bundlingEnvironment?: NonNullable<AssetOptions['bundling']>['environment'];
+}
+
+export type SinglePageAppProps =
+  | SinglePageAppPropsCustomBundling
+  | SinglePageAppPropsDefaultBundling;
 
 /**
  * A construct that deploys a Single Page App using S3 and Cloudfront. This construct
@@ -188,6 +201,7 @@ export class SinglePageApp extends Construct {
               return true;
             },
           },
+          environment: props.bundlingEnvironment,
           image: DockerImage.fromRegistry('node:16'),
           command: [
             'bash',

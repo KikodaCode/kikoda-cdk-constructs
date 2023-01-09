@@ -5,7 +5,7 @@ import { HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 
-import { SinglePageApp } from './single-page-app';
+import { SinglePageApp, SinglePageAppProps } from './single-page-app';
 import { WebConfig } from './web-config';
 
 /** Presets used for invalidation after deployments to Cloudfront Distributions */
@@ -32,7 +32,7 @@ export interface GenerateWebConfigProps extends AdditionalConfigObject {
   readonly configDir: string;
 }
 
-export interface WebsiteProps {
+interface WebsitePropsCore {
   /** String indicator of which environment/stage is being deployed ex. 'dev', 'test', 'prod' */
   readonly stage: string;
 
@@ -57,8 +57,6 @@ export interface WebsiteProps {
    * final build output.
    */
   readonly buildAssetExcludes?: string[];
-
-  readonly bundling?: AssetOptions['bundling'];
 
   /** The name of the index document to load, typically 'index.html'
    *
@@ -96,6 +94,20 @@ export interface WebsiteProps {
    */
   readonly cloudfrontInvalidationPaths?: string[];
 }
+
+interface WebsitePropsCustomBundling extends WebsitePropsCore {
+  /** Specify a custom bundling set up. If you only need to specify environment variables use the `bundlingEnvironment` property. */
+  readonly bundling?: SinglePageAppProps['bundling'];
+  readonly bundlingEnvironment?: never;
+}
+
+interface WebsitePropsDefaultBundling extends WebsitePropsCore {
+  readonly bundling?: never;
+  /** Specify bundling environment variables when using the default bundling. If you require custom bundling use the `bundling` property. */
+  readonly bundlingEnvironment?: SinglePageAppProps['bundlingEnvironment'];
+}
+
+export type WebsiteProps = WebsitePropsCustomBundling | WebsitePropsDefaultBundling;
 
 /** Deploy a single page app with a standard static website architecture to AWS using CloudFront, S3, and Route53. This is typically
  * coupled with the `configProvider` hooks in the `@kikoda/delivery-hooks` package using the `generateWebConfig`
