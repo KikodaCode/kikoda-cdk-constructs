@@ -4053,11 +4053,25 @@ const pipelineConfig: PipelineConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.assetPublishingCodeBuildDefaults">assetPublishingCodeBuildDefaults</a></code> | <code>aws-cdk-lib.pipelines.CodeBuildOptions</code> | CodeBuild options for the asset publishing step. |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.codeArtifactRepositoryArn">codeArtifactRepositoryArn</a></code> | <code>string</code> | Specifying a codeartifact ARN here will enable asset phase of the pipeline to access that codeartifact repository. |
-| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.environment">environment</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_codebuild.BuildEnvironmentVariable}</code> | The environment variables that your builds can use. |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.notificationTopicArn">notificationTopicArn</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.pruneCloudAssembly">pruneCloudAssembly</a></code> | <code>boolean</code> | Add a step to pull down and remove asset zips from the cloud assembly output from the Synth step. |
-| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.roles">roles</a></code> | <code>aws-cdk-lib.aws_iam.PolicyStatement[]</code> | *No description.* |
+
+---
+
+##### `assetPublishingCodeBuildDefaults`<sup>Optional</sup> <a name="assetPublishingCodeBuildDefaults" id="@kikoda/cdk-constructs.PipelineConfig.property.assetPublishingCodeBuildDefaults"></a>
+
+```typescript
+public readonly assetPublishingCodeBuildDefaults: CodeBuildOptions;
+```
+
+- *Type:* aws-cdk-lib.pipelines.CodeBuildOptions
+
+CodeBuild options for the asset publishing step.
+
+Maps to the CodePipelineProps assetPublishingCodeBuildDefaults.
+These will be merged with options to handle CodeArtifacts repositories if `codeArtifactRepositoryArn` is also specified.
 
 ---
 
@@ -4072,18 +4086,6 @@ public readonly codeArtifactRepositoryArn: string;
 Specifying a codeartifact ARN here will enable asset phase of the pipeline to access that codeartifact repository.
 
 This includes adding approprate roles and leveraging an assumed role for the docker build so that the docker build can pull from codeartifact.
-
----
-
-##### `environment`<sup>Optional</sup> <a name="environment" id="@kikoda/cdk-constructs.PipelineConfig.property.environment"></a>
-
-```typescript
-public readonly environment: {[ key: string ]: BuildEnvironmentVariable};
-```
-
-- *Type:* {[ key: string ]: aws-cdk-lib.aws_codebuild.BuildEnvironmentVariable}
-
-The environment variables that your builds can use.
 
 ---
 
@@ -4109,16 +4111,6 @@ Add a step to pull down and remove asset zips from the cloud assembly output fro
 
 This is usefull when you have a lot of resources and are hitting the CFN limit for input
 artifact size.
-
----
-
-##### `roles`<sup>Optional</sup> <a name="roles" id="@kikoda/cdk-constructs.PipelineConfig.property.roles"></a>
-
-```typescript
-public readonly roles: PolicyStatement[];
-```
-
-- *Type:* aws-cdk-lib.aws_iam.PolicyStatement[]
 
 ---
 
