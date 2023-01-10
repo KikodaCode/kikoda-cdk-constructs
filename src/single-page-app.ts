@@ -45,6 +45,8 @@ export interface SinglePageAppProps {
   /** list of glob patterns to exclude from the build artifact when deploying */
   readonly buildAssetExcludes?: FileCopyOptions['exclude'];
 
+  readonly bundling?: AssetOptions['bundling'];
+
   /** This should be the full absolute path of root directory of the git repository. Dependending on your repository setup
    * this may be required for Docker-based bundling. This path, if provided will be used as the mount point
    * for the Docker container during bundling. If this is not provided, the `appDir` path will be used.
@@ -61,7 +63,6 @@ export interface SinglePageAppProps {
 
   /** Specify a build command to use with the default bundling options, or specify the `bundling` prop */
   readonly buildCommand?: string;
-  readonly bundling?: AssetOptions['bundling'];
   readonly blockPublicAccess?: BlockPublicAccess;
   readonly bucketCorsRules?: CorsRule[];
   readonly viewerProtocolPolicy?: ViewerProtocolPolicy;

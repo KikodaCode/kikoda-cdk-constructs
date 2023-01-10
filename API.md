@@ -4053,9 +4053,25 @@ const pipelineConfig: PipelineConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.assetPublishingCodeBuildDefaults">assetPublishingCodeBuildDefaults</a></code> | <code>aws-cdk-lib.pipelines.CodeBuildOptions</code> | CodeBuild options for the asset publishing step. |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.codeArtifactRepositoryArn">codeArtifactRepositoryArn</a></code> | <code>string</code> | Specifying a codeartifact ARN here will enable asset phase of the pipeline to access that codeartifact repository. |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.notificationTopicArn">notificationTopicArn</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.pruneCloudAssembly">pruneCloudAssembly</a></code> | <code>boolean</code> | Add a step to pull down and remove asset zips from the cloud assembly output from the Synth step. |
+
+---
+
+##### `assetPublishingCodeBuildDefaults`<sup>Optional</sup> <a name="assetPublishingCodeBuildDefaults" id="@kikoda/cdk-constructs.PipelineConfig.property.assetPublishingCodeBuildDefaults"></a>
+
+```typescript
+public readonly assetPublishingCodeBuildDefaults: CodeBuildOptions;
+```
+
+- *Type:* aws-cdk-lib.pipelines.CodeBuildOptions
+
+CodeBuild options for the asset publishing step.
+
+Maps to the CodePipelineProps assetPublishingCodeBuildDefaults.
+These will be merged with options to handle CodeArtifacts repositories if `codeArtifactRepositoryArn` is also specified.
 
 ---
 

@@ -1,11 +1,10 @@
 import { ConfigManifest, GeneratedConfig, AdditionalConfigObject } from '@kikoda/generated-config';
-import { AssetOptions } from 'aws-cdk-lib';
 import { OriginRequestPolicy, SecurityPolicyProtocol } from 'aws-cdk-lib/aws-cloudfront';
 import { HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 
-import { SinglePageApp } from './single-page-app';
+import { SinglePageApp, SinglePageAppProps } from './single-page-app';
 import { WebConfig } from './web-config';
 
 /** Presets used for invalidation after deployments to Cloudfront Distributions */
@@ -58,7 +57,7 @@ export interface WebsiteProps {
    */
   readonly buildAssetExcludes?: string[];
 
-  readonly bundling?: AssetOptions['bundling'];
+  readonly bundling?: SinglePageAppProps['bundling'];
 
   /** The name of the index document to load, typically 'index.html'
    *
