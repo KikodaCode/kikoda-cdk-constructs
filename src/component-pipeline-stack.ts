@@ -7,6 +7,7 @@ import {
   CodePipeline,
   ManualApprovalStep,
   CodeBuildOptions,
+  CodePipelineProps,
 } from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
 import { merge } from 'lodash';
@@ -82,17 +83,11 @@ export interface PipelineConfig {
   readonly notificationTopicArn?: string;
 
   /**
-   * The environment variables that your builds can use.
+   * CodeBuild options for the asset publishing step. Maps to the CodePipelineProps assetPublishingCodeBuildDefaults.
+   * These will be merged with options to handle CodeArtifacts repositories if `codeArtifactRepositoryArn` is also specified.
    * @readonly
    */
-  readonly environment?: NonNullable<CodeBuildOptions['buildEnvironment']>['environmentVariables'];
-
-  /**
-   *
-   * @readonly
-   * @type {?string}
-   */
-  readonly roles?: CodeBuildOptions['rolePolicy'];
+  readonly assetPublishingCodeBuildDefaults?: CodePipelineProps['assetPublishingCodeBuildDefaults'];
 }
 
 /**
@@ -153,8 +148,7 @@ export class ComponentPipelineStack<
       pruneCloudAssembly = true,
       codeArtifactRepositoryArn,
       notificationTopicArn,
-      environment,
-      roles,
+      assetPublishingCodeBuildDefaults: codeBuildOptions,
     } = props.pipelineConfig;
 
     const { source, synthOuputDir = 'out', baseDir = '.' } = props.repository;
@@ -164,13 +158,7 @@ export class ComponentPipelineStack<
 
     // Branch-based pipeline name
     const pipelineName = `${componentName}-${branchName.replace('/', '-')}`;
-    let assetPublishingCodeBuildDefaults: CodeBuildOptions = {
-      buildEnvironment: {
-        environmentVariables: environment,
-      },
-      rolePolicy: roles,
-    };
-
+    let assetPublishingCodeBuildDefaults: CodeBuildOptions = codeBuildOptions ?? {};
     if (codeArtifactRepositoryArn) {
       const roleName = 'code-artifacts-access-role';
       const codeArtifactAccessRole = new CodeArtifactAuthTokenAccessRole(
