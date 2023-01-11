@@ -1,6 +1,5 @@
 import { Stack, StackProps, StageProps } from 'aws-cdk-lib';
 import { ComputeType } from 'aws-cdk-lib/aws-codebuild';
-import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import {
   ShellStep,
   AddStageOpts,
@@ -11,10 +10,8 @@ import {
 } from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
 import { merge } from 'lodash';
-import { AssumeRolePartialBuildSpec } from './assume-role-partial-build-spec';
 import { ComponentConfig, IDeploymentBranch } from './branch-pipelines';
 import { CodeSource, RepositoryConfig } from './code-source';
-import { CodeArtifactAuthTokenAccessRole } from './codeartifact-auth-token-access-role';
 import { PipelineEventNotificationRule } from './pipeline-event-notification-rule';
 import { TrimCloudAssemblyStep } from './trim-cloud-assembly-step';
 import { defineSynthCommands } from './util';
@@ -68,14 +65,6 @@ export interface PipelineConfig {
    */
   readonly pruneCloudAssembly?: boolean;
   /**
-   * Specifying a codeartifact ARN here will enable asset phase of the pipeline to access that codeartifact repository.
-   * This includes adding approprate roles and leveraging an assumed role for the docker build so that the docker build can pull from codeartifact.
-   *
-   * @readonly
-   * @type {?string}
-   */
-  readonly codeArtifactRepositoryArn?: string;
-  /**
    *
    * @readonly
    * @type {?string}
@@ -88,6 +77,12 @@ export interface PipelineConfig {
    * @readonly
    */
   readonly assetPublishingCodeBuildDefaults?: CodePipelineProps['assetPublishingCodeBuildDefaults'];
+  /**
+   * Additional customizations to apply to the synthesize CodeBuild projects
+   *
+   * @default - Only `codeBuildDefaults` are applied
+   */
+  readonly synthCodeBuildDefaults?: CodePipelineProps['synthCodeBuildDefaults'];
 }
 
 /**
@@ -146,9 +141,9 @@ export class ComponentPipelineStack<
     const { componentName, componentType } = props.component;
     const {
       pruneCloudAssembly = true,
-      codeArtifactRepositoryArn,
       notificationTopicArn,
-      assetPublishingCodeBuildDefaults: codeBuildOptions,
+      synthCodeBuildDefaults: codeBuildOptions,
+      assetPublishingCodeBuildDefaults,
     } = props.pipelineConfig;
 
     const { source, synthOuputDir = 'out', baseDir = '.' } = props.repository;
@@ -158,35 +153,18 @@ export class ComponentPipelineStack<
 
     // Branch-based pipeline name
     const pipelineName = `${componentName}-${branchName.replace('/', '-')}`;
-    let assetPublishingCodeBuildDefaults: CodeBuildOptions = codeBuildOptions ?? {};
-    if (codeArtifactRepositoryArn) {
-      const roleName = 'code-artifacts-access-role';
-      const codeArtifactAccessRole = new CodeArtifactAuthTokenAccessRole(
-        this,
-        'CodeArtifactAccessRole',
-        { codeArtifactRepositoryArn, roleName },
-      );
-      const partialDefaults: CodeBuildOptions = {
-        partialBuildSpec: new AssumeRolePartialBuildSpec(codeArtifactAccessRole.roleArn)
-          .partialBuildSpec,
-        rolePolicy: [
-          new PolicyStatement({
-            effect: Effect.ALLOW,
-            actions: ['sts:AssumeRole'],
-            resources: ['*'],
-          }),
-        ],
-      };
-      assetPublishingCodeBuildDefaults = merge(assetPublishingCodeBuildDefaults, partialDefaults);
-    }
-    this.codePipeline = new CodePipeline(this, pipelineId, {
-      pipelineName,
-      dockerEnabledForSynth: true,
-      synthCodeBuildDefaults: {
+    let synthCodeBuildDefaults: CodeBuildOptions = merge(
+      {
         buildEnvironment: {
           computeType: ComputeType.LARGE,
         },
       },
+      codeBuildOptions,
+    );
+    this.codePipeline = new CodePipeline(this, pipelineId, {
+      pipelineName,
+      dockerEnabledForSynth: true,
+      synthCodeBuildDefaults,
       synth: new ShellStep('Synth', {
         input: new CodeSource(this, props.branch.branchName, source).source,
         commands: defineSynthCommands(baseDir, synthOuputDir),

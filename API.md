@@ -4054,9 +4054,9 @@ const pipelineConfig: PipelineConfig = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.assetPublishingCodeBuildDefaults">assetPublishingCodeBuildDefaults</a></code> | <code>aws-cdk-lib.pipelines.CodeBuildOptions</code> | CodeBuild options for the asset publishing step. |
-| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.codeArtifactRepositoryArn">codeArtifactRepositoryArn</a></code> | <code>string</code> | Specifying a codeartifact ARN here will enable asset phase of the pipeline to access that codeartifact repository. |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.notificationTopicArn">notificationTopicArn</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.pruneCloudAssembly">pruneCloudAssembly</a></code> | <code>boolean</code> | Add a step to pull down and remove asset zips from the cloud assembly output from the Synth step. |
+| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.synthCodeBuildDefaults">synthCodeBuildDefaults</a></code> | <code>aws-cdk-lib.pipelines.CodeBuildOptions</code> | Additional customizations to apply to the synthesize CodeBuild projects. |
 
 ---
 
@@ -4072,20 +4072,6 @@ CodeBuild options for the asset publishing step.
 
 Maps to the CodePipelineProps assetPublishingCodeBuildDefaults.
 These will be merged with options to handle CodeArtifacts repositories if `codeArtifactRepositoryArn` is also specified.
-
----
-
-##### `codeArtifactRepositoryArn`<sup>Optional</sup> <a name="codeArtifactRepositoryArn" id="@kikoda/cdk-constructs.PipelineConfig.property.codeArtifactRepositoryArn"></a>
-
-```typescript
-public readonly codeArtifactRepositoryArn: string;
-```
-
-- *Type:* string
-
-Specifying a codeartifact ARN here will enable asset phase of the pipeline to access that codeartifact repository.
-
-This includes adding approprate roles and leveraging an assumed role for the docker build so that the docker build can pull from codeartifact.
 
 ---
 
@@ -4111,6 +4097,19 @@ Add a step to pull down and remove asset zips from the cloud assembly output fro
 
 This is usefull when you have a lot of resources and are hitting the CFN limit for input
 artifact size.
+
+---
+
+##### `synthCodeBuildDefaults`<sup>Optional</sup> <a name="synthCodeBuildDefaults" id="@kikoda/cdk-constructs.PipelineConfig.property.synthCodeBuildDefaults"></a>
+
+```typescript
+public readonly synthCodeBuildDefaults: CodeBuildOptions;
+```
+
+- *Type:* aws-cdk-lib.pipelines.CodeBuildOptions
+- *Default:* Only `codeBuildDefaults` are applied
+
+Additional customizations to apply to the synthesize CodeBuild projects.
 
 ---
 
