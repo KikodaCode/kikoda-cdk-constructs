@@ -20,15 +20,7 @@ describe('ComponentPipelineStack', () => {
         componentName: 'test',
         componentType: TestStage,
       },
-      pipelineConfig: {
-        codeArtifactRepositoryArn: Arn.format({
-          partition: 'aws',
-          region: 'us-east-1',
-          account: '123456789012',
-          service: 'codeartifact',
-          resource: 'my-package',
-        }),
-      },
+      pipelineConfig: {},
       repository: {
         source: {
           codeCommitArn: Arn.format({
