@@ -4,10 +4,10 @@ import { AssetHashType, DockerImage, ILocalBundling, AssetStaging } from 'aws-cd
 import { Architecture, AssetCode, Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { BundlingOptions, OutputFormat, SourceMapMode } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { BuildOptions } from 'esbuild';
-import { PackageManager } from '../package-manager';
-import { findUp } from '../util';
 import { PackageInstallation } from './package-installation';
 import { getTsconfigCompilerOptions, extractDependencies, exec } from './util';
+import { PackageManager } from '../package-manager';
+import { findUp } from '../util';
 
 const ESBUILD_MAJOR_VERSION = '0';
 
