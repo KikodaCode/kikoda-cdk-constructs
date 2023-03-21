@@ -212,6 +212,7 @@ export class SinglePageApp extends Construct {
       sources: [this.sourceAsset],
       destinationBucket: this.websiteBucket,
       prune: false,
+      distribution: props.cloudfrontInvalidationPaths ? this.distribution : undefined,
       distributionPaths: props.cloudfrontInvalidationPaths,
     });
 
