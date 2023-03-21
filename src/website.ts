@@ -148,6 +148,10 @@ export class Website extends Construct {
             },
           ]
         : undefined,
+      // If we're not deploying a webconfig, we'll pass the invalidation paths through to the SPA construct
+      cloudfrontInvalidationPaths: !generateWebConfigProps
+        ? props.cloudfrontInvalidationPaths
+        : undefined,
     });
 
     // create frontend config file asset

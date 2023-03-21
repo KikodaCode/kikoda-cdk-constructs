@@ -16,7 +16,12 @@ import { ARecord, RecordTarget, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { BlockPublicAccess, Bucket, BucketEncryption, CorsRule } from 'aws-cdk-lib/aws-s3';
 import { AssetOptions } from 'aws-cdk-lib/aws-s3-assets';
-import { BucketDeployment, ISource, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import {
+  BucketDeployment,
+  BucketDeploymentProps,
+  ISource,
+  Source,
+} from 'aws-cdk-lib/aws-s3-deployment';
 import { Construct } from 'constructs';
 import { copySync } from 'fs-extra';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -68,6 +73,7 @@ export interface SinglePageAppProps {
   readonly viewerProtocolPolicy?: ViewerProtocolPolicy;
   readonly securityPolicy?: SecurityPolicyProtocol;
   readonly originRequestPolicy?: IOriginRequestPolicy;
+  readonly cloudfrontInvalidationPaths?: BucketDeploymentProps['distributionPaths'];
 }
 
 /**
@@ -206,6 +212,7 @@ export class SinglePageApp extends Construct {
       sources: [this.sourceAsset],
       destinationBucket: this.websiteBucket,
       prune: false,
+      distributionPaths: props.cloudfrontInvalidationPaths,
     });
 
     new ARecord(this, 'Alias', {
