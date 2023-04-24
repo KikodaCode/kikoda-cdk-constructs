@@ -39,6 +39,11 @@ export interface SinglePageAppProps {
   readonly domainName: string;
 
   /**
+   * Specify alternate domain names to use for the Cloudfront Distribution.
+   */
+  readonly alternateDomainNames?: string[];
+
+  /**
    * Specify an ARN of an ACM certificate to use for the Cloudfront Distribution. This is
    * useful when you are deploying to a region other than `us-east-1`, as Cloudfront
    * requires the certificate to be in `us-east-1`.
@@ -110,6 +115,7 @@ export class SinglePageApp extends Construct {
         region: 'us-east-1',
         hostedZone: props.hostedZone,
         domainName: props.domainName,
+        subjectAlternativeNames: props.alternateDomainNames,
       });
     }
 
@@ -216,10 +222,13 @@ export class SinglePageApp extends Construct {
       distributionPaths: props.cloudfrontInvalidationPaths,
     });
 
-    new ARecord(this, 'Alias', {
-      zone: props.hostedZone,
-      recordName: props.domainName,
-      target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
+    // Create an ALIAS record for all the specified domain names
+    [props.domainName, ...(props.alternateDomainNames || [])].forEach(domainName => {
+      new ARecord(this, 'Alias', {
+        zone: props.hostedZone,
+        recordName: domainName,
+        target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
+      });
     });
   }
 

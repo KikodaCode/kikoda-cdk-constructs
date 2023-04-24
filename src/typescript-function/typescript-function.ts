@@ -14,6 +14,14 @@ export interface TypescriptFunctionProps extends NodejsFunctionProps {
   readonly yarnPnP?: BundlingProps['yarnPnP'];
 }
 
+/**
+ * This construct was a fork of the `@aws-cdk/aws-lambda-nodejs` construct that
+ * added support for TypeScript and esbuild customizations. The construct
+ * provided by `@aws-cdk/aws-lambda-nodejs` now supports everything that this construct
+ * does, so this construct has been deprecated and will be removed in future releases.
+ *
+ * @deprecated use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
+ */
 export class TypescriptFunction extends Function {
   constructor(scope: Construct, id: string, props: TypescriptFunctionProps = {}) {
     if (props.runtime && props.runtime.family !== RuntimeFamily.NODEJS) {

@@ -76,6 +76,21 @@ export interface WebsiteProps {
   readonly domainName: string;
 
   /**
+   * Specify alternate domain names to use for the website. These muse be in the
+   * same hosted zone as the primary domain name. If you need to use a different
+   * hosted zone, consider using the `acmCertificateArn` option instead to provide
+   * a certificate with the alternate domain names.
+   *
+   * @default - No alternate domain names
+   */
+  readonly alternateDomainNames?: string[];
+
+  /**
+   * Provide an ACM certificate ARN to use for the website.
+   */
+  readonly acmCertificateArn?: string;
+
+  /**
    * Specify an existing hosted zone to use for the website.
    *
    * @default - This construct will try to lookup an existing hosted zone for the domain name provided.
@@ -111,6 +126,8 @@ export class Website extends Construct {
     const {
       stage,
       domainName,
+      alternateDomainNames,
+      acmCertificateArn,
       hostedZone,
       appDir,
       buildDir,
@@ -126,6 +143,8 @@ export class Website extends Construct {
     const spa = new SinglePageApp(this, 'Spa', {
       hostedZone: hostedZone ?? HostedZone.fromLookup(this, 'HostedZone', { domainName }),
       domainName,
+      alternateDomainNames,
+      acmCertificateArn,
       appDir,
       buildDir,
       buildAssetExcludes: [
