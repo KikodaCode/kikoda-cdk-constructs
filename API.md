@@ -1377,6 +1377,12 @@ The CFN Export, will be populated if createCfnExport is true.
 
 ### TypescriptFunction <a name="TypescriptFunction" id="@kikoda/cdk-constructs.TypescriptFunction"></a>
 
+This construct was a fork of the `@aws-cdk/aws-lambda-nodejs` construct that added support for TypeScript and esbuild customizations.
+
+The construct
+provided by `@aws-cdk/aws-lambda-nodejs` now supports everything that this construct
+does, so this construct has been deprecated and will be removed in future releases.
+
 #### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.TypescriptFunction.Initializer"></a>
 
 ```typescript
@@ -1437,7 +1443,7 @@ new TypescriptFunction(scope: Construct, id: string, props?: TypescriptFunctionP
 
 ---
 
-##### `toString` <a name="toString" id="@kikoda/cdk-constructs.TypescriptFunction.toString"></a>
+##### ~~`toString`~~ <a name="toString" id="@kikoda/cdk-constructs.TypescriptFunction.toString"></a>
 
 ```typescript
 public toString(): string
@@ -1445,7 +1451,7 @@ public toString(): string
 
 Returns a string representation of this construct.
 
-##### `applyRemovalPolicy` <a name="applyRemovalPolicy" id="@kikoda/cdk-constructs.TypescriptFunction.applyRemovalPolicy"></a>
+##### ~~`applyRemovalPolicy`~~ <a name="applyRemovalPolicy" id="@kikoda/cdk-constructs.TypescriptFunction.applyRemovalPolicy"></a>
 
 ```typescript
 public applyRemovalPolicy(policy: RemovalPolicy): void
@@ -1467,7 +1473,7 @@ account for data recovery and cleanup later (`RemovalPolicy.RETAIN`).
 
 ---
 
-##### `addEventSource` <a name="addEventSource" id="@kikoda/cdk-constructs.TypescriptFunction.addEventSource"></a>
+##### ~~`addEventSource`~~ <a name="addEventSource" id="@kikoda/cdk-constructs.TypescriptFunction.addEventSource"></a>
 
 ```typescript
 public addEventSource(source: IEventSource): void
@@ -1489,7 +1495,7 @@ myFunction.addEventSource(new SqsEventSource(myQueue));
 
 ---
 
-##### `addEventSourceMapping` <a name="addEventSourceMapping" id="@kikoda/cdk-constructs.TypescriptFunction.addEventSourceMapping"></a>
+##### ~~`addEventSourceMapping`~~ <a name="addEventSourceMapping" id="@kikoda/cdk-constructs.TypescriptFunction.addEventSourceMapping"></a>
 
 ```typescript
 public addEventSourceMapping(id: string, options: EventSourceMappingOptions): EventSourceMapping
@@ -1509,7 +1515,7 @@ Adds an event source that maps to this AWS Lambda function.
 
 ---
 
-##### `addFunctionUrl` <a name="addFunctionUrl" id="@kikoda/cdk-constructs.TypescriptFunction.addFunctionUrl"></a>
+##### ~~`addFunctionUrl`~~ <a name="addFunctionUrl" id="@kikoda/cdk-constructs.TypescriptFunction.addFunctionUrl"></a>
 
 ```typescript
 public addFunctionUrl(options?: FunctionUrlOptions): FunctionUrl
@@ -1523,7 +1529,7 @@ Adds a url to this lambda function.
 
 ---
 
-##### `addPermission` <a name="addPermission" id="@kikoda/cdk-constructs.TypescriptFunction.addPermission"></a>
+##### ~~`addPermission`~~ <a name="addPermission" id="@kikoda/cdk-constructs.TypescriptFunction.addPermission"></a>
 
 ```typescript
 public addPermission(id: string, permission: Permission): void
@@ -1549,7 +1555,7 @@ The permission to grant to this Lambda function.
 
 ---
 
-##### `addToRolePolicy` <a name="addToRolePolicy" id="@kikoda/cdk-constructs.TypescriptFunction.addToRolePolicy"></a>
+##### ~~`addToRolePolicy`~~ <a name="addToRolePolicy" id="@kikoda/cdk-constructs.TypescriptFunction.addToRolePolicy"></a>
 
 ```typescript
 public addToRolePolicy(statement: PolicyStatement): void
@@ -1563,7 +1569,7 @@ Adds a statement to the IAM role assumed by the instance.
 
 ---
 
-##### `configureAsyncInvoke` <a name="configureAsyncInvoke" id="@kikoda/cdk-constructs.TypescriptFunction.configureAsyncInvoke"></a>
+##### ~~`configureAsyncInvoke`~~ <a name="configureAsyncInvoke" id="@kikoda/cdk-constructs.TypescriptFunction.configureAsyncInvoke"></a>
 
 ```typescript
 public configureAsyncInvoke(options: EventInvokeConfigOptions): void
@@ -1577,7 +1583,7 @@ Configures options for asynchronous invocation.
 
 ---
 
-##### `considerWarningOnInvokeFunctionPermissions` <a name="considerWarningOnInvokeFunctionPermissions" id="@kikoda/cdk-constructs.TypescriptFunction.considerWarningOnInvokeFunctionPermissions"></a>
+##### ~~`considerWarningOnInvokeFunctionPermissions`~~ <a name="considerWarningOnInvokeFunctionPermissions" id="@kikoda/cdk-constructs.TypescriptFunction.considerWarningOnInvokeFunctionPermissions"></a>
 
 ```typescript
 public considerWarningOnInvokeFunctionPermissions(scope: Construct, action: string): void
@@ -1602,7 +1608,7 @@ This function is overridden as a noOp for QualifiedFunctionBase.
 
 ---
 
-##### `grantInvoke` <a name="grantInvoke" id="@kikoda/cdk-constructs.TypescriptFunction.grantInvoke"></a>
+##### ~~`grantInvoke`~~ <a name="grantInvoke" id="@kikoda/cdk-constructs.TypescriptFunction.grantInvoke"></a>
 
 ```typescript
 public grantInvoke(grantee: IGrantable): Grant
@@ -1616,7 +1622,7 @@ Grant the given identity permissions to invoke this Lambda.
 
 ---
 
-##### `grantInvokeUrl` <a name="grantInvokeUrl" id="@kikoda/cdk-constructs.TypescriptFunction.grantInvokeUrl"></a>
+##### ~~`grantInvokeUrl`~~ <a name="grantInvokeUrl" id="@kikoda/cdk-constructs.TypescriptFunction.grantInvokeUrl"></a>
 
 ```typescript
 public grantInvokeUrl(grantee: IGrantable): Grant
@@ -1630,7 +1636,7 @@ Grant the given identity permissions to invoke this Lambda Function URL.
 
 ---
 
-##### `metric` <a name="metric" id="@kikoda/cdk-constructs.TypescriptFunction.metric"></a>
+##### ~~`metric`~~ <a name="metric" id="@kikoda/cdk-constructs.TypescriptFunction.metric"></a>
 
 ```typescript
 public metric(metricName: string, props?: MetricOptions): Metric
@@ -1650,7 +1656,7 @@ Return the given named metric for this Function.
 
 ---
 
-##### `metricDuration` <a name="metricDuration" id="@kikoda/cdk-constructs.TypescriptFunction.metricDuration"></a>
+##### ~~`metricDuration`~~ <a name="metricDuration" id="@kikoda/cdk-constructs.TypescriptFunction.metricDuration"></a>
 
 ```typescript
 public metricDuration(props?: MetricOptions): Metric
@@ -1666,7 +1672,7 @@ Average over 5 minutes
 
 ---
 
-##### `metricErrors` <a name="metricErrors" id="@kikoda/cdk-constructs.TypescriptFunction.metricErrors"></a>
+##### ~~`metricErrors`~~ <a name="metricErrors" id="@kikoda/cdk-constructs.TypescriptFunction.metricErrors"></a>
 
 ```typescript
 public metricErrors(props?: MetricOptions): Metric
@@ -1682,7 +1688,7 @@ Sum over 5 minutes
 
 ---
 
-##### `metricInvocations` <a name="metricInvocations" id="@kikoda/cdk-constructs.TypescriptFunction.metricInvocations"></a>
+##### ~~`metricInvocations`~~ <a name="metricInvocations" id="@kikoda/cdk-constructs.TypescriptFunction.metricInvocations"></a>
 
 ```typescript
 public metricInvocations(props?: MetricOptions): Metric
@@ -1698,7 +1704,7 @@ Sum over 5 minutes
 
 ---
 
-##### `metricThrottles` <a name="metricThrottles" id="@kikoda/cdk-constructs.TypescriptFunction.metricThrottles"></a>
+##### ~~`metricThrottles`~~ <a name="metricThrottles" id="@kikoda/cdk-constructs.TypescriptFunction.metricThrottles"></a>
 
 ```typescript
 public metricThrottles(props?: MetricOptions): Metric
@@ -1714,7 +1720,7 @@ Sum over 5 minutes
 
 ---
 
-##### `addAlias` <a name="addAlias" id="@kikoda/cdk-constructs.TypescriptFunction.addAlias"></a>
+##### ~~`addAlias`~~ <a name="addAlias" id="@kikoda/cdk-constructs.TypescriptFunction.addAlias"></a>
 
 ```typescript
 public addAlias(aliasName: string, options?: AliasOptions): Alias
@@ -1753,7 +1759,7 @@ Alias options.
 
 ---
 
-##### `addEnvironment` <a name="addEnvironment" id="@kikoda/cdk-constructs.TypescriptFunction.addEnvironment"></a>
+##### ~~`addEnvironment`~~ <a name="addEnvironment" id="@kikoda/cdk-constructs.TypescriptFunction.addEnvironment"></a>
 
 ```typescript
 public addEnvironment(key: string, value: string, options?: EnvironmentOptions): Function
@@ -1787,7 +1793,7 @@ Environment variable options.
 
 ---
 
-##### `addLayers` <a name="addLayers" id="@kikoda/cdk-constructs.TypescriptFunction.addLayers"></a>
+##### ~~`addLayers`~~ <a name="addLayers" id="@kikoda/cdk-constructs.TypescriptFunction.addLayers"></a>
 
 ```typescript
 public addLayers(layers: ILayerVersion): void
@@ -1841,7 +1847,7 @@ Any object.
 
 ---
 
-##### `isResource` <a name="isResource" id="@kikoda/cdk-constructs.TypescriptFunction.isResource"></a>
+##### ~~`isResource`~~ <a name="isResource" id="@kikoda/cdk-constructs.TypescriptFunction.isResource"></a>
 
 ```typescript
 import { TypescriptFunction } from '@kikoda/cdk-constructs'
@@ -1857,7 +1863,7 @@ Check whether the given construct is a Resource.
 
 ---
 
-##### `classifyVersionProperty` <a name="classifyVersionProperty" id="@kikoda/cdk-constructs.TypescriptFunction.classifyVersionProperty"></a>
+##### ~~`classifyVersionProperty`~~ <a name="classifyVersionProperty" id="@kikoda/cdk-constructs.TypescriptFunction.classifyVersionProperty"></a>
 
 ```typescript
 import { TypescriptFunction } from '@kikoda/cdk-constructs'
@@ -1885,7 +1891,7 @@ whether the property should be associated to the version or not.
 
 ---
 
-##### `fromFunctionArn` <a name="fromFunctionArn" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionArn"></a>
+##### ~~`fromFunctionArn`~~ <a name="fromFunctionArn" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionArn"></a>
 
 ```typescript
 import { TypescriptFunction } from '@kikoda/cdk-constructs'
@@ -1913,7 +1919,7 @@ Import a lambda function into the CDK using its ARN.
 
 ---
 
-##### `fromFunctionAttributes` <a name="fromFunctionAttributes" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionAttributes"></a>
+##### ~~`fromFunctionAttributes`~~ <a name="fromFunctionAttributes" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionAttributes"></a>
 
 ```typescript
 import { TypescriptFunction } from '@kikoda/cdk-constructs'
@@ -1947,7 +1953,7 @@ the attributes of the function to import.
 
 ---
 
-##### `fromFunctionName` <a name="fromFunctionName" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionName"></a>
+##### ~~`fromFunctionName`~~ <a name="fromFunctionName" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionName"></a>
 
 ```typescript
 import { TypescriptFunction } from '@kikoda/cdk-constructs'
@@ -1975,7 +1981,7 @@ Import a lambda function into the CDK using its name.
 
 ---
 
-##### `metricAll` <a name="metricAll" id="@kikoda/cdk-constructs.TypescriptFunction.metricAll"></a>
+##### ~~`metricAll`~~ <a name="metricAll" id="@kikoda/cdk-constructs.TypescriptFunction.metricAll"></a>
 
 ```typescript
 import { TypescriptFunction } from '@kikoda/cdk-constructs'
@@ -1997,7 +2003,7 @@ Return the given named metric for this Lambda.
 
 ---
 
-##### `metricAllConcurrentExecutions` <a name="metricAllConcurrentExecutions" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllConcurrentExecutions"></a>
+##### ~~`metricAllConcurrentExecutions`~~ <a name="metricAllConcurrentExecutions" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllConcurrentExecutions"></a>
 
 ```typescript
 import { TypescriptFunction } from '@kikoda/cdk-constructs'
@@ -2013,7 +2019,7 @@ Metric for the number of concurrent executions across all Lambdas.
 
 ---
 
-##### `metricAllDuration` <a name="metricAllDuration" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllDuration"></a>
+##### ~~`metricAllDuration`~~ <a name="metricAllDuration" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllDuration"></a>
 
 ```typescript
 import { TypescriptFunction } from '@kikoda/cdk-constructs'
@@ -2029,7 +2035,7 @@ Metric for the Duration executing all Lambdas.
 
 ---
 
-##### `metricAllErrors` <a name="metricAllErrors" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllErrors"></a>
+##### ~~`metricAllErrors`~~ <a name="metricAllErrors" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllErrors"></a>
 
 ```typescript
 import { TypescriptFunction } from '@kikoda/cdk-constructs'
@@ -2045,7 +2051,7 @@ Metric for the number of Errors executing all Lambdas.
 
 ---
 
-##### `metricAllInvocations` <a name="metricAllInvocations" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllInvocations"></a>
+##### ~~`metricAllInvocations`~~ <a name="metricAllInvocations" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllInvocations"></a>
 
 ```typescript
 import { TypescriptFunction } from '@kikoda/cdk-constructs'
@@ -2061,7 +2067,7 @@ Metric for the number of invocations of all Lambdas.
 
 ---
 
-##### `metricAllThrottles` <a name="metricAllThrottles" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllThrottles"></a>
+##### ~~`metricAllThrottles`~~ <a name="metricAllThrottles" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllThrottles"></a>
 
 ```typescript
 import { TypescriptFunction } from '@kikoda/cdk-constructs'
@@ -2077,7 +2083,7 @@ Metric for the number of throttled invocations of all Lambdas.
 
 ---
 
-##### `metricAllUnreservedConcurrentExecutions` <a name="metricAllUnreservedConcurrentExecutions" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllUnreservedConcurrentExecutions"></a>
+##### ~~`metricAllUnreservedConcurrentExecutions`~~ <a name="metricAllUnreservedConcurrentExecutions" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllUnreservedConcurrentExecutions"></a>
 
 ```typescript
 import { TypescriptFunction } from '@kikoda/cdk-constructs'
@@ -2119,7 +2125,9 @@ Metric for the number of unreserved concurrent executions across all Lambdas.
 
 ---
 
-##### `node`<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.TypescriptFunction.property.node"></a>
+##### ~~`node`~~<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.TypescriptFunction.property.node"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly node: Node;
@@ -2131,7 +2139,9 @@ The tree node.
 
 ---
 
-##### `env`<sup>Required</sup> <a name="env" id="@kikoda/cdk-constructs.TypescriptFunction.property.env"></a>
+##### ~~`env`~~<sup>Required</sup> <a name="env" id="@kikoda/cdk-constructs.TypescriptFunction.property.env"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly env: ResourceEnvironment;
@@ -2150,7 +2160,9 @@ that might be different than the stack they were imported into.
 
 ---
 
-##### `stack`<sup>Required</sup> <a name="stack" id="@kikoda/cdk-constructs.TypescriptFunction.property.stack"></a>
+##### ~~`stack`~~<sup>Required</sup> <a name="stack" id="@kikoda/cdk-constructs.TypescriptFunction.property.stack"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly stack: Stack;
@@ -2162,7 +2174,9 @@ The stack in which this resource is defined.
 
 ---
 
-##### `architecture`<sup>Required</sup> <a name="architecture" id="@kikoda/cdk-constructs.TypescriptFunction.property.architecture"></a>
+##### ~~`architecture`~~<sup>Required</sup> <a name="architecture" id="@kikoda/cdk-constructs.TypescriptFunction.property.architecture"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly architecture: Architecture;
@@ -2174,7 +2188,9 @@ The architecture of this Lambda Function (this is an optional attribute and defa
 
 ---
 
-##### `connections`<sup>Required</sup> <a name="connections" id="@kikoda/cdk-constructs.TypescriptFunction.property.connections"></a>
+##### ~~`connections`~~<sup>Required</sup> <a name="connections" id="@kikoda/cdk-constructs.TypescriptFunction.property.connections"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly connections: Connections;
@@ -2188,7 +2204,9 @@ Will fail if not a VPC-enabled Lambda Function
 
 ---
 
-##### `functionArn`<sup>Required</sup> <a name="functionArn" id="@kikoda/cdk-constructs.TypescriptFunction.property.functionArn"></a>
+##### ~~`functionArn`~~<sup>Required</sup> <a name="functionArn" id="@kikoda/cdk-constructs.TypescriptFunction.property.functionArn"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly functionArn: string;
@@ -2200,7 +2218,9 @@ ARN of this function.
 
 ---
 
-##### `functionName`<sup>Required</sup> <a name="functionName" id="@kikoda/cdk-constructs.TypescriptFunction.property.functionName"></a>
+##### ~~`functionName`~~<sup>Required</sup> <a name="functionName" id="@kikoda/cdk-constructs.TypescriptFunction.property.functionName"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly functionName: string;
@@ -2212,7 +2232,9 @@ Name of this function.
 
 ---
 
-##### `grantPrincipal`<sup>Required</sup> <a name="grantPrincipal" id="@kikoda/cdk-constructs.TypescriptFunction.property.grantPrincipal"></a>
+##### ~~`grantPrincipal`~~<sup>Required</sup> <a name="grantPrincipal" id="@kikoda/cdk-constructs.TypescriptFunction.property.grantPrincipal"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly grantPrincipal: IPrincipal;
@@ -2224,7 +2246,9 @@ The principal this Lambda Function is running as.
 
 ---
 
-##### `isBoundToVpc`<sup>Required</sup> <a name="isBoundToVpc" id="@kikoda/cdk-constructs.TypescriptFunction.property.isBoundToVpc"></a>
+##### ~~`isBoundToVpc`~~<sup>Required</sup> <a name="isBoundToVpc" id="@kikoda/cdk-constructs.TypescriptFunction.property.isBoundToVpc"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly isBoundToVpc: boolean;
@@ -2238,7 +2262,9 @@ If this is is `false`, trying to access the `connections` object will fail.
 
 ---
 
-##### `latestVersion`<sup>Required</sup> <a name="latestVersion" id="@kikoda/cdk-constructs.TypescriptFunction.property.latestVersion"></a>
+##### ~~`latestVersion`~~<sup>Required</sup> <a name="latestVersion" id="@kikoda/cdk-constructs.TypescriptFunction.property.latestVersion"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly latestVersion: IVersion;
@@ -2257,7 +2283,9 @@ function configuration, use `lambdaFunction.currentVersion` instead.
 
 ---
 
-##### `permissionsNode`<sup>Required</sup> <a name="permissionsNode" id="@kikoda/cdk-constructs.TypescriptFunction.property.permissionsNode"></a>
+##### ~~`permissionsNode`~~<sup>Required</sup> <a name="permissionsNode" id="@kikoda/cdk-constructs.TypescriptFunction.property.permissionsNode"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly permissionsNode: Node;
@@ -2269,7 +2297,9 @@ The construct node where permissions are attached.
 
 ---
 
-##### `resourceArnsForGrantInvoke`<sup>Required</sup> <a name="resourceArnsForGrantInvoke" id="@kikoda/cdk-constructs.TypescriptFunction.property.resourceArnsForGrantInvoke"></a>
+##### ~~`resourceArnsForGrantInvoke`~~<sup>Required</sup> <a name="resourceArnsForGrantInvoke" id="@kikoda/cdk-constructs.TypescriptFunction.property.resourceArnsForGrantInvoke"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly resourceArnsForGrantInvoke: string[];
@@ -2281,7 +2311,9 @@ The ARN(s) to put into the resource field of the generated IAM policy for grantI
 
 ---
 
-##### `role`<sup>Optional</sup> <a name="role" id="@kikoda/cdk-constructs.TypescriptFunction.property.role"></a>
+##### ~~`role`~~<sup>Optional</sup> <a name="role" id="@kikoda/cdk-constructs.TypescriptFunction.property.role"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly role: IRole;
@@ -2293,7 +2325,9 @@ Execution role associated with this function.
 
 ---
 
-##### `currentVersion`<sup>Required</sup> <a name="currentVersion" id="@kikoda/cdk-constructs.TypescriptFunction.property.currentVersion"></a>
+##### ~~`currentVersion`~~<sup>Required</sup> <a name="currentVersion" id="@kikoda/cdk-constructs.TypescriptFunction.property.currentVersion"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly currentVersion: Version;
@@ -2308,7 +2342,9 @@ prop when initializing the `lambda.Function`.
 
 ---
 
-##### `logGroup`<sup>Required</sup> <a name="logGroup" id="@kikoda/cdk-constructs.TypescriptFunction.property.logGroup"></a>
+##### ~~`logGroup`~~<sup>Required</sup> <a name="logGroup" id="@kikoda/cdk-constructs.TypescriptFunction.property.logGroup"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly logGroup: ILogGroup;
@@ -2327,7 +2363,9 @@ to never expire even if it was configured with a different value.
 
 ---
 
-##### `runtime`<sup>Required</sup> <a name="runtime" id="@kikoda/cdk-constructs.TypescriptFunction.property.runtime"></a>
+##### ~~`runtime`~~<sup>Required</sup> <a name="runtime" id="@kikoda/cdk-constructs.TypescriptFunction.property.runtime"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly runtime: Runtime;
@@ -2339,7 +2377,9 @@ The runtime configured for this lambda.
 
 ---
 
-##### `deadLetterQueue`<sup>Optional</sup> <a name="deadLetterQueue" id="@kikoda/cdk-constructs.TypescriptFunction.property.deadLetterQueue"></a>
+##### ~~`deadLetterQueue`~~<sup>Optional</sup> <a name="deadLetterQueue" id="@kikoda/cdk-constructs.TypescriptFunction.property.deadLetterQueue"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly deadLetterQueue: IQueue;
@@ -2351,7 +2391,9 @@ The DLQ (as queue) associated with this Lambda Function (this is an optional att
 
 ---
 
-##### `deadLetterTopic`<sup>Optional</sup> <a name="deadLetterTopic" id="@kikoda/cdk-constructs.TypescriptFunction.property.deadLetterTopic"></a>
+##### ~~`deadLetterTopic`~~<sup>Optional</sup> <a name="deadLetterTopic" id="@kikoda/cdk-constructs.TypescriptFunction.property.deadLetterTopic"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly deadLetterTopic: ITopic;
@@ -2363,7 +2405,9 @@ The DLQ (as topic) associated with this Lambda Function (this is an optional att
 
 ---
 
-##### `timeout`<sup>Optional</sup> <a name="timeout" id="@kikoda/cdk-constructs.TypescriptFunction.property.timeout"></a>
+##### ~~`timeout`~~<sup>Optional</sup> <a name="timeout" id="@kikoda/cdk-constructs.TypescriptFunction.property.timeout"></a>
+
+- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
 
 ```typescript
 public readonly timeout: Duration;
@@ -5808,6 +5852,8 @@ const websiteProps: WebsiteProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.appDir">appDir</a></code> | <code>string</code> | The full absolute path of the Single Page App. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.domainName">domainName</a></code> | <code>string</code> | Specify a domain name to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.stage">stage</a></code> | <code>string</code> | String indicator of which environment/stage is being deployed ex. |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.acmCertificateArn">acmCertificateArn</a></code> | <code>string</code> | Provide an ACM certificate ARN to use for the website. |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.alternateDomainNames">alternateDomainNames</a></code> | <code>string[]</code> | Specify alternate domain names to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildAssetExcludes">buildAssetExcludes</a></code> | <code>string[]</code> | Provide an array of glob patterns to exclude from the build output. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildCommand">buildCommand</a></code> | <code>string</code> | The command for building the website (e.g. "yarn run build"). |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildDir">buildDir</a></code> | <code>string</code> | Path to the build output, relative to the `appDir`. |
@@ -5857,6 +5903,36 @@ public readonly stage: string;
 String indicator of which environment/stage is being deployed ex.
 
 'dev', 'test', 'prod'
+
+---
+
+##### `acmCertificateArn`<sup>Optional</sup> <a name="acmCertificateArn" id="@kikoda/cdk-constructs.WebsiteProps.property.acmCertificateArn"></a>
+
+```typescript
+public readonly acmCertificateArn: string;
+```
+
+- *Type:* string
+
+Provide an ACM certificate ARN to use for the website.
+
+---
+
+##### `alternateDomainNames`<sup>Optional</sup> <a name="alternateDomainNames" id="@kikoda/cdk-constructs.WebsiteProps.property.alternateDomainNames"></a>
+
+```typescript
+public readonly alternateDomainNames: string[];
+```
+
+- *Type:* string[]
+- *Default:* No alternate domain names
+
+Specify alternate domain names to use for the website.
+
+These muse be in the
+same hosted zone as the primary domain name. If you need to use a different
+hosted zone, consider using the `acmCertificateArn` option instead to provide
+a certificate with the alternate domain names.
 
 ---
 
