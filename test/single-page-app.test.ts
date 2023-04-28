@@ -106,6 +106,26 @@ describe('Given simple Single Page App', () => {
     });
   });
 
+  const alternateDomainName: string = 'alternate.example.com';
+  const alternateDomainNameSpaStack = new SPAStack({
+    appDir: __dirname,
+    domainName,
+    alternateDomainNames: [alternateDomainName],
+    indexDoc: 'indexDoc',
+  });
+  const alternateDomainNameTemplate = Template.fromStack(alternateDomainNameSpaStack);
+
+  test(`CF Distribution Alias contains alternate domain name: ${alternateDomainName}`, () => {
+    alternateDomainNameTemplate.hasResourceProperties('AWS::CloudFront::Distribution', {
+      DistributionConfig: {
+        Aliases: [
+          Match.stringLikeRegexp(`(?=.*${domainName})`),
+          Match.stringLikeRegexp(`(?=.*${alternateDomainName})`),
+        ],
+      },
+    });
+  });
+
   let spaStack1 = new SPAStack({
     appDir: __dirname,
     domainName: 'test.example.com',

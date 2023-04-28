@@ -149,7 +149,7 @@ export class SinglePageApp extends Construct {
           responseHttpStatus: 200,
         },
       ],
-      domainNames: [props.domainName],
+      domainNames: [props.domainName, ...(props.alternateDomainNames ?? [])],
       certificate,
       minimumProtocolVersion: props.securityPolicy ?? SecurityPolicyProtocol.TLS_V1_2_2021,
     });
@@ -224,7 +224,7 @@ export class SinglePageApp extends Construct {
 
     // Create an ALIAS record for all the specified domain names
     [props.domainName, ...(props.alternateDomainNames || [])].forEach(domainName => {
-      new ARecord(this, 'Alias', {
+      new ARecord(this, `Alias-${domainName}`, {
         zone: props.hostedZone,
         recordName: domainName,
         target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),

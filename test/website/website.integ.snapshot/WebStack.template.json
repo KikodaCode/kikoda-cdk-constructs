@@ -300,7 +300,7 @@
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
   },
-  "WebsiteSpaAliasC1201051": {
+  "WebsiteSpaAliastestexamplecom4147B52F": {
    "Type": "AWS::Route53::RecordSet",
    "Properties": {
     "Name": "test.example.com.",
