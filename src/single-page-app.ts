@@ -238,7 +238,7 @@ export class SinglePageApp extends Construct {
     // Create an ALIAS record for all the specified domain names
     [props.domainName, ...(props.alternateDomainNames || [])].forEach(domainName => {
       // only create the record if it's in the provided hosted zone
-      if (!domainName.endsWith(props.hostedZone.zoneName)) {
+      if (domainName.endsWith(props.hostedZone.zoneName)) {
         new ARecord(this, `Alias-${domainName}`, {
           zone: props.hostedZone,
           recordName: domainName,
