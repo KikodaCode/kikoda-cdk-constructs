@@ -110,13 +110,26 @@ export class SinglePageApp extends Construct {
       }
 
       certificate = Certificate.fromCertificateArn(this, 'Certificate', props.acmCertificateArn);
-    } else {
+    }
+    // Create a new certificate only if all the domain names are in the same hosted zone
+    else if (
+      props.alternateDomainNames?.every(domainName =>
+        domainName.endsWith(props.hostedZone.zoneName),
+      ) ||
+      !props.alternateDomainNames
+    ) {
       certificate = new DnsValidatedCertificate(this, 'Certificate', {
         region: 'us-east-1',
         hostedZone: props.hostedZone,
         domainName: props.domainName,
         subjectAlternativeNames: props.alternateDomainNames,
       });
+    }
+    // If the domain names are not in the same hosted zone and no certArn was provided, throw an error
+    else {
+      throw new Error(
+        'The alternate domain names must be in the same hosted zone as the domain name or you must provide an ACM certificate with the acmCertificateArn prop.',
+      );
     }
 
     this.websiteBucket = new Bucket(this, 'WebsiteBucket', {
@@ -224,11 +237,14 @@ export class SinglePageApp extends Construct {
 
     // Create an ALIAS record for all the specified domain names
     [props.domainName, ...(props.alternateDomainNames || [])].forEach(domainName => {
-      new ARecord(this, `Alias-${domainName}`, {
-        zone: props.hostedZone,
-        recordName: domainName,
-        target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
-      });
+      // only create the record if it's in the provided hosted zone
+      if (!domainName.endsWith(props.hostedZone.zoneName)) {
+        new ARecord(this, `Alias-${domainName}`, {
+          zone: props.hostedZone,
+          recordName: domainName,
+          target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
+        });
+      }
     });
   }
 

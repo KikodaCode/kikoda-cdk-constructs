@@ -300,33 +300,6 @@
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
   },
-  "WebsiteSpaAliastestexamplecom4147B52F": {
-   "Type": "AWS::Route53::RecordSet",
-   "Properties": {
-    "Name": "test.example.com.",
-    "Type": "A",
-    "AliasTarget": {
-     "DNSName": {
-      "Fn::GetAtt": [
-       "WebsiteSpaCloudfrontDistributionDA3296EE",
-       "DomainName"
-      ]
-     },
-     "HostedZoneId": {
-      "Fn::FindInMap": [
-       "AWSCloudFrontPartitionHostedZoneIdMap",
-       {
-        "Ref": "AWS::Partition"
-       },
-       "zoneId"
-      ]
-     }
-    },
-    "HostedZoneId": {
-     "Ref": "HostedZoneDB99F866"
-    }
-   }
-  },
   "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": {
    "Type": "AWS::IAM::Role",
    "Properties": {
@@ -480,16 +453,6 @@
     "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
     "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
    ]
-  }
- },
- "Mappings": {
-  "AWSCloudFrontPartitionHostedZoneIdMap": {
-   "aws": {
-    "zoneId": "Z2FDTNDATAQYW2"
-   },
-   "aws-cn": {
-    "zoneId": "Z3RFFRIM2A3IF5"
-   }
   }
  },
  "Parameters": {

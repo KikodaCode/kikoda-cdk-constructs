@@ -76,10 +76,10 @@ export interface WebsiteProps {
   readonly domainName: string;
 
   /**
-   * Specify alternate domain names to use for the website. These muse be in the
-   * same hosted zone as the primary domain name. If you need to use a different
-   * hosted zone, consider using the `acmCertificateArn` option instead to provide
-   * a certificate with the alternate domain names.
+   * Specify alternate domain names to use for the website. An Alias record will
+   * only be created if the alternate domain name is in the provided hosted zone.
+   * If you need to use a different hosted zone, consider using the `acmCertificateArn`
+   * option instead to provide a certificate with the alternate domain names.
    *
    * @default - No alternate domain names
    */
