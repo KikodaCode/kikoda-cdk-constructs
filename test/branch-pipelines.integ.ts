@@ -20,7 +20,7 @@ new BranchPipelines(app, {
       staticPipelineIdentifier: 'production',
       stages: [
         {
-          stageName: 'integ',
+          name: 'integ',
           config: {
             foo: 'bar',
           },

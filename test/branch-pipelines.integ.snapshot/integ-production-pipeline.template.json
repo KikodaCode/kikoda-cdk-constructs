@@ -347,7 +347,7 @@
          "ProjectName": {
           "Ref": "integproductionPipelineBuildSynthCdkBuildProject0D5DF9AB"
          },
-         "EnvironmentVariables": "[{\"name\":\"_PROJECT_CONFIG_HASH\",\"type\":\"PLAINTEXT\",\"value\":\"8761beb7696c02d869eaa9a0537d1c7ee3f06c02021d09b58ecee1423c697086\"}]"
+         "EnvironmentVariables": "[{\"name\":\"_PROJECT_CONFIG_HASH\",\"type\":\"PLAINTEXT\",\"value\":\"0d6766aa9dd62b74d1be6d2e3753a0ac98cf93ed9005801095ee072e4d8289d9\"}]"
         },
         "InputArtifacts": [
          {
@@ -384,7 +384,7 @@
          "ProjectName": {
           "Ref": "integproductionUpdatePipelineSelfMutation407BF49C"
          },
-         "EnvironmentVariables": "[{\"name\":\"_PROJECT_CONFIG_HASH\",\"type\":\"PLAINTEXT\",\"value\":\"358783562e721798c86f67a19e87f6b0475e3db7e860cac9b01ff783102e7978\"}]"
+         "EnvironmentVariables": "[{\"name\":\"_PROJECT_CONFIG_HASH\",\"type\":\"PLAINTEXT\",\"value\":\"73e1e2b984a58ac1d9e1fb12ead8775dec9d580f1d735a7c888a24071ef63e39\"}]"
         },
         "InputArtifacts": [
          {
@@ -844,7 +844,7 @@
     },
     "Environment": {
      "ComputeType": "BUILD_GENERAL1_LARGE",
-     "Image": "aws/codebuild/standard:5.0",
+     "Image": "aws/codebuild/standard:6.0",
      "ImagePullCredentialsType": "CODEBUILD",
      "PrivilegedMode": true,
      "Type": "LINUX_CONTAINER"
@@ -1012,7 +1012,7 @@
     },
     "Environment": {
      "ComputeType": "BUILD_GENERAL1_SMALL",
-     "Image": "aws/codebuild/standard:5.0",
+     "Image": "aws/codebuild/standard:6.0",
      "ImagePullCredentialsType": "CODEBUILD",
      "PrivilegedMode": false,
      "Type": "LINUX_CONTAINER"
@@ -1041,23 +1041,12 @@
      "Statement": [
       {
        "Action": "sts:AssumeRole",
-       "Condition": {
-        "Bool": {
-         "aws:ViaAWSService": "codepipeline.amazonaws.com"
-        }
-       },
        "Effect": "Allow",
        "Principal": {
         "AWS": {
-         "Fn::Join": [
-          "",
-          [
-           "arn:",
-           {
-            "Ref": "AWS::Partition"
-           },
-           ":iam::000000000000:root"
-          ]
+         "Fn::GetAtt": [
+          "integproductionPipelineRole7F1CF00A",
+          "Arn"
          ]
         }
        }
@@ -1287,7 +1276,7 @@
     },
     "Environment": {
      "ComputeType": "BUILD_GENERAL1_SMALL",
-     "Image": "aws/codebuild/standard:5.0",
+     "Image": "aws/codebuild/standard:6.0",
      "ImagePullCredentialsType": "CODEBUILD",
      "PrivilegedMode": false,
      "Type": "LINUX_CONTAINER"

@@ -88,9 +88,6 @@
       "steps": [
         {
           "exec": "jsii --silence-warnings=reserved-word"
-        },
-        {
-          "exec": "cp src/typescript-function/esbuild.js lib/typescript-function/"
         }
       ]
     },
@@ -222,73 +219,7 @@
           "spawn": "integ:branch-pipelines:snapshot"
         },
         {
-          "spawn": "integ:typescript-function:snapshot"
-        },
-        {
           "spawn": "integ:website:snapshot"
-        }
-      ]
-    },
-    "integ:typescript-function:assert": {
-      "name": "integ:typescript-function:assert",
-      "description": "assert the snapshot of integration test 'typescript-function'",
-      "steps": [
-        {
-          "exec": "[ -d \"test/functions/typescript-function.integ.snapshot\" ] || (echo \"No snapshot available for integration test 'typescript-function'. Run 'projen integ:typescript-function:deploy' to capture.\" && exit 1)"
-        },
-        {
-          "exec": "cdk synth --app \"ts-node -P tsconfig.dev.json test/functions/typescript-function.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata -o test/functions/.tmp/typescript-function.integ/assert.cdk.out > /dev/null"
-        },
-        {
-          "exec": "diff -r -x asset.* -x cdk.out -x manifest.json -x tree.json test/functions/typescript-function.integ.snapshot/ test/functions/.tmp/typescript-function.integ/assert.cdk.out/"
-        }
-      ]
-    },
-    "integ:typescript-function:deploy": {
-      "name": "integ:typescript-function:deploy",
-      "description": "deploy integration test 'typescript-function' and capture snapshot",
-      "steps": [
-        {
-          "exec": "rm -fr test/functions/.tmp/typescript-function.integ/deploy.cdk.out"
-        },
-        {
-          "exec": "cdk deploy --app \"ts-node -P tsconfig.dev.json test/functions/typescript-function.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata '**' --require-approval=never -o test/functions/.tmp/typescript-function.integ/deploy.cdk.out"
-        },
-        {
-          "exec": "rm -fr test/functions/typescript-function.integ.snapshot"
-        },
-        {
-          "exec": "mv test/functions/.tmp/typescript-function.integ/deploy.cdk.out test/functions/typescript-function.integ.snapshot"
-        },
-        {
-          "spawn": "integ:typescript-function:destroy"
-        }
-      ]
-    },
-    "integ:typescript-function:destroy": {
-      "name": "integ:typescript-function:destroy",
-      "description": "destroy integration test 'typescript-function'",
-      "steps": [
-        {
-          "exec": "cdk destroy --app test/functions/typescript-function.integ.snapshot '**' --no-version-reporting"
-        }
-      ]
-    },
-    "integ:typescript-function:snapshot": {
-      "name": "integ:typescript-function:snapshot",
-      "description": "update snapshot for integration test \"typescript-function\"",
-      "steps": [
-        {
-          "exec": "cdk synth --app \"ts-node -P tsconfig.dev.json test/functions/typescript-function.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata -o test/functions/typescript-function.integ.snapshot > /dev/null"
-        }
-      ]
-    },
-    "integ:typescript-function:watch": {
-      "name": "integ:typescript-function:watch",
-      "description": "watch integration test 'typescript-function' (without updating snapshots)",
-      "steps": [
-        {
-          "exec": "cdk watch --app \"ts-node -P tsconfig.dev.json test/functions/typescript-function.integ.ts\" --no-notices --no-version-reporting --no-asset-metadata --no-path-metadata '**' -o test/functions/.tmp/typescript-function.integ/deploy.cdk.out"
         }
       ]
     },
@@ -448,9 +379,6 @@
         },
         {
           "spawn": "integ:branch-pipelines:assert"
-        },
-        {
-          "spawn": "integ:typescript-function:assert"
         },
         {
           "spawn": "integ:website:assert"

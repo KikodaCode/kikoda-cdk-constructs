@@ -24,7 +24,5 @@ tsconfig.tsbuildinfo
 !.jsii
 test/.tmp
 test/branch-pipelines.integ.snapshot
-test/functions/.tmp
-test/functions/typescript-function.integ.snapshot
 test/website/.tmp
 test/website/website.integ.snapshot

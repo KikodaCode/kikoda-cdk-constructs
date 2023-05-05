@@ -41,7 +41,7 @@ describe('BranchPipelines', () => {
           branchName: 'test',
           stages: [
             {
-              stageName: 'dev',
+              name: 'dev',
               config: {
                 activeTracing: Tracing.ACTIVE,
               },
@@ -81,7 +81,7 @@ describe('BranchPipelines', () => {
           branchName: 'test',
           stages: [
             {
-              stageName: 'dev',
+              name: 'dev',
               config: {
                 activeTracing: Tracing.ACTIVE,
               },

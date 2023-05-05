@@ -14,7 +14,7 @@ describe('ComponentPipelineStack', () => {
       branch: {
         branchName: 'test',
         staticPipelineIdentifier: 'test',
-        stages: [{ stageName: 'test', config: {} }],
+        stages: [{ name: 'test', config: {} }],
       },
       component: {
         componentName: 'test',

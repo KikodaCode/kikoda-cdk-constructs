@@ -21,11 +21,6 @@
     "integ:branch-pipelines:snapshot": "npx projen integ:branch-pipelines:snapshot",
     "integ:branch-pipelines:watch": "npx projen integ:branch-pipelines:watch",
     "integ:snapshot-all": "npx projen integ:snapshot-all",
-    "integ:typescript-function:assert": "npx projen integ:typescript-function:assert",
-    "integ:typescript-function:deploy": "npx projen integ:typescript-function:deploy",
-    "integ:typescript-function:destroy": "npx projen integ:typescript-function:destroy",
-    "integ:typescript-function:snapshot": "npx projen integ:typescript-function:snapshot",
-    "integ:typescript-function:watch": "npx projen integ:typescript-function:watch",
     "integ:website:assert": "npx projen integ:website:assert",
     "integ:website:deploy": "npx projen integ:website:deploy",
     "integ:website:destroy": "npx projen integ:website:destroy",
@@ -62,7 +57,7 @@
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
     "aws-cdk": "^2",
-    "aws-cdk-lib": "2.26.0",
+    "aws-cdk-lib": "2.78.0",
     "constructs": "10.0.5",
     "delay": "^5.0.0",
     "eslint": "^8",
@@ -87,7 +82,7 @@
   },
   "peerDependencies": {
     "@kikoda/generated-config": "^0.5.1",
-    "aws-cdk-lib": "^2.26.0",
+    "aws-cdk-lib": "^2.78.0",
     "constructs": "^10.0.5"
   },
   "dependencies": {

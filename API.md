@@ -163,8 +163,10 @@ new ComponentPipelineStack(scope: Construct, id: string, props: ComponentPipelin
 | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.toString">toString</a></code> | Returns a string representation of this construct. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.addDependency">addDependency</a></code> | Add a dependency between this stack and another stack. |
+| <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.addMetadata">addMetadata</a></code> | Adds an arbitary key-value pair, with information you want to record about the stack. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.addTransform">addTransform</a></code> | Add a Transform to this stack. A Transform is a macro that AWS CloudFormation uses to process your template. |
-| <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.exportValue">exportValue</a></code> | Create a CloudFormation Export for a value. |
+| <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.exportStringListValue">exportStringListValue</a></code> | Create a CloudFormation Export for a string list value. |
+| <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.exportValue">exportValue</a></code> | Create a CloudFormation Export for a string value. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.formatArn">formatArn</a></code> | Creates an ARN from components. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.getLogicalId">getLogicalId</a></code> | Allocates a stack-unique CloudFormation-compatible logical identity for a specific resource. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.regionalFact">regionalFact</a></code> | Look up a fact value for the given fact for the region of this stack. |
@@ -173,6 +175,7 @@ new ComponentPipelineStack(scope: Construct, id: string, props: ComponentPipelin
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.resolve">resolve</a></code> | Resolve a tokenized value in the context of the current stack. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.splitArn">splitArn</a></code> | Splits the provided ARN into its components. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.toJsonString">toJsonString</a></code> | Convert an object, potentially containing tokens, to a JSON string. |
+| <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.toYamlString">toYamlString</a></code> | Convert an object, potentially containing tokens, to a YAML string. |
 
 ---
 
@@ -207,6 +210,30 @@ app, and also supports nested stacks.
 
 ---
 
+##### `addMetadata` <a name="addMetadata" id="@kikoda/cdk-constructs.ComponentPipelineStack.addMetadata"></a>
+
+```typescript
+public addMetadata(key: string, value: any): void
+```
+
+Adds an arbitary key-value pair, with information you want to record about the stack.
+
+These get translated to the Metadata section of the generated template.
+
+> [https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/metadata-section-structure.html](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/metadata-section-structure.html)
+
+###### `key`<sup>Required</sup> <a name="key" id="@kikoda/cdk-constructs.ComponentPipelineStack.addMetadata.parameter.key"></a>
+
+- *Type:* string
+
+---
+
+###### `value`<sup>Required</sup> <a name="value" id="@kikoda/cdk-constructs.ComponentPipelineStack.addMetadata.parameter.value"></a>
+
+- *Type:* any
+
+---
+
 ##### `addTransform` <a name="addTransform" id="@kikoda/cdk-constructs.ComponentPipelineStack.addTransform"></a>
 
 ```typescript
@@ -236,13 +263,51 @@ The transform to add.
 
 ---
 
+##### `exportStringListValue` <a name="exportStringListValue" id="@kikoda/cdk-constructs.ComponentPipelineStack.exportStringListValue"></a>
+
+```typescript
+public exportStringListValue(exportedValue: any, options?: ExportValueOptions): string[]
+```
+
+Create a CloudFormation Export for a string list value.
+
+Returns a string list representing the corresponding `Fn.importValue()`
+expression for this Export. The export expression is automatically wrapped with an
+`Fn::Join` and the import value with an `Fn::Split`, since CloudFormation can only
+export strings. You can control the name for the export by passing the `name` option.
+
+If you don't supply a value for `name`, the value you're exporting must be
+a Resource attribute (for example: `bucket.bucketName`) and it will be
+given the same name as the automatic cross-stack reference that would be created
+if you used the attribute in another Stack.
+
+One of the uses for this method is to *remove* the relationship between
+two Stacks established by automatic cross-stack references. It will
+temporarily ensure that the CloudFormation Export still exists while you
+remove the reference from the consuming stack. After that, you can remove
+the resource and the manual export.
+
+See `exportValue` for an example of this process.
+
+###### `exportedValue`<sup>Required</sup> <a name="exportedValue" id="@kikoda/cdk-constructs.ComponentPipelineStack.exportStringListValue.parameter.exportedValue"></a>
+
+- *Type:* any
+
+---
+
+###### `options`<sup>Optional</sup> <a name="options" id="@kikoda/cdk-constructs.ComponentPipelineStack.exportStringListValue.parameter.options"></a>
+
+- *Type:* aws-cdk-lib.ExportValueOptions
+
+---
+
 ##### `exportValue` <a name="exportValue" id="@kikoda/cdk-constructs.ComponentPipelineStack.exportValue"></a>
 
 ```typescript
 public exportValue(exportedValue: any, options?: ExportValueOptions): string
 ```
 
-Create a CloudFormation Export for a value.
+Create a CloudFormation Export for a string value.
 
 Returns a string representing the corresponding `Fn.importValue()`
 expression for this Export. You can control the name for the export by
@@ -274,11 +339,11 @@ Instead, the process takes two deployments:
 ### Deployment 1: break the relationship
 
 - Make sure `consumerStack` no longer references `bucket.bucketName` (maybe the consumer
-   stack now uses its own bucket, or it writes to an AWS DynamoDB table, or maybe you just
-   remove the Lambda Function altogether).
+  stack now uses its own bucket, or it writes to an AWS DynamoDB table, or maybe you just
+  remove the Lambda Function altogether).
 - In the `ProducerStack` class, call `this.exportValue(this.bucket.bucketName)`. This
-   will make sure the CloudFormation Export continues to exist while the relationship
-   between the two stacks is being broken.
+  will make sure the CloudFormation Export continues to exist while the relationship
+  between the two stacks is being broken.
 - Deploy (this will effectively only change the `consumerStack`, but it's safe to deploy both).
 
 ### Deployment 2: remove the bucket resource
@@ -315,7 +380,7 @@ into the generated ARN at the location that component corresponds to.
 
 The ARN will be formatted as follows:
 
-   arn:{partition}:{service}:{region}:{account}:{resource}{sep}}{resource-name}
+  arn:{partition}:{service}:{region}:{account}:{resource}{sep}{resource-name}
 
 The required ARN pieces that are omitted will be taken from the stack that
 the 'scope' is attached to. If all ARN pieces are supplied, the supplied scope
@@ -492,6 +557,20 @@ Convert an object, potentially containing tokens, to a JSON string.
 
 ---
 
+##### `toYamlString` <a name="toYamlString" id="@kikoda/cdk-constructs.ComponentPipelineStack.toYamlString"></a>
+
+```typescript
+public toYamlString(obj: any): string
+```
+
+Convert an object, potentially containing tokens, to a YAML string.
+
+###### `obj`<sup>Required</sup> <a name="obj" id="@kikoda/cdk-constructs.ComponentPipelineStack.toYamlString.parameter.obj"></a>
+
+- *Type:* any
+
+---
+
 #### Static Functions <a name="Static Functions" id="Static Functions"></a>
 
 | **Name** | **Description** |
@@ -612,14 +691,14 @@ The AWS account into which this stack will be deployed.
 This value is resolved according to the following rules:
 
 1. The value provided to `env.account` when the stack is defined. This can
-    either be a concerete account (e.g. `585695031111`) or the
-    `Aws.accountId` token.
-3. `Aws.accountId`, which represents the CloudFormation intrinsic reference
-    `{ "Ref": "AWS::AccountId" }` encoded as a string token.
+   either be a concrete account (e.g. `585695031111`) or the
+   `Aws.ACCOUNT_ID` token.
+3. `Aws.ACCOUNT_ID`, which represents the CloudFormation intrinsic reference
+   `{ "Ref": "AWS::AccountId" }` encoded as a string token.
 
 Preferably, you should use the return value as an opaque string and not
 attempt to parse it to implement your logic. If you do, you must first
-check that it is a concerete value an not an unresolved token. If this
+check that it is a concrete value an not an unresolved token. If this
 value is an unresolved token (`Token.isUnresolved(stack.account)` returns
 `true`), this implies that the user wishes that this stack will synthesize
 into a **account-agnostic template**. In this case, your code should either
@@ -705,7 +784,7 @@ You can use this value to determine if two stacks are targeting the same
 environment.
 
 If either `stack.account` or `stack.region` are not concrete values (e.g.
-`Aws.account` or `Aws.region`) the special strings `unknown-account` and/or
+`Aws.ACCOUNT_ID` or `Aws.REGION`) the special strings `unknown-account` and/or
 `unknown-region` will be used respectively to indicate this stack is
 region/account-agnostic.
 
@@ -760,14 +839,14 @@ The AWS region into which this stack will be deployed (e.g. `us-west-2`).
 This value is resolved according to the following rules:
 
 1. The value provided to `env.region` when the stack is defined. This can
-    either be a concerete region (e.g. `us-west-2`) or the `Aws.region`
-    token.
-3. `Aws.region`, which is represents the CloudFormation intrinsic reference
-    `{ "Ref": "AWS::Region" }` encoded as a string token.
+   either be a concrete region (e.g. `us-west-2`) or the `Aws.REGION`
+   token.
+3. `Aws.REGION`, which is represents the CloudFormation intrinsic reference
+   `{ "Ref": "AWS::Region" }` encoded as a string token.
 
 Preferably, you should use the return value as an opaque string and not
 attempt to parse it to implement your logic. If you do, you must first
-check that it is a concerete value an not an unresolved token. If this
+check that it is a concrete value an not an unresolved token. If this
 value is an unresolved token (`Token.isUnresolved(stack.region)` returns
 `true`), this implies that the user wishes that this stack will synthesize
 into a **region-agnostic template**. In this case, your code should either
@@ -813,7 +892,7 @@ name. Stacks that are defined deeper within the tree will use a hashed naming
 scheme based on the construct path to ensure uniqueness.
 
 If you wish to obtain the deploy-time AWS::StackName intrinsic,
-you can use `Aws.stackName` directly.
+you can use `Aws.STACK_NAME` directly.
 
 ---
 
@@ -1118,6 +1197,7 @@ Test whether the given construct is a ConfiguredStage.
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.artifactId">artifactId</a></code> | <code>string</code> | Artifact ID of the assembly if it is a nested stage. The root stage (app) will return an empty string. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.assetOutdir">assetOutdir</a></code> | <code>string</code> | The cloud assembly asset output directory. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.outdir">outdir</a></code> | <code>string</code> | The cloud assembly output directory. |
+| <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.policyValidationBeta1">policyValidationBeta1</a></code> | <code>aws-cdk-lib.IPolicyValidationPluginBeta1[]</code> | Validation plugins to run during synthesis. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.stageName">stageName</a></code> | <code>string</code> | The name of the stage. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.account">account</a></code> | <code>string</code> | The default account for all resources defined within this stage. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.property.parentStage">parentStage</a></code> | <code>aws-cdk-lib.Stage</code> | The parent stage or `undefined` if this is the app. |
@@ -1173,6 +1253,22 @@ public readonly outdir: string;
 - *Type:* string
 
 The cloud assembly output directory.
+
+---
+
+##### `policyValidationBeta1`<sup>Required</sup> <a name="policyValidationBeta1" id="@kikoda/cdk-constructs.ConfiguredStage.property.policyValidationBeta1"></a>
+
+```typescript
+public readonly policyValidationBeta1: IPolicyValidationPluginBeta1[];
+```
+
+- *Type:* aws-cdk-lib.IPolicyValidationPluginBeta1[]
+- *Default:* no validation plugins are used
+
+Validation plugins to run during synthesis.
+
+If any plugin reports any violation,
+synthesis will be interrupted and the report displayed to the user.
 
 ---
 
@@ -1238,6 +1334,208 @@ public readonly config: any;
 - *Type:* any
 
 The configuration for the stage.
+
+---
+
+
+### InstanceAutoStart <a name="InstanceAutoStart" id="@kikoda/cdk-constructs.InstanceAutoStart"></a>
+
+`InstanceAutoStart` creates an AWS CloudWatch Event Rule that starts an EC2 instance on a schedule.
+
+#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.InstanceAutoStart.Initializer"></a>
+
+```typescript
+import { InstanceAutoStart } from '@kikoda/cdk-constructs'
+
+new InstanceAutoStart(scope: Construct, id: string, props: InstanceAutoStartProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStart.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStart.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStart.Initializer.parameter.props">props</a></code> | <code><a href="#@kikoda/cdk-constructs.InstanceAutoStartProps">InstanceAutoStartProps</a></code> | *No description.* |
+
+---
+
+##### `scope`<sup>Required</sup> <a name="scope" id="@kikoda/cdk-constructs.InstanceAutoStart.Initializer.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+---
+
+##### `id`<sup>Required</sup> <a name="id" id="@kikoda/cdk-constructs.InstanceAutoStart.Initializer.parameter.id"></a>
+
+- *Type:* string
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@kikoda/cdk-constructs.InstanceAutoStart.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@kikoda/cdk-constructs.InstanceAutoStartProps">InstanceAutoStartProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStart.toString">toString</a></code> | Returns a string representation of this construct. |
+
+---
+
+##### `toString` <a name="toString" id="@kikoda/cdk-constructs.InstanceAutoStart.toString"></a>
+
+```typescript
+public toString(): string
+```
+
+Returns a string representation of this construct.
+
+#### Static Functions <a name="Static Functions" id="Static Functions"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStart.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+
+---
+
+##### ~~`isConstruct`~~ <a name="isConstruct" id="@kikoda/cdk-constructs.InstanceAutoStart.isConstruct"></a>
+
+```typescript
+import { InstanceAutoStart } from '@kikoda/cdk-constructs'
+
+InstanceAutoStart.isConstruct(x: any)
+```
+
+Checks if `x` is a construct.
+
+###### `x`<sup>Required</sup> <a name="x" id="@kikoda/cdk-constructs.InstanceAutoStart.isConstruct.parameter.x"></a>
+
+- *Type:* any
+
+Any object.
+
+---
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStart.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.InstanceAutoStart.property.node"></a>
+
+```typescript
+public readonly node: Node;
+```
+
+- *Type:* constructs.Node
+
+The tree node.
+
+---
+
+
+### InstanceAutoStop <a name="InstanceAutoStop" id="@kikoda/cdk-constructs.InstanceAutoStop"></a>
+
+`InstanceAutoStop` creates an AWS CloudWatch Event Rule that stops an EC2 instance on a schedule.
+
+#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.InstanceAutoStop.Initializer"></a>
+
+```typescript
+import { InstanceAutoStop } from '@kikoda/cdk-constructs'
+
+new InstanceAutoStop(scope: Construct, id: string, props: InstanceAutoStopProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStop.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStop.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStop.Initializer.parameter.props">props</a></code> | <code><a href="#@kikoda/cdk-constructs.InstanceAutoStopProps">InstanceAutoStopProps</a></code> | *No description.* |
+
+---
+
+##### `scope`<sup>Required</sup> <a name="scope" id="@kikoda/cdk-constructs.InstanceAutoStop.Initializer.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+---
+
+##### `id`<sup>Required</sup> <a name="id" id="@kikoda/cdk-constructs.InstanceAutoStop.Initializer.parameter.id"></a>
+
+- *Type:* string
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@kikoda/cdk-constructs.InstanceAutoStop.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@kikoda/cdk-constructs.InstanceAutoStopProps">InstanceAutoStopProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStop.toString">toString</a></code> | Returns a string representation of this construct. |
+
+---
+
+##### `toString` <a name="toString" id="@kikoda/cdk-constructs.InstanceAutoStop.toString"></a>
+
+```typescript
+public toString(): string
+```
+
+Returns a string representation of this construct.
+
+#### Static Functions <a name="Static Functions" id="Static Functions"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStop.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+
+---
+
+##### ~~`isConstruct`~~ <a name="isConstruct" id="@kikoda/cdk-constructs.InstanceAutoStop.isConstruct"></a>
+
+```typescript
+import { InstanceAutoStop } from '@kikoda/cdk-constructs'
+
+InstanceAutoStop.isConstruct(x: any)
+```
+
+Checks if `x` is a construct.
+
+###### `x`<sup>Required</sup> <a name="x" id="@kikoda/cdk-constructs.InstanceAutoStop.isConstruct.parameter.x"></a>
+
+- *Type:* any
+
+Any object.
+
+---
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStop.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.InstanceAutoStop.property.node"></a>
+
+```typescript
+public readonly node: Node;
+```
+
+- *Type:* constructs.Node
+
+The tree node.
 
 ---
 
@@ -1371,1752 +1669,6 @@ public readonly cfnOutput: CfnOutput;
 - *Type:* aws-cdk-lib.CfnOutput
 
 The CFN Export, will be populated if createCfnExport is true.
-
----
-
-
-### TypescriptFunction <a name="TypescriptFunction" id="@kikoda/cdk-constructs.TypescriptFunction"></a>
-
-This construct was a fork of the `@aws-cdk/aws-lambda-nodejs` construct that added support for TypeScript and esbuild customizations.
-
-The construct
-provided by `@aws-cdk/aws-lambda-nodejs` now supports everything that this construct
-does, so this construct has been deprecated and will be removed in future releases.
-
-#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.TypescriptFunction.Initializer"></a>
-
-```typescript
-import { TypescriptFunction } from '@kikoda/cdk-constructs'
-
-new TypescriptFunction(scope: Construct, id: string, props?: TypescriptFunctionProps)
-```
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.Initializer.parameter.props">props</a></code> | <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps">TypescriptFunctionProps</a></code> | *No description.* |
-
----
-
-##### `scope`<sup>Required</sup> <a name="scope" id="@kikoda/cdk-constructs.TypescriptFunction.Initializer.parameter.scope"></a>
-
-- *Type:* constructs.Construct
-
----
-
-##### `id`<sup>Required</sup> <a name="id" id="@kikoda/cdk-constructs.TypescriptFunction.Initializer.parameter.id"></a>
-
-- *Type:* string
-
----
-
-##### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptFunction.Initializer.parameter.props"></a>
-
-- *Type:* <a href="#@kikoda/cdk-constructs.TypescriptFunctionProps">TypescriptFunctionProps</a>
-
----
-
-#### Methods <a name="Methods" id="Methods"></a>
-
-| **Name** | **Description** |
-| --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.toString">toString</a></code> | Returns a string representation of this construct. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.addEventSource">addEventSource</a></code> | Adds an event source to this function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.addEventSourceMapping">addEventSourceMapping</a></code> | Adds an event source that maps to this AWS Lambda function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.addFunctionUrl">addFunctionUrl</a></code> | Adds a url to this lambda function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.addPermission">addPermission</a></code> | Adds a permission to the Lambda resource policy. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.addToRolePolicy">addToRolePolicy</a></code> | Adds a statement to the IAM role assumed by the instance. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.configureAsyncInvoke">configureAsyncInvoke</a></code> | Configures options for asynchronous invocation. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.considerWarningOnInvokeFunctionPermissions">considerWarningOnInvokeFunctionPermissions</a></code> | A warning will be added to functions under the following conditions: - permissions that include `lambda:InvokeFunction` are added to the unqualified function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.grantInvoke">grantInvoke</a></code> | Grant the given identity permissions to invoke this Lambda. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.grantInvokeUrl">grantInvokeUrl</a></code> | Grant the given identity permissions to invoke this Lambda Function URL. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.metric">metric</a></code> | Return the given named metric for this Function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.metricDuration">metricDuration</a></code> | How long execution of this Lambda takes. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.metricErrors">metricErrors</a></code> | How many invocations of this Lambda fail. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.metricInvocations">metricInvocations</a></code> | How often this Lambda is invoked. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.metricThrottles">metricThrottles</a></code> | How often this Lambda is throttled. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.addAlias">addAlias</a></code> | Defines an alias for this function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.addEnvironment">addEnvironment</a></code> | Adds an environment variable to this Lambda function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.addLayers">addLayers</a></code> | Adds one or more Lambda Layers to this Lambda function. |
-
----
-
-##### ~~`toString`~~ <a name="toString" id="@kikoda/cdk-constructs.TypescriptFunction.toString"></a>
-
-```typescript
-public toString(): string
-```
-
-Returns a string representation of this construct.
-
-##### ~~`applyRemovalPolicy`~~ <a name="applyRemovalPolicy" id="@kikoda/cdk-constructs.TypescriptFunction.applyRemovalPolicy"></a>
-
-```typescript
-public applyRemovalPolicy(policy: RemovalPolicy): void
-```
-
-Apply the given removal policy to this resource.
-
-The Removal Policy controls what happens to this resource when it stops
-being managed by CloudFormation, either because you've removed it from the
-CDK application or because you've made a change that requires the resource
-to be replaced.
-
-The resource can be deleted (`RemovalPolicy.DESTROY`), or left in your AWS
-account for data recovery and cleanup later (`RemovalPolicy.RETAIN`).
-
-###### `policy`<sup>Required</sup> <a name="policy" id="@kikoda/cdk-constructs.TypescriptFunction.applyRemovalPolicy.parameter.policy"></a>
-
-- *Type:* aws-cdk-lib.RemovalPolicy
-
----
-
-##### ~~`addEventSource`~~ <a name="addEventSource" id="@kikoda/cdk-constructs.TypescriptFunction.addEventSource"></a>
-
-```typescript
-public addEventSource(source: IEventSource): void
-```
-
-Adds an event source to this function.
-
-Event sources are implemented in the @aws-cdk/aws-lambda-event-sources module.
-
-The following example adds an SQS Queue as an event source:
-```
-import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
-myFunction.addEventSource(new SqsEventSource(myQueue));
-```
-
-###### `source`<sup>Required</sup> <a name="source" id="@kikoda/cdk-constructs.TypescriptFunction.addEventSource.parameter.source"></a>
-
-- *Type:* aws-cdk-lib.aws_lambda.IEventSource
-
----
-
-##### ~~`addEventSourceMapping`~~ <a name="addEventSourceMapping" id="@kikoda/cdk-constructs.TypescriptFunction.addEventSourceMapping"></a>
-
-```typescript
-public addEventSourceMapping(id: string, options: EventSourceMappingOptions): EventSourceMapping
-```
-
-Adds an event source that maps to this AWS Lambda function.
-
-###### `id`<sup>Required</sup> <a name="id" id="@kikoda/cdk-constructs.TypescriptFunction.addEventSourceMapping.parameter.id"></a>
-
-- *Type:* string
-
----
-
-###### `options`<sup>Required</sup> <a name="options" id="@kikoda/cdk-constructs.TypescriptFunction.addEventSourceMapping.parameter.options"></a>
-
-- *Type:* aws-cdk-lib.aws_lambda.EventSourceMappingOptions
-
----
-
-##### ~~`addFunctionUrl`~~ <a name="addFunctionUrl" id="@kikoda/cdk-constructs.TypescriptFunction.addFunctionUrl"></a>
-
-```typescript
-public addFunctionUrl(options?: FunctionUrlOptions): FunctionUrl
-```
-
-Adds a url to this lambda function.
-
-###### `options`<sup>Optional</sup> <a name="options" id="@kikoda/cdk-constructs.TypescriptFunction.addFunctionUrl.parameter.options"></a>
-
-- *Type:* aws-cdk-lib.aws_lambda.FunctionUrlOptions
-
----
-
-##### ~~`addPermission`~~ <a name="addPermission" id="@kikoda/cdk-constructs.TypescriptFunction.addPermission"></a>
-
-```typescript
-public addPermission(id: string, permission: Permission): void
-```
-
-Adds a permission to the Lambda resource policy.
-
-> [Permission for details.](Permission for details.)
-
-###### `id`<sup>Required</sup> <a name="id" id="@kikoda/cdk-constructs.TypescriptFunction.addPermission.parameter.id"></a>
-
-- *Type:* string
-
-The id for the permission construct.
-
----
-
-###### `permission`<sup>Required</sup> <a name="permission" id="@kikoda/cdk-constructs.TypescriptFunction.addPermission.parameter.permission"></a>
-
-- *Type:* aws-cdk-lib.aws_lambda.Permission
-
-The permission to grant to this Lambda function.
-
----
-
-##### ~~`addToRolePolicy`~~ <a name="addToRolePolicy" id="@kikoda/cdk-constructs.TypescriptFunction.addToRolePolicy"></a>
-
-```typescript
-public addToRolePolicy(statement: PolicyStatement): void
-```
-
-Adds a statement to the IAM role assumed by the instance.
-
-###### `statement`<sup>Required</sup> <a name="statement" id="@kikoda/cdk-constructs.TypescriptFunction.addToRolePolicy.parameter.statement"></a>
-
-- *Type:* aws-cdk-lib.aws_iam.PolicyStatement
-
----
-
-##### ~~`configureAsyncInvoke`~~ <a name="configureAsyncInvoke" id="@kikoda/cdk-constructs.TypescriptFunction.configureAsyncInvoke"></a>
-
-```typescript
-public configureAsyncInvoke(options: EventInvokeConfigOptions): void
-```
-
-Configures options for asynchronous invocation.
-
-###### `options`<sup>Required</sup> <a name="options" id="@kikoda/cdk-constructs.TypescriptFunction.configureAsyncInvoke.parameter.options"></a>
-
-- *Type:* aws-cdk-lib.aws_lambda.EventInvokeConfigOptions
-
----
-
-##### ~~`considerWarningOnInvokeFunctionPermissions`~~ <a name="considerWarningOnInvokeFunctionPermissions" id="@kikoda/cdk-constructs.TypescriptFunction.considerWarningOnInvokeFunctionPermissions"></a>
-
-```typescript
-public considerWarningOnInvokeFunctionPermissions(scope: Construct, action: string): void
-```
-
-A warning will be added to functions under the following conditions: - permissions that include `lambda:InvokeFunction` are added to the unqualified function.
-
-function.currentVersion is invoked before or after the permission is created.
-
-This applies only to permissions on Lambda functions, not versions or aliases.
-This function is overridden as a noOp for QualifiedFunctionBase.
-
-###### `scope`<sup>Required</sup> <a name="scope" id="@kikoda/cdk-constructs.TypescriptFunction.considerWarningOnInvokeFunctionPermissions.parameter.scope"></a>
-
-- *Type:* constructs.Construct
-
----
-
-###### `action`<sup>Required</sup> <a name="action" id="@kikoda/cdk-constructs.TypescriptFunction.considerWarningOnInvokeFunctionPermissions.parameter.action"></a>
-
-- *Type:* string
-
----
-
-##### ~~`grantInvoke`~~ <a name="grantInvoke" id="@kikoda/cdk-constructs.TypescriptFunction.grantInvoke"></a>
-
-```typescript
-public grantInvoke(grantee: IGrantable): Grant
-```
-
-Grant the given identity permissions to invoke this Lambda.
-
-###### `grantee`<sup>Required</sup> <a name="grantee" id="@kikoda/cdk-constructs.TypescriptFunction.grantInvoke.parameter.grantee"></a>
-
-- *Type:* aws-cdk-lib.aws_iam.IGrantable
-
----
-
-##### ~~`grantInvokeUrl`~~ <a name="grantInvokeUrl" id="@kikoda/cdk-constructs.TypescriptFunction.grantInvokeUrl"></a>
-
-```typescript
-public grantInvokeUrl(grantee: IGrantable): Grant
-```
-
-Grant the given identity permissions to invoke this Lambda Function URL.
-
-###### `grantee`<sup>Required</sup> <a name="grantee" id="@kikoda/cdk-constructs.TypescriptFunction.grantInvokeUrl.parameter.grantee"></a>
-
-- *Type:* aws-cdk-lib.aws_iam.IGrantable
-
----
-
-##### ~~`metric`~~ <a name="metric" id="@kikoda/cdk-constructs.TypescriptFunction.metric"></a>
-
-```typescript
-public metric(metricName: string, props?: MetricOptions): Metric
-```
-
-Return the given named metric for this Function.
-
-###### `metricName`<sup>Required</sup> <a name="metricName" id="@kikoda/cdk-constructs.TypescriptFunction.metric.parameter.metricName"></a>
-
-- *Type:* string
-
----
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptFunction.metric.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-##### ~~`metricDuration`~~ <a name="metricDuration" id="@kikoda/cdk-constructs.TypescriptFunction.metricDuration"></a>
-
-```typescript
-public metricDuration(props?: MetricOptions): Metric
-```
-
-How long execution of this Lambda takes.
-
-Average over 5 minutes
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptFunction.metricDuration.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-##### ~~`metricErrors`~~ <a name="metricErrors" id="@kikoda/cdk-constructs.TypescriptFunction.metricErrors"></a>
-
-```typescript
-public metricErrors(props?: MetricOptions): Metric
-```
-
-How many invocations of this Lambda fail.
-
-Sum over 5 minutes
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptFunction.metricErrors.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-##### ~~`metricInvocations`~~ <a name="metricInvocations" id="@kikoda/cdk-constructs.TypescriptFunction.metricInvocations"></a>
-
-```typescript
-public metricInvocations(props?: MetricOptions): Metric
-```
-
-How often this Lambda is invoked.
-
-Sum over 5 minutes
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptFunction.metricInvocations.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-##### ~~`metricThrottles`~~ <a name="metricThrottles" id="@kikoda/cdk-constructs.TypescriptFunction.metricThrottles"></a>
-
-```typescript
-public metricThrottles(props?: MetricOptions): Metric
-```
-
-How often this Lambda is throttled.
-
-Sum over 5 minutes
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptFunction.metricThrottles.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-##### ~~`addAlias`~~ <a name="addAlias" id="@kikoda/cdk-constructs.TypescriptFunction.addAlias"></a>
-
-```typescript
-public addAlias(aliasName: string, options?: AliasOptions): Alias
-```
-
-Defines an alias for this function.
-
-The alias will automatically be updated to point to the latest version of
-the function as it is being updated during a deployment.
-
-```ts
-declare const fn: lambda.Function;
-
-fn.addAlias('Live');
-
-// Is equivalent to
-
-new lambda.Alias(this, 'AliasLive', {
-   aliasName: 'Live',
-   version: fn.currentVersion,
-});
-
-###### `aliasName`<sup>Required</sup> <a name="aliasName" id="@kikoda/cdk-constructs.TypescriptFunction.addAlias.parameter.aliasName"></a>
-
-- *Type:* string
-
-The name of the alias.
-
----
-
-###### `options`<sup>Optional</sup> <a name="options" id="@kikoda/cdk-constructs.TypescriptFunction.addAlias.parameter.options"></a>
-
-- *Type:* aws-cdk-lib.aws_lambda.AliasOptions
-
-Alias options.
-
----
-
-##### ~~`addEnvironment`~~ <a name="addEnvironment" id="@kikoda/cdk-constructs.TypescriptFunction.addEnvironment"></a>
-
-```typescript
-public addEnvironment(key: string, value: string, options?: EnvironmentOptions): Function
-```
-
-Adds an environment variable to this Lambda function.
-
-If this is a ref to a Lambda function, this operation results in a no-op.
-
-###### `key`<sup>Required</sup> <a name="key" id="@kikoda/cdk-constructs.TypescriptFunction.addEnvironment.parameter.key"></a>
-
-- *Type:* string
-
-The environment variable key.
-
----
-
-###### `value`<sup>Required</sup> <a name="value" id="@kikoda/cdk-constructs.TypescriptFunction.addEnvironment.parameter.value"></a>
-
-- *Type:* string
-
-The environment variable's value.
-
----
-
-###### `options`<sup>Optional</sup> <a name="options" id="@kikoda/cdk-constructs.TypescriptFunction.addEnvironment.parameter.options"></a>
-
-- *Type:* aws-cdk-lib.aws_lambda.EnvironmentOptions
-
-Environment variable options.
-
----
-
-##### ~~`addLayers`~~ <a name="addLayers" id="@kikoda/cdk-constructs.TypescriptFunction.addLayers"></a>
-
-```typescript
-public addLayers(layers: ILayerVersion): void
-```
-
-Adds one or more Lambda Layers to this Lambda function.
-
-###### `layers`<sup>Required</sup> <a name="layers" id="@kikoda/cdk-constructs.TypescriptFunction.addLayers.parameter.layers"></a>
-
-- *Type:* aws-cdk-lib.aws_lambda.ILayerVersion
-
-the layers to be added.
-
----
-
-#### Static Functions <a name="Static Functions" id="Static Functions"></a>
-
-| **Name** | **Description** |
-| --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.isResource">isResource</a></code> | Check whether the given construct is a Resource. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.classifyVersionProperty">classifyVersionProperty</a></code> | Record whether specific properties in the `AWS::Lambda::Function` resource should also be associated to the Version resource. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.fromFunctionArn">fromFunctionArn</a></code> | Import a lambda function into the CDK using its ARN. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.fromFunctionAttributes">fromFunctionAttributes</a></code> | Creates a Lambda function object which represents a function not defined within this stack. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.fromFunctionName">fromFunctionName</a></code> | Import a lambda function into the CDK using its name. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.metricAll">metricAll</a></code> | Return the given named metric for this Lambda. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.metricAllConcurrentExecutions">metricAllConcurrentExecutions</a></code> | Metric for the number of concurrent executions across all Lambdas. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.metricAllDuration">metricAllDuration</a></code> | Metric for the Duration executing all Lambdas. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.metricAllErrors">metricAllErrors</a></code> | Metric for the number of Errors executing all Lambdas. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.metricAllInvocations">metricAllInvocations</a></code> | Metric for the number of invocations of all Lambdas. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.metricAllThrottles">metricAllThrottles</a></code> | Metric for the number of throttled invocations of all Lambdas. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.metricAllUnreservedConcurrentExecutions">metricAllUnreservedConcurrentExecutions</a></code> | Metric for the number of unreserved concurrent executions across all Lambdas. |
-
----
-
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@kikoda/cdk-constructs.TypescriptFunction.isConstruct"></a>
-
-```typescript
-import { TypescriptFunction } from '@kikoda/cdk-constructs'
-
-TypescriptFunction.isConstruct(x: any)
-```
-
-Checks if `x` is a construct.
-
-###### `x`<sup>Required</sup> <a name="x" id="@kikoda/cdk-constructs.TypescriptFunction.isConstruct.parameter.x"></a>
-
-- *Type:* any
-
-Any object.
-
----
-
-##### ~~`isResource`~~ <a name="isResource" id="@kikoda/cdk-constructs.TypescriptFunction.isResource"></a>
-
-```typescript
-import { TypescriptFunction } from '@kikoda/cdk-constructs'
-
-TypescriptFunction.isResource(construct: IConstruct)
-```
-
-Check whether the given construct is a Resource.
-
-###### `construct`<sup>Required</sup> <a name="construct" id="@kikoda/cdk-constructs.TypescriptFunction.isResource.parameter.construct"></a>
-
-- *Type:* constructs.IConstruct
-
----
-
-##### ~~`classifyVersionProperty`~~ <a name="classifyVersionProperty" id="@kikoda/cdk-constructs.TypescriptFunction.classifyVersionProperty"></a>
-
-```typescript
-import { TypescriptFunction } from '@kikoda/cdk-constructs'
-
-TypescriptFunction.classifyVersionProperty(propertyName: string, locked: boolean)
-```
-
-Record whether specific properties in the `AWS::Lambda::Function` resource should also be associated to the Version resource.
-
-See 'currentVersion' section in the module README for more details.
-
-###### `propertyName`<sup>Required</sup> <a name="propertyName" id="@kikoda/cdk-constructs.TypescriptFunction.classifyVersionProperty.parameter.propertyName"></a>
-
-- *Type:* string
-
-The property to classify.
-
----
-
-###### `locked`<sup>Required</sup> <a name="locked" id="@kikoda/cdk-constructs.TypescriptFunction.classifyVersionProperty.parameter.locked"></a>
-
-- *Type:* boolean
-
-whether the property should be associated to the version or not.
-
----
-
-##### ~~`fromFunctionArn`~~ <a name="fromFunctionArn" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionArn"></a>
-
-```typescript
-import { TypescriptFunction } from '@kikoda/cdk-constructs'
-
-TypescriptFunction.fromFunctionArn(scope: Construct, id: string, functionArn: string)
-```
-
-Import a lambda function into the CDK using its ARN.
-
-###### `scope`<sup>Required</sup> <a name="scope" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionArn.parameter.scope"></a>
-
-- *Type:* constructs.Construct
-
----
-
-###### `id`<sup>Required</sup> <a name="id" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionArn.parameter.id"></a>
-
-- *Type:* string
-
----
-
-###### `functionArn`<sup>Required</sup> <a name="functionArn" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionArn.parameter.functionArn"></a>
-
-- *Type:* string
-
----
-
-##### ~~`fromFunctionAttributes`~~ <a name="fromFunctionAttributes" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionAttributes"></a>
-
-```typescript
-import { TypescriptFunction } from '@kikoda/cdk-constructs'
-
-TypescriptFunction.fromFunctionAttributes(scope: Construct, id: string, attrs: FunctionAttributes)
-```
-
-Creates a Lambda function object which represents a function not defined within this stack.
-
-###### `scope`<sup>Required</sup> <a name="scope" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionAttributes.parameter.scope"></a>
-
-- *Type:* constructs.Construct
-
-The parent construct.
-
----
-
-###### `id`<sup>Required</sup> <a name="id" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionAttributes.parameter.id"></a>
-
-- *Type:* string
-
-The name of the lambda construct.
-
----
-
-###### `attrs`<sup>Required</sup> <a name="attrs" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionAttributes.parameter.attrs"></a>
-
-- *Type:* aws-cdk-lib.aws_lambda.FunctionAttributes
-
-the attributes of the function to import.
-
----
-
-##### ~~`fromFunctionName`~~ <a name="fromFunctionName" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionName"></a>
-
-```typescript
-import { TypescriptFunction } from '@kikoda/cdk-constructs'
-
-TypescriptFunction.fromFunctionName(scope: Construct, id: string, functionName: string)
-```
-
-Import a lambda function into the CDK using its name.
-
-###### `scope`<sup>Required</sup> <a name="scope" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionName.parameter.scope"></a>
-
-- *Type:* constructs.Construct
-
----
-
-###### `id`<sup>Required</sup> <a name="id" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionName.parameter.id"></a>
-
-- *Type:* string
-
----
-
-###### `functionName`<sup>Required</sup> <a name="functionName" id="@kikoda/cdk-constructs.TypescriptFunction.fromFunctionName.parameter.functionName"></a>
-
-- *Type:* string
-
----
-
-##### ~~`metricAll`~~ <a name="metricAll" id="@kikoda/cdk-constructs.TypescriptFunction.metricAll"></a>
-
-```typescript
-import { TypescriptFunction } from '@kikoda/cdk-constructs'
-
-TypescriptFunction.metricAll(metricName: string, props?: MetricOptions)
-```
-
-Return the given named metric for this Lambda.
-
-###### `metricName`<sup>Required</sup> <a name="metricName" id="@kikoda/cdk-constructs.TypescriptFunction.metricAll.parameter.metricName"></a>
-
-- *Type:* string
-
----
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptFunction.metricAll.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-##### ~~`metricAllConcurrentExecutions`~~ <a name="metricAllConcurrentExecutions" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllConcurrentExecutions"></a>
-
-```typescript
-import { TypescriptFunction } from '@kikoda/cdk-constructs'
-
-TypescriptFunction.metricAllConcurrentExecutions(props?: MetricOptions)
-```
-
-Metric for the number of concurrent executions across all Lambdas.
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllConcurrentExecutions.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-##### ~~`metricAllDuration`~~ <a name="metricAllDuration" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllDuration"></a>
-
-```typescript
-import { TypescriptFunction } from '@kikoda/cdk-constructs'
-
-TypescriptFunction.metricAllDuration(props?: MetricOptions)
-```
-
-Metric for the Duration executing all Lambdas.
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllDuration.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-##### ~~`metricAllErrors`~~ <a name="metricAllErrors" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllErrors"></a>
-
-```typescript
-import { TypescriptFunction } from '@kikoda/cdk-constructs'
-
-TypescriptFunction.metricAllErrors(props?: MetricOptions)
-```
-
-Metric for the number of Errors executing all Lambdas.
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllErrors.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-##### ~~`metricAllInvocations`~~ <a name="metricAllInvocations" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllInvocations"></a>
-
-```typescript
-import { TypescriptFunction } from '@kikoda/cdk-constructs'
-
-TypescriptFunction.metricAllInvocations(props?: MetricOptions)
-```
-
-Metric for the number of invocations of all Lambdas.
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllInvocations.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-##### ~~`metricAllThrottles`~~ <a name="metricAllThrottles" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllThrottles"></a>
-
-```typescript
-import { TypescriptFunction } from '@kikoda/cdk-constructs'
-
-TypescriptFunction.metricAllThrottles(props?: MetricOptions)
-```
-
-Metric for the number of throttled invocations of all Lambdas.
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllThrottles.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-##### ~~`metricAllUnreservedConcurrentExecutions`~~ <a name="metricAllUnreservedConcurrentExecutions" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllUnreservedConcurrentExecutions"></a>
-
-```typescript
-import { TypescriptFunction } from '@kikoda/cdk-constructs'
-
-TypescriptFunction.metricAllUnreservedConcurrentExecutions(props?: MetricOptions)
-```
-
-Metric for the number of unreserved concurrent executions across all Lambdas.
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptFunction.metricAllUnreservedConcurrentExecutions.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.architecture">architecture</a></code> | <code>aws-cdk-lib.aws_lambda.Architecture</code> | The architecture of this Lambda Function (this is an optional attribute and defaults to X86_64). |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.connections">connections</a></code> | <code>aws-cdk-lib.aws_ec2.Connections</code> | Access the Connections object. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.functionArn">functionArn</a></code> | <code>string</code> | ARN of this function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.functionName">functionName</a></code> | <code>string</code> | Name of this function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.grantPrincipal">grantPrincipal</a></code> | <code>aws-cdk-lib.aws_iam.IPrincipal</code> | The principal this Lambda Function is running as. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.isBoundToVpc">isBoundToVpc</a></code> | <code>boolean</code> | Whether or not this Lambda function was bound to a VPC. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.latestVersion">latestVersion</a></code> | <code>aws-cdk-lib.aws_lambda.IVersion</code> | The `$LATEST` version of this function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.permissionsNode">permissionsNode</a></code> | <code>constructs.Node</code> | The construct node where permissions are attached. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.resourceArnsForGrantInvoke">resourceArnsForGrantInvoke</a></code> | <code>string[]</code> | The ARN(s) to put into the resource field of the generated IAM policy for grantInvoke(). |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.role">role</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | Execution role associated with this function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.currentVersion">currentVersion</a></code> | <code>aws-cdk-lib.aws_lambda.Version</code> | Returns a `lambda.Version` which represents the current version of this Lambda function. A new version will be created every time the function's configuration changes. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.logGroup">logGroup</a></code> | <code>aws-cdk-lib.aws_logs.ILogGroup</code> | The LogGroup where the Lambda function's logs are made available. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.runtime">runtime</a></code> | <code>aws-cdk-lib.aws_lambda.Runtime</code> | The runtime configured for this lambda. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.deadLetterQueue">deadLetterQueue</a></code> | <code>aws-cdk-lib.aws_sqs.IQueue</code> | The DLQ (as queue) associated with this Lambda Function (this is an optional attribute). |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.deadLetterTopic">deadLetterTopic</a></code> | <code>aws-cdk-lib.aws_sns.ITopic</code> | The DLQ (as topic) associated with this Lambda Function (this is an optional attribute). |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunction.property.timeout">timeout</a></code> | <code>aws-cdk-lib.Duration</code> | The timeout configured for this lambda. |
-
----
-
-##### ~~`node`~~<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.TypescriptFunction.property.node"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly node: Node;
-```
-
-- *Type:* constructs.Node
-
-The tree node.
-
----
-
-##### ~~`env`~~<sup>Required</sup> <a name="env" id="@kikoda/cdk-constructs.TypescriptFunction.property.env"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly env: ResourceEnvironment;
-```
-
-- *Type:* aws-cdk-lib.ResourceEnvironment
-
-The environment this resource belongs to.
-
-For resources that are created and managed by the CDK
-(generally, those created by creating new class instances like Role, Bucket, etc.),
-this is always the same as the environment of the stack they belong to;
-however, for imported resources
-(those obtained from static methods like fromRoleArn, fromBucketName, etc.),
-that might be different than the stack they were imported into.
-
----
-
-##### ~~`stack`~~<sup>Required</sup> <a name="stack" id="@kikoda/cdk-constructs.TypescriptFunction.property.stack"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly stack: Stack;
-```
-
-- *Type:* aws-cdk-lib.Stack
-
-The stack in which this resource is defined.
-
----
-
-##### ~~`architecture`~~<sup>Required</sup> <a name="architecture" id="@kikoda/cdk-constructs.TypescriptFunction.property.architecture"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly architecture: Architecture;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.Architecture
-
-The architecture of this Lambda Function (this is an optional attribute and defaults to X86_64).
-
----
-
-##### ~~`connections`~~<sup>Required</sup> <a name="connections" id="@kikoda/cdk-constructs.TypescriptFunction.property.connections"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly connections: Connections;
-```
-
-- *Type:* aws-cdk-lib.aws_ec2.Connections
-
-Access the Connections object.
-
-Will fail if not a VPC-enabled Lambda Function
-
----
-
-##### ~~`functionArn`~~<sup>Required</sup> <a name="functionArn" id="@kikoda/cdk-constructs.TypescriptFunction.property.functionArn"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly functionArn: string;
-```
-
-- *Type:* string
-
-ARN of this function.
-
----
-
-##### ~~`functionName`~~<sup>Required</sup> <a name="functionName" id="@kikoda/cdk-constructs.TypescriptFunction.property.functionName"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly functionName: string;
-```
-
-- *Type:* string
-
-Name of this function.
-
----
-
-##### ~~`grantPrincipal`~~<sup>Required</sup> <a name="grantPrincipal" id="@kikoda/cdk-constructs.TypescriptFunction.property.grantPrincipal"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly grantPrincipal: IPrincipal;
-```
-
-- *Type:* aws-cdk-lib.aws_iam.IPrincipal
-
-The principal this Lambda Function is running as.
-
----
-
-##### ~~`isBoundToVpc`~~<sup>Required</sup> <a name="isBoundToVpc" id="@kikoda/cdk-constructs.TypescriptFunction.property.isBoundToVpc"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly isBoundToVpc: boolean;
-```
-
-- *Type:* boolean
-
-Whether or not this Lambda function was bound to a VPC.
-
-If this is is `false`, trying to access the `connections` object will fail.
-
----
-
-##### ~~`latestVersion`~~<sup>Required</sup> <a name="latestVersion" id="@kikoda/cdk-constructs.TypescriptFunction.property.latestVersion"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly latestVersion: IVersion;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.IVersion
-
-The `$LATEST` version of this function.
-
-Note that this is reference to a non-specific AWS Lambda version, which
-means the function this version refers to can return different results in
-different invocations.
-
-To obtain a reference to an explicit version which references the current
-function configuration, use `lambdaFunction.currentVersion` instead.
-
----
-
-##### ~~`permissionsNode`~~<sup>Required</sup> <a name="permissionsNode" id="@kikoda/cdk-constructs.TypescriptFunction.property.permissionsNode"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly permissionsNode: Node;
-```
-
-- *Type:* constructs.Node
-
-The construct node where permissions are attached.
-
----
-
-##### ~~`resourceArnsForGrantInvoke`~~<sup>Required</sup> <a name="resourceArnsForGrantInvoke" id="@kikoda/cdk-constructs.TypescriptFunction.property.resourceArnsForGrantInvoke"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly resourceArnsForGrantInvoke: string[];
-```
-
-- *Type:* string[]
-
-The ARN(s) to put into the resource field of the generated IAM policy for grantInvoke().
-
----
-
-##### ~~`role`~~<sup>Optional</sup> <a name="role" id="@kikoda/cdk-constructs.TypescriptFunction.property.role"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly role: IRole;
-```
-
-- *Type:* aws-cdk-lib.aws_iam.IRole
-
-Execution role associated with this function.
-
----
-
-##### ~~`currentVersion`~~<sup>Required</sup> <a name="currentVersion" id="@kikoda/cdk-constructs.TypescriptFunction.property.currentVersion"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly currentVersion: Version;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.Version
-
-Returns a `lambda.Version` which represents the current version of this Lambda function. A new version will be created every time the function's configuration changes.
-
-You can specify options for this version using the `currentVersionOptions`
-prop when initializing the `lambda.Function`.
-
----
-
-##### ~~`logGroup`~~<sup>Required</sup> <a name="logGroup" id="@kikoda/cdk-constructs.TypescriptFunction.property.logGroup"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly logGroup: ILogGroup;
-```
-
-- *Type:* aws-cdk-lib.aws_logs.ILogGroup
-
-The LogGroup where the Lambda function's logs are made available.
-
-If either `logRetention` is set or this property is called, a CloudFormation custom resource is added to the stack that
-pre-creates the log group as part of the stack deployment, if it already doesn't exist, and sets the correct log retention
-period (never expire, by default).
-
-Further, if the log group already exists and the `logRetention` is not set, the custom resource will reset the log retention
-to never expire even if it was configured with a different value.
-
----
-
-##### ~~`runtime`~~<sup>Required</sup> <a name="runtime" id="@kikoda/cdk-constructs.TypescriptFunction.property.runtime"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly runtime: Runtime;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.Runtime
-
-The runtime configured for this lambda.
-
----
-
-##### ~~`deadLetterQueue`~~<sup>Optional</sup> <a name="deadLetterQueue" id="@kikoda/cdk-constructs.TypescriptFunction.property.deadLetterQueue"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly deadLetterQueue: IQueue;
-```
-
-- *Type:* aws-cdk-lib.aws_sqs.IQueue
-
-The DLQ (as queue) associated with this Lambda Function (this is an optional attribute).
-
----
-
-##### ~~`deadLetterTopic`~~<sup>Optional</sup> <a name="deadLetterTopic" id="@kikoda/cdk-constructs.TypescriptFunction.property.deadLetterTopic"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly deadLetterTopic: ITopic;
-```
-
-- *Type:* aws-cdk-lib.aws_sns.ITopic
-
-The DLQ (as topic) associated with this Lambda Function (this is an optional attribute).
-
----
-
-##### ~~`timeout`~~<sup>Optional</sup> <a name="timeout" id="@kikoda/cdk-constructs.TypescriptFunction.property.timeout"></a>
-
-- *Deprecated:* use the `NodeJsFunction` construct from the `@aws-cdk/aws-lambda-nodejs` package instead
-
-```typescript
-public readonly timeout: Duration;
-```
-
-- *Type:* aws-cdk-lib.Duration
-
-The timeout configured for this lambda.
-
----
-
-
-### TypescriptSingletonFunction <a name="TypescriptSingletonFunction" id="@kikoda/cdk-constructs.TypescriptSingletonFunction"></a>
-
-#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.Initializer"></a>
-
-```typescript
-import { TypescriptSingletonFunction } from '@kikoda/cdk-constructs'
-
-new TypescriptSingletonFunction(scope: Construct, id: string, props: TypescriptSingletonFunctionProps)
-```
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.Initializer.parameter.props">props</a></code> | <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps">TypescriptSingletonFunctionProps</a></code> | *No description.* |
-
----
-
-##### `scope`<sup>Required</sup> <a name="scope" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.Initializer.parameter.scope"></a>
-
-- *Type:* constructs.Construct
-
----
-
-##### `id`<sup>Required</sup> <a name="id" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.Initializer.parameter.id"></a>
-
-- *Type:* string
-
----
-
-##### `props`<sup>Required</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.Initializer.parameter.props"></a>
-
-- *Type:* <a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps">TypescriptSingletonFunctionProps</a>
-
----
-
-#### Methods <a name="Methods" id="Methods"></a>
-
-| **Name** | **Description** |
-| --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.toString">toString</a></code> | Returns a string representation of this construct. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.addEventSource">addEventSource</a></code> | Adds an event source to this function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.addEventSourceMapping">addEventSourceMapping</a></code> | Adds an event source that maps to this AWS Lambda function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.addFunctionUrl">addFunctionUrl</a></code> | Adds a url to this lambda function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.addPermission">addPermission</a></code> | Adds a permission to the Lambda resource policy. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.addToRolePolicy">addToRolePolicy</a></code> | Adds a statement to the IAM role assumed by the instance. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.configureAsyncInvoke">configureAsyncInvoke</a></code> | Configures options for asynchronous invocation. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.considerWarningOnInvokeFunctionPermissions">considerWarningOnInvokeFunctionPermissions</a></code> | A warning will be added to functions under the following conditions: - permissions that include `lambda:InvokeFunction` are added to the unqualified function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.grantInvoke">grantInvoke</a></code> | Grant the given identity permissions to invoke this Lambda. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.grantInvokeUrl">grantInvokeUrl</a></code> | Grant the given identity permissions to invoke this Lambda Function URL. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.metric">metric</a></code> | Return the given named metric for this Function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.metricDuration">metricDuration</a></code> | How long execution of this Lambda takes. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.metricErrors">metricErrors</a></code> | How many invocations of this Lambda fail. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.metricInvocations">metricInvocations</a></code> | How often this Lambda is invoked. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.metricThrottles">metricThrottles</a></code> | How often this Lambda is throttled. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.addDependency">addDependency</a></code> | Using node.addDependency() does not work on this method as the underlying lambda function is modeled as a singleton across the stack. Use this method instead to declare dependencies. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.addEnvironment">addEnvironment</a></code> | Adds an environment variable to this Lambda function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.addLayers">addLayers</a></code> | Adds one or more Lambda Layers to this Lambda function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.dependOn">dependOn</a></code> | The SingletonFunction construct cannot be added as a dependency of another construct using node.addDependency(). Use this method instead to declare this as a dependency of another construct. |
-
----
-
-##### `toString` <a name="toString" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.toString"></a>
-
-```typescript
-public toString(): string
-```
-
-Returns a string representation of this construct.
-
-##### `applyRemovalPolicy` <a name="applyRemovalPolicy" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.applyRemovalPolicy"></a>
-
-```typescript
-public applyRemovalPolicy(policy: RemovalPolicy): void
-```
-
-Apply the given removal policy to this resource.
-
-The Removal Policy controls what happens to this resource when it stops
-being managed by CloudFormation, either because you've removed it from the
-CDK application or because you've made a change that requires the resource
-to be replaced.
-
-The resource can be deleted (`RemovalPolicy.DESTROY`), or left in your AWS
-account for data recovery and cleanup later (`RemovalPolicy.RETAIN`).
-
-###### `policy`<sup>Required</sup> <a name="policy" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.applyRemovalPolicy.parameter.policy"></a>
-
-- *Type:* aws-cdk-lib.RemovalPolicy
-
----
-
-##### `addEventSource` <a name="addEventSource" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addEventSource"></a>
-
-```typescript
-public addEventSource(source: IEventSource): void
-```
-
-Adds an event source to this function.
-
-Event sources are implemented in the @aws-cdk/aws-lambda-event-sources module.
-
-The following example adds an SQS Queue as an event source:
-```
-import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
-myFunction.addEventSource(new SqsEventSource(myQueue));
-```
-
-###### `source`<sup>Required</sup> <a name="source" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addEventSource.parameter.source"></a>
-
-- *Type:* aws-cdk-lib.aws_lambda.IEventSource
-
----
-
-##### `addEventSourceMapping` <a name="addEventSourceMapping" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addEventSourceMapping"></a>
-
-```typescript
-public addEventSourceMapping(id: string, options: EventSourceMappingOptions): EventSourceMapping
-```
-
-Adds an event source that maps to this AWS Lambda function.
-
-###### `id`<sup>Required</sup> <a name="id" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addEventSourceMapping.parameter.id"></a>
-
-- *Type:* string
-
----
-
-###### `options`<sup>Required</sup> <a name="options" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addEventSourceMapping.parameter.options"></a>
-
-- *Type:* aws-cdk-lib.aws_lambda.EventSourceMappingOptions
-
----
-
-##### `addFunctionUrl` <a name="addFunctionUrl" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addFunctionUrl"></a>
-
-```typescript
-public addFunctionUrl(options?: FunctionUrlOptions): FunctionUrl
-```
-
-Adds a url to this lambda function.
-
-###### `options`<sup>Optional</sup> <a name="options" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addFunctionUrl.parameter.options"></a>
-
-- *Type:* aws-cdk-lib.aws_lambda.FunctionUrlOptions
-
----
-
-##### `addPermission` <a name="addPermission" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addPermission"></a>
-
-```typescript
-public addPermission(name: string, permission: Permission): void
-```
-
-Adds a permission to the Lambda resource policy.
-
-###### `name`<sup>Required</sup> <a name="name" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addPermission.parameter.name"></a>
-
-- *Type:* string
-
----
-
-###### `permission`<sup>Required</sup> <a name="permission" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addPermission.parameter.permission"></a>
-
-- *Type:* aws-cdk-lib.aws_lambda.Permission
-
----
-
-##### `addToRolePolicy` <a name="addToRolePolicy" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addToRolePolicy"></a>
-
-```typescript
-public addToRolePolicy(statement: PolicyStatement): void
-```
-
-Adds a statement to the IAM role assumed by the instance.
-
-###### `statement`<sup>Required</sup> <a name="statement" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addToRolePolicy.parameter.statement"></a>
-
-- *Type:* aws-cdk-lib.aws_iam.PolicyStatement
-
----
-
-##### `configureAsyncInvoke` <a name="configureAsyncInvoke" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.configureAsyncInvoke"></a>
-
-```typescript
-public configureAsyncInvoke(options: EventInvokeConfigOptions): void
-```
-
-Configures options for asynchronous invocation.
-
-###### `options`<sup>Required</sup> <a name="options" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.configureAsyncInvoke.parameter.options"></a>
-
-- *Type:* aws-cdk-lib.aws_lambda.EventInvokeConfigOptions
-
----
-
-##### `considerWarningOnInvokeFunctionPermissions` <a name="considerWarningOnInvokeFunctionPermissions" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.considerWarningOnInvokeFunctionPermissions"></a>
-
-```typescript
-public considerWarningOnInvokeFunctionPermissions(scope: Construct, action: string): void
-```
-
-A warning will be added to functions under the following conditions: - permissions that include `lambda:InvokeFunction` are added to the unqualified function.
-
-function.currentVersion is invoked before or after the permission is created.
-
-This applies only to permissions on Lambda functions, not versions or aliases.
-This function is overridden as a noOp for QualifiedFunctionBase.
-
-###### `scope`<sup>Required</sup> <a name="scope" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.considerWarningOnInvokeFunctionPermissions.parameter.scope"></a>
-
-- *Type:* constructs.Construct
-
----
-
-###### `action`<sup>Required</sup> <a name="action" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.considerWarningOnInvokeFunctionPermissions.parameter.action"></a>
-
-- *Type:* string
-
----
-
-##### `grantInvoke` <a name="grantInvoke" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.grantInvoke"></a>
-
-```typescript
-public grantInvoke(grantee: IGrantable): Grant
-```
-
-Grant the given identity permissions to invoke this Lambda.
-
-###### `grantee`<sup>Required</sup> <a name="grantee" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.grantInvoke.parameter.grantee"></a>
-
-- *Type:* aws-cdk-lib.aws_iam.IGrantable
-
----
-
-##### `grantInvokeUrl` <a name="grantInvokeUrl" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.grantInvokeUrl"></a>
-
-```typescript
-public grantInvokeUrl(grantee: IGrantable): Grant
-```
-
-Grant the given identity permissions to invoke this Lambda Function URL.
-
-###### `grantee`<sup>Required</sup> <a name="grantee" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.grantInvokeUrl.parameter.grantee"></a>
-
-- *Type:* aws-cdk-lib.aws_iam.IGrantable
-
----
-
-##### `metric` <a name="metric" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.metric"></a>
-
-```typescript
-public metric(metricName: string, props?: MetricOptions): Metric
-```
-
-Return the given named metric for this Function.
-
-###### `metricName`<sup>Required</sup> <a name="metricName" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.metric.parameter.metricName"></a>
-
-- *Type:* string
-
----
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.metric.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-##### `metricDuration` <a name="metricDuration" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.metricDuration"></a>
-
-```typescript
-public metricDuration(props?: MetricOptions): Metric
-```
-
-How long execution of this Lambda takes.
-
-Average over 5 minutes
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.metricDuration.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-##### `metricErrors` <a name="metricErrors" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.metricErrors"></a>
-
-```typescript
-public metricErrors(props?: MetricOptions): Metric
-```
-
-How many invocations of this Lambda fail.
-
-Sum over 5 minutes
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.metricErrors.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-##### `metricInvocations` <a name="metricInvocations" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.metricInvocations"></a>
-
-```typescript
-public metricInvocations(props?: MetricOptions): Metric
-```
-
-How often this Lambda is invoked.
-
-Sum over 5 minutes
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.metricInvocations.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-##### `metricThrottles` <a name="metricThrottles" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.metricThrottles"></a>
-
-```typescript
-public metricThrottles(props?: MetricOptions): Metric
-```
-
-How often this Lambda is throttled.
-
-Sum over 5 minutes
-
-###### `props`<sup>Optional</sup> <a name="props" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.metricThrottles.parameter.props"></a>
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
-
----
-
-##### `addDependency` <a name="addDependency" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addDependency"></a>
-
-```typescript
-public addDependency(up: IDependable): void
-```
-
-Using node.addDependency() does not work on this method as the underlying lambda function is modeled as a singleton across the stack. Use this method instead to declare dependencies.
-
-###### `up`<sup>Required</sup> <a name="up" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addDependency.parameter.up"></a>
-
-- *Type:* constructs.IDependable
-
----
-
-##### `addEnvironment` <a name="addEnvironment" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addEnvironment"></a>
-
-```typescript
-public addEnvironment(key: string, value: string, options?: EnvironmentOptions): Function
-```
-
-Adds an environment variable to this Lambda function.
-
-If this is a ref to a Lambda function, this operation results in a no-op.
-
-###### `key`<sup>Required</sup> <a name="key" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addEnvironment.parameter.key"></a>
-
-- *Type:* string
-
-The environment variable key.
-
----
-
-###### `value`<sup>Required</sup> <a name="value" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addEnvironment.parameter.value"></a>
-
-- *Type:* string
-
-The environment variable's value.
-
----
-
-###### `options`<sup>Optional</sup> <a name="options" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addEnvironment.parameter.options"></a>
-
-- *Type:* aws-cdk-lib.aws_lambda.EnvironmentOptions
-
-Environment variable options.
-
----
-
-##### `addLayers` <a name="addLayers" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addLayers"></a>
-
-```typescript
-public addLayers(layers: ILayerVersion): void
-```
-
-Adds one or more Lambda Layers to this Lambda function.
-
-###### `layers`<sup>Required</sup> <a name="layers" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.addLayers.parameter.layers"></a>
-
-- *Type:* aws-cdk-lib.aws_lambda.ILayerVersion
-
-the layers to be added.
-
----
-
-##### `dependOn` <a name="dependOn" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.dependOn"></a>
-
-```typescript
-public dependOn(down: IConstruct): void
-```
-
-The SingletonFunction construct cannot be added as a dependency of another construct using node.addDependency(). Use this method instead to declare this as a dependency of another construct.
-
-###### `down`<sup>Required</sup> <a name="down" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.dependOn.parameter.down"></a>
-
-- *Type:* constructs.IConstruct
-
----
-
-#### Static Functions <a name="Static Functions" id="Static Functions"></a>
-
-| **Name** | **Description** |
-| --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.isResource">isResource</a></code> | Check whether the given construct is a Resource. |
-
----
-
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.isConstruct"></a>
-
-```typescript
-import { TypescriptSingletonFunction } from '@kikoda/cdk-constructs'
-
-TypescriptSingletonFunction.isConstruct(x: any)
-```
-
-Checks if `x` is a construct.
-
-###### `x`<sup>Required</sup> <a name="x" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.isConstruct.parameter.x"></a>
-
-- *Type:* any
-
-Any object.
-
----
-
-##### `isResource` <a name="isResource" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.isResource"></a>
-
-```typescript
-import { TypescriptSingletonFunction } from '@kikoda/cdk-constructs'
-
-TypescriptSingletonFunction.isResource(construct: IConstruct)
-```
-
-Check whether the given construct is a Resource.
-
-###### `construct`<sup>Required</sup> <a name="construct" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.isResource.parameter.construct"></a>
-
-- *Type:* constructs.IConstruct
-
----
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.property.architecture">architecture</a></code> | <code>aws-cdk-lib.aws_lambda.Architecture</code> | The architecture of this Lambda Function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.property.connections">connections</a></code> | <code>aws-cdk-lib.aws_ec2.Connections</code> | Access the Connections object. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.property.functionArn">functionArn</a></code> | <code>string</code> | The ARN fo the function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.property.functionName">functionName</a></code> | <code>string</code> | The name of the function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.property.grantPrincipal">grantPrincipal</a></code> | <code>aws-cdk-lib.aws_iam.IPrincipal</code> | The principal this Lambda Function is running as. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.property.isBoundToVpc">isBoundToVpc</a></code> | <code>boolean</code> | Whether or not this Lambda function was bound to a VPC. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.property.latestVersion">latestVersion</a></code> | <code>aws-cdk-lib.aws_lambda.IVersion</code> | The `$LATEST` version of this function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.property.permissionsNode">permissionsNode</a></code> | <code>constructs.Node</code> | The construct node where permissions are attached. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.property.resourceArnsForGrantInvoke">resourceArnsForGrantInvoke</a></code> | <code>string[]</code> | The ARN(s) to put into the resource field of the generated IAM policy for grantInvoke(). |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.property.role">role</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | The IAM role associated with this function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.property.currentVersion">currentVersion</a></code> | <code>aws-cdk-lib.aws_lambda.Version</code> | Returns a `lambda.Version` which represents the current version of this singleton Lambda function. A new version will be created every time the function's configuration changes. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.property.logGroup">logGroup</a></code> | <code>aws-cdk-lib.aws_logs.ILogGroup</code> | The LogGroup where the Lambda function's logs are made available. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunction.property.runtime">runtime</a></code> | <code>aws-cdk-lib.aws_lambda.Runtime</code> | The runtime environment for the Lambda function. |
-
----
-
-##### `node`<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.property.node"></a>
-
-```typescript
-public readonly node: Node;
-```
-
-- *Type:* constructs.Node
-
-The tree node.
-
----
-
-##### `env`<sup>Required</sup> <a name="env" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.property.env"></a>
-
-```typescript
-public readonly env: ResourceEnvironment;
-```
-
-- *Type:* aws-cdk-lib.ResourceEnvironment
-
-The environment this resource belongs to.
-
-For resources that are created and managed by the CDK
-(generally, those created by creating new class instances like Role, Bucket, etc.),
-this is always the same as the environment of the stack they belong to;
-however, for imported resources
-(those obtained from static methods like fromRoleArn, fromBucketName, etc.),
-that might be different than the stack they were imported into.
-
----
-
-##### `stack`<sup>Required</sup> <a name="stack" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.property.stack"></a>
-
-```typescript
-public readonly stack: Stack;
-```
-
-- *Type:* aws-cdk-lib.Stack
-
-The stack in which this resource is defined.
-
----
-
-##### `architecture`<sup>Required</sup> <a name="architecture" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.property.architecture"></a>
-
-```typescript
-public readonly architecture: Architecture;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.Architecture
-
-The architecture of this Lambda Function.
-
----
-
-##### `connections`<sup>Required</sup> <a name="connections" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.property.connections"></a>
-
-```typescript
-public readonly connections: Connections;
-```
-
-- *Type:* aws-cdk-lib.aws_ec2.Connections
-
-Access the Connections object.
-
-Will fail if not a VPC-enabled Lambda Function
-
----
-
-##### `functionArn`<sup>Required</sup> <a name="functionArn" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.property.functionArn"></a>
-
-```typescript
-public readonly functionArn: string;
-```
-
-- *Type:* string
-
-The ARN fo the function.
-
----
-
-##### `functionName`<sup>Required</sup> <a name="functionName" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.property.functionName"></a>
-
-```typescript
-public readonly functionName: string;
-```
-
-- *Type:* string
-
-The name of the function.
-
----
-
-##### `grantPrincipal`<sup>Required</sup> <a name="grantPrincipal" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.property.grantPrincipal"></a>
-
-```typescript
-public readonly grantPrincipal: IPrincipal;
-```
-
-- *Type:* aws-cdk-lib.aws_iam.IPrincipal
-
-The principal this Lambda Function is running as.
-
----
-
-##### `isBoundToVpc`<sup>Required</sup> <a name="isBoundToVpc" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.property.isBoundToVpc"></a>
-
-```typescript
-public readonly isBoundToVpc: boolean;
-```
-
-- *Type:* boolean
-
-Whether or not this Lambda function was bound to a VPC.
-
-If this is is `false`, trying to access the `connections` object will fail.
-
----
-
-##### `latestVersion`<sup>Required</sup> <a name="latestVersion" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.property.latestVersion"></a>
-
-```typescript
-public readonly latestVersion: IVersion;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.IVersion
-
-The `$LATEST` version of this function.
-
-Note that this is reference to a non-specific AWS Lambda version, which
-means the function this version refers to can return different results in
-different invocations.
-
-To obtain a reference to an explicit version which references the current
-function configuration, use `lambdaFunction.currentVersion` instead.
-
----
-
-##### `permissionsNode`<sup>Required</sup> <a name="permissionsNode" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.property.permissionsNode"></a>
-
-```typescript
-public readonly permissionsNode: Node;
-```
-
-- *Type:* constructs.Node
-
-The construct node where permissions are attached.
-
----
-
-##### `resourceArnsForGrantInvoke`<sup>Required</sup> <a name="resourceArnsForGrantInvoke" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.property.resourceArnsForGrantInvoke"></a>
-
-```typescript
-public readonly resourceArnsForGrantInvoke: string[];
-```
-
-- *Type:* string[]
-
-The ARN(s) to put into the resource field of the generated IAM policy for grantInvoke().
-
----
-
-##### `role`<sup>Optional</sup> <a name="role" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.property.role"></a>
-
-```typescript
-public readonly role: IRole;
-```
-
-- *Type:* aws-cdk-lib.aws_iam.IRole
-
-The IAM role associated with this function.
-
-Undefined if the function was imported without a role.
-
----
-
-##### `currentVersion`<sup>Required</sup> <a name="currentVersion" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.property.currentVersion"></a>
-
-```typescript
-public readonly currentVersion: Version;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.Version
-
-Returns a `lambda.Version` which represents the current version of this singleton Lambda function. A new version will be created every time the function's configuration changes.
-
-You can specify options for this version using the `currentVersionOptions`
-prop when initializing the `lambda.SingletonFunction`.
-
----
-
-##### `logGroup`<sup>Required</sup> <a name="logGroup" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.property.logGroup"></a>
-
-```typescript
-public readonly logGroup: ILogGroup;
-```
-
-- *Type:* aws-cdk-lib.aws_logs.ILogGroup
-
-The LogGroup where the Lambda function's logs are made available.
-
-If either `logRetention` is set or this property is called, a CloudFormation custom resource is added to the stack that
-pre-creates the log group as part of the stack deployment, if it already doesn't exist, and sets the correct log retention
-period (never expire, by default).
-
-Further, if the log group already exists and the `logRetention` is not set, the custom resource will reset the log retention
-to never expire even if it was configured with a different value.
-
----
-
-##### `runtime`<sup>Required</sup> <a name="runtime" id="@kikoda/cdk-constructs.TypescriptSingletonFunction.property.runtime"></a>
-
-```typescript
-public readonly runtime: Runtime;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.Runtime
-
-The runtime environment for the Lambda function.
 
 ---
 
@@ -3269,8 +1821,10 @@ const branchPipelinesProps: BranchPipelinesProps = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.analyticsReporting">analyticsReporting</a></code> | <code>boolean</code> | Include runtime versioning information in this Stack. |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.crossRegionReferences">crossRegionReferences</a></code> | <code>boolean</code> | Enable this flag to allow native cross region stack references. |
 | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.description">description</a></code> | <code>string</code> | A description of the stack. |
 | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.env">env</a></code> | <code>aws-cdk-lib.Environment</code> | The AWS environment (account/region) where this stack will be deployed. |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.permissionsBoundary">permissionsBoundary</a></code> | <code>aws-cdk-lib.PermissionsBoundary</code> | Options for applying a permissions boundary to all IAM Roles and Users created within this Stage. |
 | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.stackName">stackName</a></code> | <code>string</code> | Name to deploy the stack with. |
 | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.synthesizer">synthesizer</a></code> | <code>aws-cdk-lib.IStackSynthesizer</code> | Synthesis method to use while deploying this stack. |
 | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Stack tags that will be applied to all the taggable resources and the stack itself. |
@@ -3292,6 +1846,24 @@ public readonly analyticsReporting: boolean;
 - *Default:* `analyticsReporting` setting of containing `App`, or value of 'aws:cdk:version-reporting' context key
 
 Include runtime versioning information in this Stack.
+
+---
+
+##### `crossRegionReferences`<sup>Optional</sup> <a name="crossRegionReferences" id="@kikoda/cdk-constructs.BranchPipelinesProps.property.crossRegionReferences"></a>
+
+```typescript
+public readonly crossRegionReferences: boolean;
+```
+
+- *Type:* boolean
+- *Default:* false
+
+Enable this flag to allow native cross region stack references.
+
+Enabling this will create a CloudFormation custom resource
+in both the producing stack and consuming stack in order to perform the export/import
+
+This feature is currently experimental
 
 ---
 
@@ -3382,6 +1954,19 @@ new MyStack(app, 'Stack1');
 ```
 
 
+##### `permissionsBoundary`<sup>Optional</sup> <a name="permissionsBoundary" id="@kikoda/cdk-constructs.BranchPipelinesProps.property.permissionsBoundary"></a>
+
+```typescript
+public readonly permissionsBoundary: PermissionsBoundary;
+```
+
+- *Type:* aws-cdk-lib.PermissionsBoundary
+- *Default:* no permissions boundary is applied
+
+Options for applying a permissions boundary to all IAM Roles and Users created within this Stage.
+
+---
+
 ##### `stackName`<sup>Optional</sup> <a name="stackName" id="@kikoda/cdk-constructs.BranchPipelinesProps.property.stackName"></a>
 
 ```typescript
@@ -3402,9 +1987,19 @@ public readonly synthesizer: IStackSynthesizer;
 ```
 
 - *Type:* aws-cdk-lib.IStackSynthesizer
-- *Default:* `DefaultStackSynthesizer` if the `@aws-cdk/core:newStyleStackSynthesis` feature flag is set, `LegacyStackSynthesizer` otherwise.
+- *Default:* The synthesizer specified on `App`, or `DefaultStackSynthesizer` otherwise.
 
 Synthesis method to use while deploying this stack.
+
+The Stack Synthesizer controls aspects of synthesis and deployment,
+like how assets are referenced and what IAM roles to use. For more
+information, see the README of the main CDK package.
+
+If not specified, the `defaultStackSynthesizer` from `App` will be used.
+If that is not specified, `DefaultStackSynthesizer` is used if
+`@aws-cdk/core:newStyleStackSynthesis` is set to `true` or the CDK major
+version is v2. In CDK v1 `LegacyStackSynthesizer` is the default if no
+other synthesizer is specified.
 
 ---
 
@@ -3576,8 +2171,10 @@ const componentPipelineStackProps: ComponentPipelineStackProps = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.analyticsReporting">analyticsReporting</a></code> | <code>boolean</code> | Include runtime versioning information in this Stack. |
+| <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.crossRegionReferences">crossRegionReferences</a></code> | <code>boolean</code> | Enable this flag to allow native cross region stack references. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.description">description</a></code> | <code>string</code> | A description of the stack. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.env">env</a></code> | <code>aws-cdk-lib.Environment</code> | The AWS environment (account/region) where this stack will be deployed. |
+| <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.permissionsBoundary">permissionsBoundary</a></code> | <code>aws-cdk-lib.PermissionsBoundary</code> | Options for applying a permissions boundary to all IAM Roles and Users created within this Stage. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.stackName">stackName</a></code> | <code>string</code> | Name to deploy the stack with. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.synthesizer">synthesizer</a></code> | <code>aws-cdk-lib.IStackSynthesizer</code> | Synthesis method to use while deploying this stack. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Stack tags that will be applied to all the taggable resources and the stack itself. |
@@ -3599,6 +2196,24 @@ public readonly analyticsReporting: boolean;
 - *Default:* `analyticsReporting` setting of containing `App`, or value of 'aws:cdk:version-reporting' context key
 
 Include runtime versioning information in this Stack.
+
+---
+
+##### `crossRegionReferences`<sup>Optional</sup> <a name="crossRegionReferences" id="@kikoda/cdk-constructs.ComponentPipelineStackProps.property.crossRegionReferences"></a>
+
+```typescript
+public readonly crossRegionReferences: boolean;
+```
+
+- *Type:* boolean
+- *Default:* false
+
+Enable this flag to allow native cross region stack references.
+
+Enabling this will create a CloudFormation custom resource
+in both the producing stack and consuming stack in order to perform the export/import
+
+This feature is currently experimental
 
 ---
 
@@ -3689,6 +2304,19 @@ new MyStack(app, 'Stack1');
 ```
 
 
+##### `permissionsBoundary`<sup>Optional</sup> <a name="permissionsBoundary" id="@kikoda/cdk-constructs.ComponentPipelineStackProps.property.permissionsBoundary"></a>
+
+```typescript
+public readonly permissionsBoundary: PermissionsBoundary;
+```
+
+- *Type:* aws-cdk-lib.PermissionsBoundary
+- *Default:* no permissions boundary is applied
+
+Options for applying a permissions boundary to all IAM Roles and Users created within this Stage.
+
+---
+
 ##### `stackName`<sup>Optional</sup> <a name="stackName" id="@kikoda/cdk-constructs.ComponentPipelineStackProps.property.stackName"></a>
 
 ```typescript
@@ -3709,9 +2337,19 @@ public readonly synthesizer: IStackSynthesizer;
 ```
 
 - *Type:* aws-cdk-lib.IStackSynthesizer
-- *Default:* `DefaultStackSynthesizer` if the `@aws-cdk/core:newStyleStackSynthesis` feature flag is set, `LegacyStackSynthesizer` otherwise.
+- *Default:* The synthesizer specified on `App`, or `DefaultStackSynthesizer` otherwise.
 
 Synthesis method to use while deploying this stack.
+
+The Stack Synthesizer controls aspects of synthesis and deployment,
+like how assets are referenced and what IAM roles to use. For more
+information, see the README of the main CDK package.
+
+If not specified, the `defaultStackSynthesizer` from `App` will be used.
+If that is not specified, `DefaultStackSynthesizer` is used if
+`@aws-cdk/core:newStyleStackSynthesis` is set to `true` or the CDK major
+version is v2. In CDK v1 `LegacyStackSynthesizer` is the default if no
+other synthesizer is specified.
 
 ---
 
@@ -3801,6 +2439,9 @@ const configuredStageProps: ConfiguredStageProps = { ... }
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStageProps.property.env">env</a></code> | <code>aws-cdk-lib.Environment</code> | Default AWS environment (account/region) for `Stack`s in this `Stage`. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStageProps.property.outdir">outdir</a></code> | <code>string</code> | The output directory into which to emit synthesized artifacts. |
+| <code><a href="#@kikoda/cdk-constructs.ConfiguredStageProps.property.permissionsBoundary">permissionsBoundary</a></code> | <code>aws-cdk-lib.PermissionsBoundary</code> | Options for applying a permissions boundary to all IAM Roles and Users created within this Stage. |
+| <code><a href="#@kikoda/cdk-constructs.ConfiguredStageProps.property.policyValidationBeta1">policyValidationBeta1</a></code> | <code>aws-cdk-lib.IPolicyValidationPluginBeta1[]</code> | Validation plugins to run during synthesis. |
+| <code><a href="#@kikoda/cdk-constructs.ConfiguredStageProps.property.stageName">stageName</a></code> | <code>string</code> | Name of this stage. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStageProps.property.config">config</a></code> | <code>any</code> | *No description.* |
 
 ---
@@ -3863,6 +2504,48 @@ thrown.
 
 ---
 
+##### `permissionsBoundary`<sup>Optional</sup> <a name="permissionsBoundary" id="@kikoda/cdk-constructs.ConfiguredStageProps.property.permissionsBoundary"></a>
+
+```typescript
+public readonly permissionsBoundary: PermissionsBoundary;
+```
+
+- *Type:* aws-cdk-lib.PermissionsBoundary
+- *Default:* no permissions boundary is applied
+
+Options for applying a permissions boundary to all IAM Roles and Users created within this Stage.
+
+---
+
+##### `policyValidationBeta1`<sup>Optional</sup> <a name="policyValidationBeta1" id="@kikoda/cdk-constructs.ConfiguredStageProps.property.policyValidationBeta1"></a>
+
+```typescript
+public readonly policyValidationBeta1: IPolicyValidationPluginBeta1[];
+```
+
+- *Type:* aws-cdk-lib.IPolicyValidationPluginBeta1[]
+- *Default:* no validation plugins are used
+
+Validation plugins to run during synthesis.
+
+If any plugin reports any violation,
+synthesis will be interrupted and the report displayed to the user.
+
+---
+
+##### `stageName`<sup>Optional</sup> <a name="stageName" id="@kikoda/cdk-constructs.ConfiguredStageProps.property.stageName"></a>
+
+```typescript
+public readonly stageName: string;
+```
+
+- *Type:* string
+- *Default:* Derived from the id.
+
+Name of this stage.
+
+---
+
 ##### `config`<sup>Required</sup> <a name="config" id="@kikoda/cdk-constructs.ConfiguredStageProps.property.config"></a>
 
 ```typescript
@@ -3870,117 +2553,6 @@ public readonly config: any;
 ```
 
 - *Type:* any
-
----
-
-### FunctionBundleCopyFilesProps <a name="FunctionBundleCopyFilesProps" id="@kikoda/cdk-constructs.FunctionBundleCopyFilesProps"></a>
-
-#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.FunctionBundleCopyFilesProps.Initializer"></a>
-
-```typescript
-import { FunctionBundleCopyFilesProps } from '@kikoda/cdk-constructs'
-
-const functionBundleCopyFilesProps: FunctionBundleCopyFilesProps = { ... }
-```
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.FunctionBundleCopyFilesProps.property.from">from</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.FunctionBundleCopyFilesProps.property.to">to</a></code> | <code>string</code> | *No description.* |
-
----
-
-##### `from`<sup>Required</sup> <a name="from" id="@kikoda/cdk-constructs.FunctionBundleCopyFilesProps.property.from"></a>
-
-```typescript
-public readonly from: string;
-```
-
-- *Type:* string
-
----
-
-##### `to`<sup>Optional</sup> <a name="to" id="@kikoda/cdk-constructs.FunctionBundleCopyFilesProps.property.to"></a>
-
-```typescript
-public readonly to: string;
-```
-
-- *Type:* string
-
----
-
-### FunctionBundleProps <a name="FunctionBundleProps" id="@kikoda/cdk-constructs.FunctionBundleProps"></a>
-
-#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.FunctionBundleProps.Initializer"></a>
-
-```typescript
-import { FunctionBundleProps } from '@kikoda/cdk-constructs'
-
-const functionBundleProps: FunctionBundleProps = { ... }
-```
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.FunctionBundleProps.property.commandHooks">commandHooks</a></code> | <code>aws-cdk-lib.aws_lambda_nodejs.ICommandHooks</code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.FunctionBundleProps.property.copyFiles">copyFiles</a></code> | <code><a href="#@kikoda/cdk-constructs.FunctionBundleCopyFilesProps">FunctionBundleCopyFilesProps</a>[]</code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.FunctionBundleProps.property.externalModules">externalModules</a></code> | <code>string[]</code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.FunctionBundleProps.property.loader">loader</a></code> | <code>{[ key: string ]: string}</code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.FunctionBundleProps.property.nodeModules">nodeModules</a></code> | <code>string[]</code> | *No description.* |
-
----
-
-##### `commandHooks`<sup>Optional</sup> <a name="commandHooks" id="@kikoda/cdk-constructs.FunctionBundleProps.property.commandHooks"></a>
-
-```typescript
-public readonly commandHooks: ICommandHooks;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda_nodejs.ICommandHooks
-
----
-
-##### `copyFiles`<sup>Optional</sup> <a name="copyFiles" id="@kikoda/cdk-constructs.FunctionBundleProps.property.copyFiles"></a>
-
-```typescript
-public readonly copyFiles: FunctionBundleCopyFilesProps[];
-```
-
-- *Type:* <a href="#@kikoda/cdk-constructs.FunctionBundleCopyFilesProps">FunctionBundleCopyFilesProps</a>[]
-
----
-
-##### `externalModules`<sup>Optional</sup> <a name="externalModules" id="@kikoda/cdk-constructs.FunctionBundleProps.property.externalModules"></a>
-
-```typescript
-public readonly externalModules: string[];
-```
-
-- *Type:* string[]
-
----
-
-##### `loader`<sup>Optional</sup> <a name="loader" id="@kikoda/cdk-constructs.FunctionBundleProps.property.loader"></a>
-
-```typescript
-public readonly loader: {[ key: string ]: string};
-```
-
-- *Type:* {[ key: string ]: string}
-
----
-
-##### `nodeModules`<sup>Optional</sup> <a name="nodeModules" id="@kikoda/cdk-constructs.FunctionBundleProps.property.nodeModules"></a>
-
-```typescript
-public readonly nodeModules: string[];
-```
-
-- *Type:* string[]
 
 ---
 
@@ -4080,6 +2652,92 @@ public readonly owner: string;
 - *Type:* string
 
 The owner of the GitHub repository.
+
+---
+
+### InstanceAutoStartProps <a name="InstanceAutoStartProps" id="@kikoda/cdk-constructs.InstanceAutoStartProps"></a>
+
+#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.InstanceAutoStartProps.Initializer"></a>
+
+```typescript
+import { InstanceAutoStartProps } from '@kikoda/cdk-constructs'
+
+const instanceAutoStartProps: InstanceAutoStartProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStartProps.property.instance">instance</a></code> | <code>aws-cdk-lib.aws_ec2.IInstance</code> | The Instance to start on a schedule. |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStartProps.property.schedule">schedule</a></code> | <code>aws-cdk-lib.aws_events.Schedule</code> | The schedule to start the instance. |
+
+---
+
+##### `instance`<sup>Required</sup> <a name="instance" id="@kikoda/cdk-constructs.InstanceAutoStartProps.property.instance"></a>
+
+```typescript
+public readonly instance: IInstance;
+```
+
+- *Type:* aws-cdk-lib.aws_ec2.IInstance
+
+The Instance to start on a schedule.
+
+---
+
+##### `schedule`<sup>Required</sup> <a name="schedule" id="@kikoda/cdk-constructs.InstanceAutoStartProps.property.schedule"></a>
+
+```typescript
+public readonly schedule: Schedule;
+```
+
+- *Type:* aws-cdk-lib.aws_events.Schedule
+
+The schedule to start the instance.
+
+---
+
+### InstanceAutoStopProps <a name="InstanceAutoStopProps" id="@kikoda/cdk-constructs.InstanceAutoStopProps"></a>
+
+#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.InstanceAutoStopProps.Initializer"></a>
+
+```typescript
+import { InstanceAutoStopProps } from '@kikoda/cdk-constructs'
+
+const instanceAutoStopProps: InstanceAutoStopProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStopProps.property.instance">instance</a></code> | <code>aws-cdk-lib.aws_ec2.IInstance</code> | The Instance to stop on a schedule. |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStopProps.property.schedule">schedule</a></code> | <code>aws-cdk-lib.aws_events.Schedule</code> | The schedule to stop the instance. |
+
+---
+
+##### `instance`<sup>Required</sup> <a name="instance" id="@kikoda/cdk-constructs.InstanceAutoStopProps.property.instance"></a>
+
+```typescript
+public readonly instance: IInstance;
+```
+
+- *Type:* aws-cdk-lib.aws_ec2.IInstance
+
+The Instance to stop on a schedule.
+
+---
+
+##### `schedule`<sup>Required</sup> <a name="schedule" id="@kikoda/cdk-constructs.InstanceAutoStopProps.property.schedule"></a>
+
+```typescript
+public readonly schedule: Schedule;
+```
+
+- *Type:* aws-cdk-lib.aws_events.Schedule
+
+The schedule to stop the instance.
 
 ---
 
@@ -4295,8 +2953,11 @@ const stageConfig: StageConfig = { ... }
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.StageConfig.property.env">env</a></code> | <code>aws-cdk-lib.Environment</code> | Default AWS environment (account/region) for `Stack`s in this `Stage`. |
 | <code><a href="#@kikoda/cdk-constructs.StageConfig.property.outdir">outdir</a></code> | <code>string</code> | The output directory into which to emit synthesized artifacts. |
+| <code><a href="#@kikoda/cdk-constructs.StageConfig.property.permissionsBoundary">permissionsBoundary</a></code> | <code>aws-cdk-lib.PermissionsBoundary</code> | Options for applying a permissions boundary to all IAM Roles and Users created within this Stage. |
+| <code><a href="#@kikoda/cdk-constructs.StageConfig.property.policyValidationBeta1">policyValidationBeta1</a></code> | <code>aws-cdk-lib.IPolicyValidationPluginBeta1[]</code> | Validation plugins to run during synthesis. |
+| <code><a href="#@kikoda/cdk-constructs.StageConfig.property.stageName">stageName</a></code> | <code>string</code> | Name of this stage. |
 | <code><a href="#@kikoda/cdk-constructs.StageConfig.property.config">config</a></code> | <code>any</code> | The generic config. |
-| <code><a href="#@kikoda/cdk-constructs.StageConfig.property.stageName">stageName</a></code> | <code>string</code> | The name of the stage. |
+| <code><a href="#@kikoda/cdk-constructs.StageConfig.property.name">name</a></code> | <code>string</code> | The name of the stage. |
 | <code><a href="#@kikoda/cdk-constructs.StageConfig.property.manualApproval">manualApproval</a></code> | <code>boolean</code> | Add a manual approval step when deploying this stage. |
 
 ---
@@ -4359,6 +3020,48 @@ thrown.
 
 ---
 
+##### `permissionsBoundary`<sup>Optional</sup> <a name="permissionsBoundary" id="@kikoda/cdk-constructs.StageConfig.property.permissionsBoundary"></a>
+
+```typescript
+public readonly permissionsBoundary: PermissionsBoundary;
+```
+
+- *Type:* aws-cdk-lib.PermissionsBoundary
+- *Default:* no permissions boundary is applied
+
+Options for applying a permissions boundary to all IAM Roles and Users created within this Stage.
+
+---
+
+##### `policyValidationBeta1`<sup>Optional</sup> <a name="policyValidationBeta1" id="@kikoda/cdk-constructs.StageConfig.property.policyValidationBeta1"></a>
+
+```typescript
+public readonly policyValidationBeta1: IPolicyValidationPluginBeta1[];
+```
+
+- *Type:* aws-cdk-lib.IPolicyValidationPluginBeta1[]
+- *Default:* no validation plugins are used
+
+Validation plugins to run during synthesis.
+
+If any plugin reports any violation,
+synthesis will be interrupted and the report displayed to the user.
+
+---
+
+##### `stageName`<sup>Optional</sup> <a name="stageName" id="@kikoda/cdk-constructs.StageConfig.property.stageName"></a>
+
+```typescript
+public readonly stageName: string;
+```
+
+- *Type:* string
+- *Default:* Derived from the id.
+
+Name of this stage.
+
+---
+
 ##### `config`<sup>Required</sup> <a name="config" id="@kikoda/cdk-constructs.StageConfig.property.config"></a>
 
 ```typescript
@@ -4371,10 +3074,10 @@ The generic config.
 
 ---
 
-##### `stageName`<sup>Required</sup> <a name="stageName" id="@kikoda/cdk-constructs.StageConfig.property.stageName"></a>
+##### `name`<sup>Required</sup> <a name="name" id="@kikoda/cdk-constructs.StageConfig.property.name"></a>
 
 ```typescript
-public readonly stageName: string;
+public readonly name: string;
 ```
 
 - *Type:* string
@@ -4392,1446 +3095,6 @@ public readonly manualApproval: boolean;
 - *Type:* boolean
 
 Add a manual approval step when deploying this stage.
-
----
-
-### TypescriptFunctionProps <a name="TypescriptFunctionProps" id="@kikoda/cdk-constructs.TypescriptFunctionProps"></a>
-
-#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.TypescriptFunctionProps.Initializer"></a>
-
-```typescript
-import { TypescriptFunctionProps } from '@kikoda/cdk-constructs'
-
-const typescriptFunctionProps: TypescriptFunctionProps = { ... }
-```
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.maxEventAge">maxEventAge</a></code> | <code>aws-cdk-lib.Duration</code> | The maximum age of a request that Lambda sends to a function for processing. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.onFailure">onFailure</a></code> | <code>aws-cdk-lib.aws_lambda.IDestination</code> | The destination for failed invocations. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.onSuccess">onSuccess</a></code> | <code>aws-cdk-lib.aws_lambda.IDestination</code> | The destination for successful invocations. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.retryAttempts">retryAttempts</a></code> | <code>number</code> | The maximum number of times to retry when the function returns an error. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.allowAllOutbound">allowAllOutbound</a></code> | <code>boolean</code> | Whether to allow the Lambda to send all network traffic. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.allowPublicSubnet">allowPublicSubnet</a></code> | <code>boolean</code> | Lambda Functions in a public subnet can NOT access the internet. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.architecture">architecture</a></code> | <code>aws-cdk-lib.aws_lambda.Architecture</code> | The system architectures compatible with this lambda function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.codeSigningConfig">codeSigningConfig</a></code> | <code>aws-cdk-lib.aws_lambda.ICodeSigningConfig</code> | Code signing config associated with this function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.currentVersionOptions">currentVersionOptions</a></code> | <code>aws-cdk-lib.aws_lambda.VersionOptions</code> | Options for the `lambda.Version` resource automatically created by the `fn.currentVersion` method. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.deadLetterQueue">deadLetterQueue</a></code> | <code>aws-cdk-lib.aws_sqs.IQueue</code> | The SQS queue to use if DLQ is enabled. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.deadLetterQueueEnabled">deadLetterQueueEnabled</a></code> | <code>boolean</code> | Enabled DLQ. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.deadLetterTopic">deadLetterTopic</a></code> | <code>aws-cdk-lib.aws_sns.ITopic</code> | The SNS topic to use as a DLQ. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.description">description</a></code> | <code>string</code> | A description of the function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.environment">environment</a></code> | <code>{[ key: string ]: string}</code> | Key-value pairs that Lambda caches and makes available for your Lambda functions. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.environmentEncryption">environmentEncryption</a></code> | <code>aws-cdk-lib.aws_kms.IKey</code> | The AWS KMS key that's used to encrypt your function's environment variables. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.ephemeralStorageSize">ephemeralStorageSize</a></code> | <code>aws-cdk-lib.Size</code> | The size of the function’s /tmp directory in MiB. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.events">events</a></code> | <code>aws-cdk-lib.aws_lambda.IEventSource[]</code> | Event sources for this function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.filesystem">filesystem</a></code> | <code>aws-cdk-lib.aws_lambda.FileSystem</code> | The filesystem configuration for the lambda function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.functionName">functionName</a></code> | <code>string</code> | A name for the function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.initialPolicy">initialPolicy</a></code> | <code>aws-cdk-lib.aws_iam.PolicyStatement[]</code> | Initial policy statements to add to the created Lambda Role. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.insightsVersion">insightsVersion</a></code> | <code>aws-cdk-lib.aws_lambda.LambdaInsightsVersion</code> | Specify the version of CloudWatch Lambda insights to use for monitoring. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.layers">layers</a></code> | <code>aws-cdk-lib.aws_lambda.ILayerVersion[]</code> | A list of layers to add to the function's execution environment. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.logRetention">logRetention</a></code> | <code>aws-cdk-lib.aws_logs.RetentionDays</code> | The number of days log events are kept in CloudWatch Logs. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.logRetentionRetryOptions">logRetentionRetryOptions</a></code> | <code>aws-cdk-lib.aws_lambda.LogRetentionRetryOptions</code> | When log retention is specified, a custom resource attempts to create the CloudWatch log group. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.logRetentionRole">logRetentionRole</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | The IAM role for the Lambda function associated with the custom resource that sets the retention policy. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.memorySize">memorySize</a></code> | <code>number</code> | The amount of memory, in MB, that is allocated to your Lambda function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.profiling">profiling</a></code> | <code>boolean</code> | Enable profiling. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.profilingGroup">profilingGroup</a></code> | <code>aws-cdk-lib.aws_codeguruprofiler.IProfilingGroup</code> | Profiling Group. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.reservedConcurrentExecutions">reservedConcurrentExecutions</a></code> | <code>number</code> | The maximum of concurrent executions you want to reserve for the function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.role">role</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | Lambda execution role. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.securityGroups">securityGroups</a></code> | <code>aws-cdk-lib.aws_ec2.ISecurityGroup[]</code> | The list of security groups to associate with the Lambda's network interfaces. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.timeout">timeout</a></code> | <code>aws-cdk-lib.Duration</code> | The function execution time (in seconds) after which Lambda terminates the function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.tracing">tracing</a></code> | <code>aws-cdk-lib.aws_lambda.Tracing</code> | Enable AWS X-Ray Tracing for Lambda Function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | VPC network to place Lambda network interfaces. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.vpcSubnets">vpcSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Where to place the network interfaces within the VPC. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.awsSdkConnectionReuse">awsSdkConnectionReuse</a></code> | <code>boolean</code> | Whether to automatically reuse TCP connections when working with the AWS SDK for JavaScript. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.bundling">bundling</a></code> | <code>aws-cdk-lib.aws_lambda_nodejs.BundlingOptions</code> | Bundling options. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.depsLockFilePath">depsLockFilePath</a></code> | <code>string</code> | The path to the dependencies lock file (`yarn.lock` or `package-lock.json`). |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.entry">entry</a></code> | <code>string</code> | Path to the entry file (JavaScript or TypeScript). |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.handler">handler</a></code> | <code>string</code> | The name of the exported handler in the entry file. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.projectRoot">projectRoot</a></code> | <code>string</code> | The path to the directory containing project config files (`package.json` or `tsconfig.json`). |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.runtime">runtime</a></code> | <code>aws-cdk-lib.aws_lambda.Runtime</code> | The runtime environment. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptFunctionProps.property.yarnPnP">yarnPnP</a></code> | <code>boolean</code> | Enable esbuild Yarn PnP support through `@yarnpkg/esbuild-plugin-pnp`. |
-
----
-
-##### `maxEventAge`<sup>Optional</sup> <a name="maxEventAge" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.maxEventAge"></a>
-
-```typescript
-public readonly maxEventAge: Duration;
-```
-
-- *Type:* aws-cdk-lib.Duration
-- *Default:* Duration.hours(6)
-
-The maximum age of a request that Lambda sends to a function for processing.
-
-Minimum: 60 seconds
-Maximum: 6 hours
-
----
-
-##### `onFailure`<sup>Optional</sup> <a name="onFailure" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.onFailure"></a>
-
-```typescript
-public readonly onFailure: IDestination;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.IDestination
-- *Default:* no destination
-
-The destination for failed invocations.
-
----
-
-##### `onSuccess`<sup>Optional</sup> <a name="onSuccess" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.onSuccess"></a>
-
-```typescript
-public readonly onSuccess: IDestination;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.IDestination
-- *Default:* no destination
-
-The destination for successful invocations.
-
----
-
-##### `retryAttempts`<sup>Optional</sup> <a name="retryAttempts" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.retryAttempts"></a>
-
-```typescript
-public readonly retryAttempts: number;
-```
-
-- *Type:* number
-- *Default:* 2
-
-The maximum number of times to retry when the function returns an error.
-
-Minimum: 0
-Maximum: 2
-
----
-
-##### `allowAllOutbound`<sup>Optional</sup> <a name="allowAllOutbound" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.allowAllOutbound"></a>
-
-```typescript
-public readonly allowAllOutbound: boolean;
-```
-
-- *Type:* boolean
-- *Default:* true
-
-Whether to allow the Lambda to send all network traffic.
-
-If set to false, you must individually add traffic rules to allow the
-Lambda to connect to network targets.
-
----
-
-##### `allowPublicSubnet`<sup>Optional</sup> <a name="allowPublicSubnet" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.allowPublicSubnet"></a>
-
-```typescript
-public readonly allowPublicSubnet: boolean;
-```
-
-- *Type:* boolean
-- *Default:* false
-
-Lambda Functions in a public subnet can NOT access the internet.
-
-Use this property to acknowledge this limitation and still place the function in a public subnet.
-
-> [https://stackoverflow.com/questions/52992085/why-cant-an-aws-lambda-function-inside-a-public-subnet-in-a-vpc-connect-to-the/52994841#52994841](https://stackoverflow.com/questions/52992085/why-cant-an-aws-lambda-function-inside-a-public-subnet-in-a-vpc-connect-to-the/52994841#52994841)
-
----
-
-##### `architecture`<sup>Optional</sup> <a name="architecture" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.architecture"></a>
-
-```typescript
-public readonly architecture: Architecture;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.Architecture
-- *Default:* Architecture.X86_64
-
-The system architectures compatible with this lambda function.
-
----
-
-##### `codeSigningConfig`<sup>Optional</sup> <a name="codeSigningConfig" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.codeSigningConfig"></a>
-
-```typescript
-public readonly codeSigningConfig: ICodeSigningConfig;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.ICodeSigningConfig
-- *Default:* Not Sign the Code
-
-Code signing config associated with this function.
-
----
-
-##### `currentVersionOptions`<sup>Optional</sup> <a name="currentVersionOptions" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.currentVersionOptions"></a>
-
-```typescript
-public readonly currentVersionOptions: VersionOptions;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.VersionOptions
-- *Default:* default options as described in `VersionOptions`
-
-Options for the `lambda.Version` resource automatically created by the `fn.currentVersion` method.
-
----
-
-##### `deadLetterQueue`<sup>Optional</sup> <a name="deadLetterQueue" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.deadLetterQueue"></a>
-
-```typescript
-public readonly deadLetterQueue: IQueue;
-```
-
-- *Type:* aws-cdk-lib.aws_sqs.IQueue
-- *Default:* SQS queue with 14 day retention period if `deadLetterQueueEnabled` is `true`
-
-The SQS queue to use if DLQ is enabled.
-
-If SNS topic is desired, specify `deadLetterTopic` property instead.
-
----
-
-##### `deadLetterQueueEnabled`<sup>Optional</sup> <a name="deadLetterQueueEnabled" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.deadLetterQueueEnabled"></a>
-
-```typescript
-public readonly deadLetterQueueEnabled: boolean;
-```
-
-- *Type:* boolean
-- *Default:* false unless `deadLetterQueue` is set, which implies DLQ is enabled.
-
-Enabled DLQ.
-
-If `deadLetterQueue` is undefined,
-an SQS queue with default options will be defined for your Function.
-
----
-
-##### `deadLetterTopic`<sup>Optional</sup> <a name="deadLetterTopic" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.deadLetterTopic"></a>
-
-```typescript
-public readonly deadLetterTopic: ITopic;
-```
-
-- *Type:* aws-cdk-lib.aws_sns.ITopic
-- *Default:* no SNS topic
-
-The SNS topic to use as a DLQ.
-
-Note that if `deadLetterQueueEnabled` is set to `true`, an SQS queue will be created
-rather than an SNS topic. Using an SNS topic as a DLQ requires this property to be set explicitly.
-
----
-
-##### `description`<sup>Optional</sup> <a name="description" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.description"></a>
-
-```typescript
-public readonly description: string;
-```
-
-- *Type:* string
-- *Default:* No description.
-
-A description of the function.
-
----
-
-##### `environment`<sup>Optional</sup> <a name="environment" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.environment"></a>
-
-```typescript
-public readonly environment: {[ key: string ]: string};
-```
-
-- *Type:* {[ key: string ]: string}
-- *Default:* No environment variables.
-
-Key-value pairs that Lambda caches and makes available for your Lambda functions.
-
-Use environment variables to apply configuration changes, such
-as test and production environment configurations, without changing your
-Lambda function source code.
-
----
-
-##### `environmentEncryption`<sup>Optional</sup> <a name="environmentEncryption" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.environmentEncryption"></a>
-
-```typescript
-public readonly environmentEncryption: IKey;
-```
-
-- *Type:* aws-cdk-lib.aws_kms.IKey
-- *Default:* AWS Lambda creates and uses an AWS managed customer master key (CMK).
-
-The AWS KMS key that's used to encrypt your function's environment variables.
-
----
-
-##### `ephemeralStorageSize`<sup>Optional</sup> <a name="ephemeralStorageSize" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.ephemeralStorageSize"></a>
-
-```typescript
-public readonly ephemeralStorageSize: Size;
-```
-
-- *Type:* aws-cdk-lib.Size
-- *Default:* 512 MiB
-
-The size of the function’s /tmp directory in MiB.
-
----
-
-##### `events`<sup>Optional</sup> <a name="events" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.events"></a>
-
-```typescript
-public readonly events: IEventSource[];
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.IEventSource[]
-- *Default:* No event sources.
-
-Event sources for this function.
-
-You can also add event sources using `addEventSource`.
-
----
-
-##### `filesystem`<sup>Optional</sup> <a name="filesystem" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.filesystem"></a>
-
-```typescript
-public readonly filesystem: FileSystem;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.FileSystem
-- *Default:* will not mount any filesystem
-
-The filesystem configuration for the lambda function.
-
----
-
-##### `functionName`<sup>Optional</sup> <a name="functionName" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.functionName"></a>
-
-```typescript
-public readonly functionName: string;
-```
-
-- *Type:* string
-- *Default:* AWS CloudFormation generates a unique physical ID and uses that ID for the function's name. For more information, see Name Type.
-
-A name for the function.
-
----
-
-##### `initialPolicy`<sup>Optional</sup> <a name="initialPolicy" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.initialPolicy"></a>
-
-```typescript
-public readonly initialPolicy: PolicyStatement[];
-```
-
-- *Type:* aws-cdk-lib.aws_iam.PolicyStatement[]
-- *Default:* No policy statements are added to the created Lambda role.
-
-Initial policy statements to add to the created Lambda Role.
-
-You can call `addToRolePolicy` to the created lambda to add statements post creation.
-
----
-
-##### `insightsVersion`<sup>Optional</sup> <a name="insightsVersion" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.insightsVersion"></a>
-
-```typescript
-public readonly insightsVersion: LambdaInsightsVersion;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.LambdaInsightsVersion
-- *Default:* No Lambda Insights
-
-Specify the version of CloudWatch Lambda insights to use for monitoring.
-
-> [https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Lambda-Insights-Getting-Started-docker.html](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Lambda-Insights-Getting-Started-docker.html)
-
----
-
-##### `layers`<sup>Optional</sup> <a name="layers" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.layers"></a>
-
-```typescript
-public readonly layers: ILayerVersion[];
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.ILayerVersion[]
-- *Default:* No layers.
-
-A list of layers to add to the function's execution environment.
-
-You can configure your Lambda function to pull in
-additional code during initialization in the form of layers. Layers are packages of libraries or other dependencies
-that can be used by multiple functions.
-
----
-
-##### `logRetention`<sup>Optional</sup> <a name="logRetention" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.logRetention"></a>
-
-```typescript
-public readonly logRetention: RetentionDays;
-```
-
-- *Type:* aws-cdk-lib.aws_logs.RetentionDays
-- *Default:* logs.RetentionDays.INFINITE
-
-The number of days log events are kept in CloudWatch Logs.
-
-When updating
-this property, unsetting it doesn't remove the log retention policy. To
-remove the retention policy, set the value to `INFINITE`.
-
----
-
-##### `logRetentionRetryOptions`<sup>Optional</sup> <a name="logRetentionRetryOptions" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.logRetentionRetryOptions"></a>
-
-```typescript
-public readonly logRetentionRetryOptions: LogRetentionRetryOptions;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.LogRetentionRetryOptions
-- *Default:* Default AWS SDK retry options.
-
-When log retention is specified, a custom resource attempts to create the CloudWatch log group.
-
-These options control the retry policy when interacting with CloudWatch APIs.
-
----
-
-##### `logRetentionRole`<sup>Optional</sup> <a name="logRetentionRole" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.logRetentionRole"></a>
-
-```typescript
-public readonly logRetentionRole: IRole;
-```
-
-- *Type:* aws-cdk-lib.aws_iam.IRole
-- *Default:* A new role is created.
-
-The IAM role for the Lambda function associated with the custom resource that sets the retention policy.
-
----
-
-##### `memorySize`<sup>Optional</sup> <a name="memorySize" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.memorySize"></a>
-
-```typescript
-public readonly memorySize: number;
-```
-
-- *Type:* number
-- *Default:* 128
-
-The amount of memory, in MB, that is allocated to your Lambda function.
-
-Lambda uses this value to proportionally allocate the amount of CPU
-power. For more information, see Resource Model in the AWS Lambda
-Developer Guide.
-
----
-
-##### `profiling`<sup>Optional</sup> <a name="profiling" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.profiling"></a>
-
-```typescript
-public readonly profiling: boolean;
-```
-
-- *Type:* boolean
-- *Default:* No profiling.
-
-Enable profiling.
-
-> [https://docs.aws.amazon.com/codeguru/latest/profiler-ug/setting-up-lambda.html](https://docs.aws.amazon.com/codeguru/latest/profiler-ug/setting-up-lambda.html)
-
----
-
-##### `profilingGroup`<sup>Optional</sup> <a name="profilingGroup" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.profilingGroup"></a>
-
-```typescript
-public readonly profilingGroup: IProfilingGroup;
-```
-
-- *Type:* aws-cdk-lib.aws_codeguruprofiler.IProfilingGroup
-- *Default:* A new profiling group will be created if `profiling` is set.
-
-Profiling Group.
-
-> [https://docs.aws.amazon.com/codeguru/latest/profiler-ug/setting-up-lambda.html](https://docs.aws.amazon.com/codeguru/latest/profiler-ug/setting-up-lambda.html)
-
----
-
-##### `reservedConcurrentExecutions`<sup>Optional</sup> <a name="reservedConcurrentExecutions" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.reservedConcurrentExecutions"></a>
-
-```typescript
-public readonly reservedConcurrentExecutions: number;
-```
-
-- *Type:* number
-- *Default:* No specific limit - account limit.
-
-The maximum of concurrent executions you want to reserve for the function.
-
-> [https://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html](https://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html)
-
----
-
-##### `role`<sup>Optional</sup> <a name="role" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.role"></a>
-
-```typescript
-public readonly role: IRole;
-```
-
-- *Type:* aws-cdk-lib.aws_iam.IRole
-- *Default:* A unique role will be generated for this lambda function. Both supplied and generated roles can always be changed by calling `addToRolePolicy`.
-
-Lambda execution role.
-
-This is the role that will be assumed by the function upon execution.
-It controls the permissions that the function will have. The Role must
-be assumable by the 'lambda.amazonaws.com' service principal.
-
-The default Role automatically has permissions granted for Lambda execution. If you
-provide a Role, you must add the relevant AWS managed policies yourself.
-
-The relevant managed policies are "service-role/AWSLambdaBasicExecutionRole" and
-"service-role/AWSLambdaVPCAccessExecutionRole".
-
----
-
-##### `securityGroups`<sup>Optional</sup> <a name="securityGroups" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.securityGroups"></a>
-
-```typescript
-public readonly securityGroups: ISecurityGroup[];
-```
-
-- *Type:* aws-cdk-lib.aws_ec2.ISecurityGroup[]
-- *Default:* If the function is placed within a VPC and a security group is not specified, either by this or securityGroup prop, a dedicated security group will be created for this function.
-
-The list of security groups to associate with the Lambda's network interfaces.
-
-Only used if 'vpc' is supplied.
-
----
-
-##### `timeout`<sup>Optional</sup> <a name="timeout" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.timeout"></a>
-
-```typescript
-public readonly timeout: Duration;
-```
-
-- *Type:* aws-cdk-lib.Duration
-- *Default:* Duration.seconds(3)
-
-The function execution time (in seconds) after which Lambda terminates the function.
-
-Because the execution time affects cost, set this value
-based on the function's expected execution time.
-
----
-
-##### `tracing`<sup>Optional</sup> <a name="tracing" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.tracing"></a>
-
-```typescript
-public readonly tracing: Tracing;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.Tracing
-- *Default:* Tracing.Disabled
-
-Enable AWS X-Ray Tracing for Lambda Function.
-
----
-
-##### `vpc`<sup>Optional</sup> <a name="vpc" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.vpc"></a>
-
-```typescript
-public readonly vpc: IVpc;
-```
-
-- *Type:* aws-cdk-lib.aws_ec2.IVpc
-- *Default:* Function is not placed within a VPC.
-
-VPC network to place Lambda network interfaces.
-
-Specify this if the Lambda function needs to access resources in a VPC.
-
----
-
-##### `vpcSubnets`<sup>Optional</sup> <a name="vpcSubnets" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.vpcSubnets"></a>
-
-```typescript
-public readonly vpcSubnets: SubnetSelection;
-```
-
-- *Type:* aws-cdk-lib.aws_ec2.SubnetSelection
-- *Default:* the Vpc default strategy if not specified
-
-Where to place the network interfaces within the VPC.
-
-Only used if 'vpc' is supplied. Note: internet access for Lambdas
-requires a NAT gateway, so picking Public subnets is not allowed.
-
----
-
-##### `awsSdkConnectionReuse`<sup>Optional</sup> <a name="awsSdkConnectionReuse" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.awsSdkConnectionReuse"></a>
-
-```typescript
-public readonly awsSdkConnectionReuse: boolean;
-```
-
-- *Type:* boolean
-- *Default:* true
-
-Whether to automatically reuse TCP connections when working with the AWS SDK for JavaScript.
-
-This sets the `AWS_NODEJS_CONNECTION_REUSE_ENABLED` environment variable
-to `1`.
-
-> [https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/node-reusing-connections.html](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/node-reusing-connections.html)
-
----
-
-##### `bundling`<sup>Optional</sup> <a name="bundling" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.bundling"></a>
-
-```typescript
-public readonly bundling: BundlingOptions;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda_nodejs.BundlingOptions
-- *Default:* use default bundling options: no minify, no sourcemap, all modules are bundled.
-
-Bundling options.
-
----
-
-##### `depsLockFilePath`<sup>Optional</sup> <a name="depsLockFilePath" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.depsLockFilePath"></a>
-
-```typescript
-public readonly depsLockFilePath: string;
-```
-
-- *Type:* string
-- *Default:* the path is found by walking up parent directories searching for a `yarn.lock` or `package-lock.json` file
-
-The path to the dependencies lock file (`yarn.lock` or `package-lock.json`).
-
-This will be used as the source for the volume mounted in the Docker
-container.
-
-Modules specified in `nodeModules` will be installed using the right
-installer (`npm` or `yarn`) along with this lock file.
-
----
-
-##### `entry`<sup>Optional</sup> <a name="entry" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.entry"></a>
-
-```typescript
-public readonly entry: string;
-```
-
-- *Type:* string
-- *Default:* Derived from the name of the defining file and the construct's id. If the `NodejsFunction` is defined in `stack.ts` with `my-handler` as id (`new NodejsFunction(this, 'my-handler')`), the construct will look at `stack.my-handler.ts` and `stack.my-handler.js`.
-
-Path to the entry file (JavaScript or TypeScript).
-
----
-
-##### `handler`<sup>Optional</sup> <a name="handler" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.handler"></a>
-
-```typescript
-public readonly handler: string;
-```
-
-- *Type:* string
-- *Default:* handler
-
-The name of the exported handler in the entry file.
-
----
-
-##### `projectRoot`<sup>Optional</sup> <a name="projectRoot" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.projectRoot"></a>
-
-```typescript
-public readonly projectRoot: string;
-```
-
-- *Type:* string
-- *Default:* the directory containing the `depsLockFilePath`
-
-The path to the directory containing project config files (`package.json` or `tsconfig.json`).
-
----
-
-##### `runtime`<sup>Optional</sup> <a name="runtime" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.runtime"></a>
-
-```typescript
-public readonly runtime: Runtime;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.Runtime
-- *Default:* Runtime.NODEJS_14_X
-
-The runtime environment.
-
-Only runtimes of the Node.js family are
-supported.
-
----
-
-##### `yarnPnP`<sup>Optional</sup> <a name="yarnPnP" id="@kikoda/cdk-constructs.TypescriptFunctionProps.property.yarnPnP"></a>
-
-```typescript
-public readonly yarnPnP: boolean;
-```
-
-- *Type:* boolean
-
-Enable esbuild Yarn PnP support through `@yarnpkg/esbuild-plugin-pnp`.
-
----
-
-### TypescriptSingletonFunctionProps <a name="TypescriptSingletonFunctionProps" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps"></a>
-
-#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.Initializer"></a>
-
-```typescript
-import { TypescriptSingletonFunctionProps } from '@kikoda/cdk-constructs'
-
-const typescriptSingletonFunctionProps: TypescriptSingletonFunctionProps = { ... }
-```
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.maxEventAge">maxEventAge</a></code> | <code>aws-cdk-lib.Duration</code> | The maximum age of a request that Lambda sends to a function for processing. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.onFailure">onFailure</a></code> | <code>aws-cdk-lib.aws_lambda.IDestination</code> | The destination for failed invocations. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.onSuccess">onSuccess</a></code> | <code>aws-cdk-lib.aws_lambda.IDestination</code> | The destination for successful invocations. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.retryAttempts">retryAttempts</a></code> | <code>number</code> | The maximum number of times to retry when the function returns an error. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.allowAllOutbound">allowAllOutbound</a></code> | <code>boolean</code> | Whether to allow the Lambda to send all network traffic. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.allowPublicSubnet">allowPublicSubnet</a></code> | <code>boolean</code> | Lambda Functions in a public subnet can NOT access the internet. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.architecture">architecture</a></code> | <code>aws-cdk-lib.aws_lambda.Architecture</code> | The system architectures compatible with this lambda function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.codeSigningConfig">codeSigningConfig</a></code> | <code>aws-cdk-lib.aws_lambda.ICodeSigningConfig</code> | Code signing config associated with this function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.currentVersionOptions">currentVersionOptions</a></code> | <code>aws-cdk-lib.aws_lambda.VersionOptions</code> | Options for the `lambda.Version` resource automatically created by the `fn.currentVersion` method. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.deadLetterQueue">deadLetterQueue</a></code> | <code>aws-cdk-lib.aws_sqs.IQueue</code> | The SQS queue to use if DLQ is enabled. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.deadLetterQueueEnabled">deadLetterQueueEnabled</a></code> | <code>boolean</code> | Enabled DLQ. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.deadLetterTopic">deadLetterTopic</a></code> | <code>aws-cdk-lib.aws_sns.ITopic</code> | The SNS topic to use as a DLQ. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.description">description</a></code> | <code>string</code> | A description of the function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.environment">environment</a></code> | <code>{[ key: string ]: string}</code> | Key-value pairs that Lambda caches and makes available for your Lambda functions. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.environmentEncryption">environmentEncryption</a></code> | <code>aws-cdk-lib.aws_kms.IKey</code> | The AWS KMS key that's used to encrypt your function's environment variables. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.ephemeralStorageSize">ephemeralStorageSize</a></code> | <code>aws-cdk-lib.Size</code> | The size of the function’s /tmp directory in MiB. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.events">events</a></code> | <code>aws-cdk-lib.aws_lambda.IEventSource[]</code> | Event sources for this function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.filesystem">filesystem</a></code> | <code>aws-cdk-lib.aws_lambda.FileSystem</code> | The filesystem configuration for the lambda function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.functionName">functionName</a></code> | <code>string</code> | A name for the function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.initialPolicy">initialPolicy</a></code> | <code>aws-cdk-lib.aws_iam.PolicyStatement[]</code> | Initial policy statements to add to the created Lambda Role. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.insightsVersion">insightsVersion</a></code> | <code>aws-cdk-lib.aws_lambda.LambdaInsightsVersion</code> | Specify the version of CloudWatch Lambda insights to use for monitoring. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.layers">layers</a></code> | <code>aws-cdk-lib.aws_lambda.ILayerVersion[]</code> | A list of layers to add to the function's execution environment. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.logRetention">logRetention</a></code> | <code>aws-cdk-lib.aws_logs.RetentionDays</code> | The number of days log events are kept in CloudWatch Logs. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.logRetentionRetryOptions">logRetentionRetryOptions</a></code> | <code>aws-cdk-lib.aws_lambda.LogRetentionRetryOptions</code> | When log retention is specified, a custom resource attempts to create the CloudWatch log group. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.logRetentionRole">logRetentionRole</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | The IAM role for the Lambda function associated with the custom resource that sets the retention policy. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.memorySize">memorySize</a></code> | <code>number</code> | The amount of memory, in MB, that is allocated to your Lambda function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.profiling">profiling</a></code> | <code>boolean</code> | Enable profiling. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.profilingGroup">profilingGroup</a></code> | <code>aws-cdk-lib.aws_codeguruprofiler.IProfilingGroup</code> | Profiling Group. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.reservedConcurrentExecutions">reservedConcurrentExecutions</a></code> | <code>number</code> | The maximum of concurrent executions you want to reserve for the function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.role">role</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | Lambda execution role. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.securityGroups">securityGroups</a></code> | <code>aws-cdk-lib.aws_ec2.ISecurityGroup[]</code> | The list of security groups to associate with the Lambda's network interfaces. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.timeout">timeout</a></code> | <code>aws-cdk-lib.Duration</code> | The function execution time (in seconds) after which Lambda terminates the function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.tracing">tracing</a></code> | <code>aws-cdk-lib.aws_lambda.Tracing</code> | Enable AWS X-Ray Tracing for Lambda Function. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | VPC network to place Lambda network interfaces. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.vpcSubnets">vpcSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Where to place the network interfaces within the VPC. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.awsSdkConnectionReuse">awsSdkConnectionReuse</a></code> | <code>boolean</code> | Whether to automatically reuse TCP connections when working with the AWS SDK for JavaScript. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.bundling">bundling</a></code> | <code>aws-cdk-lib.aws_lambda_nodejs.BundlingOptions</code> | Bundling options. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.depsLockFilePath">depsLockFilePath</a></code> | <code>string</code> | The path to the dependencies lock file (`yarn.lock` or `package-lock.json`). |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.entry">entry</a></code> | <code>string</code> | Path to the entry file (JavaScript or TypeScript). |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.handler">handler</a></code> | <code>string</code> | The name of the exported handler in the entry file. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.projectRoot">projectRoot</a></code> | <code>string</code> | The path to the directory containing project config files (`package.json` or `tsconfig.json`). |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.runtime">runtime</a></code> | <code>aws-cdk-lib.aws_lambda.Runtime</code> | The runtime environment. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.yarnPnP">yarnPnP</a></code> | <code>boolean</code> | Enable esbuild Yarn PnP support through `@yarnpkg/esbuild-plugin-pnp`. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.uuid">uuid</a></code> | <code>string</code> | A unique identifier to identify this lambda. |
-| <code><a href="#@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.lambdaPurpose">lambdaPurpose</a></code> | <code>string</code> | A descriptive name for the purpose of this Lambda. |
-
----
-
-##### `maxEventAge`<sup>Optional</sup> <a name="maxEventAge" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.maxEventAge"></a>
-
-```typescript
-public readonly maxEventAge: Duration;
-```
-
-- *Type:* aws-cdk-lib.Duration
-- *Default:* Duration.hours(6)
-
-The maximum age of a request that Lambda sends to a function for processing.
-
-Minimum: 60 seconds
-Maximum: 6 hours
-
----
-
-##### `onFailure`<sup>Optional</sup> <a name="onFailure" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.onFailure"></a>
-
-```typescript
-public readonly onFailure: IDestination;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.IDestination
-- *Default:* no destination
-
-The destination for failed invocations.
-
----
-
-##### `onSuccess`<sup>Optional</sup> <a name="onSuccess" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.onSuccess"></a>
-
-```typescript
-public readonly onSuccess: IDestination;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.IDestination
-- *Default:* no destination
-
-The destination for successful invocations.
-
----
-
-##### `retryAttempts`<sup>Optional</sup> <a name="retryAttempts" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.retryAttempts"></a>
-
-```typescript
-public readonly retryAttempts: number;
-```
-
-- *Type:* number
-- *Default:* 2
-
-The maximum number of times to retry when the function returns an error.
-
-Minimum: 0
-Maximum: 2
-
----
-
-##### `allowAllOutbound`<sup>Optional</sup> <a name="allowAllOutbound" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.allowAllOutbound"></a>
-
-```typescript
-public readonly allowAllOutbound: boolean;
-```
-
-- *Type:* boolean
-- *Default:* true
-
-Whether to allow the Lambda to send all network traffic.
-
-If set to false, you must individually add traffic rules to allow the
-Lambda to connect to network targets.
-
----
-
-##### `allowPublicSubnet`<sup>Optional</sup> <a name="allowPublicSubnet" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.allowPublicSubnet"></a>
-
-```typescript
-public readonly allowPublicSubnet: boolean;
-```
-
-- *Type:* boolean
-- *Default:* false
-
-Lambda Functions in a public subnet can NOT access the internet.
-
-Use this property to acknowledge this limitation and still place the function in a public subnet.
-
-> [https://stackoverflow.com/questions/52992085/why-cant-an-aws-lambda-function-inside-a-public-subnet-in-a-vpc-connect-to-the/52994841#52994841](https://stackoverflow.com/questions/52992085/why-cant-an-aws-lambda-function-inside-a-public-subnet-in-a-vpc-connect-to-the/52994841#52994841)
-
----
-
-##### `architecture`<sup>Optional</sup> <a name="architecture" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.architecture"></a>
-
-```typescript
-public readonly architecture: Architecture;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.Architecture
-- *Default:* Architecture.X86_64
-
-The system architectures compatible with this lambda function.
-
----
-
-##### `codeSigningConfig`<sup>Optional</sup> <a name="codeSigningConfig" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.codeSigningConfig"></a>
-
-```typescript
-public readonly codeSigningConfig: ICodeSigningConfig;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.ICodeSigningConfig
-- *Default:* Not Sign the Code
-
-Code signing config associated with this function.
-
----
-
-##### `currentVersionOptions`<sup>Optional</sup> <a name="currentVersionOptions" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.currentVersionOptions"></a>
-
-```typescript
-public readonly currentVersionOptions: VersionOptions;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.VersionOptions
-- *Default:* default options as described in `VersionOptions`
-
-Options for the `lambda.Version` resource automatically created by the `fn.currentVersion` method.
-
----
-
-##### `deadLetterQueue`<sup>Optional</sup> <a name="deadLetterQueue" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.deadLetterQueue"></a>
-
-```typescript
-public readonly deadLetterQueue: IQueue;
-```
-
-- *Type:* aws-cdk-lib.aws_sqs.IQueue
-- *Default:* SQS queue with 14 day retention period if `deadLetterQueueEnabled` is `true`
-
-The SQS queue to use if DLQ is enabled.
-
-If SNS topic is desired, specify `deadLetterTopic` property instead.
-
----
-
-##### `deadLetterQueueEnabled`<sup>Optional</sup> <a name="deadLetterQueueEnabled" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.deadLetterQueueEnabled"></a>
-
-```typescript
-public readonly deadLetterQueueEnabled: boolean;
-```
-
-- *Type:* boolean
-- *Default:* false unless `deadLetterQueue` is set, which implies DLQ is enabled.
-
-Enabled DLQ.
-
-If `deadLetterQueue` is undefined,
-an SQS queue with default options will be defined for your Function.
-
----
-
-##### `deadLetterTopic`<sup>Optional</sup> <a name="deadLetterTopic" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.deadLetterTopic"></a>
-
-```typescript
-public readonly deadLetterTopic: ITopic;
-```
-
-- *Type:* aws-cdk-lib.aws_sns.ITopic
-- *Default:* no SNS topic
-
-The SNS topic to use as a DLQ.
-
-Note that if `deadLetterQueueEnabled` is set to `true`, an SQS queue will be created
-rather than an SNS topic. Using an SNS topic as a DLQ requires this property to be set explicitly.
-
----
-
-##### `description`<sup>Optional</sup> <a name="description" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.description"></a>
-
-```typescript
-public readonly description: string;
-```
-
-- *Type:* string
-- *Default:* No description.
-
-A description of the function.
-
----
-
-##### `environment`<sup>Optional</sup> <a name="environment" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.environment"></a>
-
-```typescript
-public readonly environment: {[ key: string ]: string};
-```
-
-- *Type:* {[ key: string ]: string}
-- *Default:* No environment variables.
-
-Key-value pairs that Lambda caches and makes available for your Lambda functions.
-
-Use environment variables to apply configuration changes, such
-as test and production environment configurations, without changing your
-Lambda function source code.
-
----
-
-##### `environmentEncryption`<sup>Optional</sup> <a name="environmentEncryption" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.environmentEncryption"></a>
-
-```typescript
-public readonly environmentEncryption: IKey;
-```
-
-- *Type:* aws-cdk-lib.aws_kms.IKey
-- *Default:* AWS Lambda creates and uses an AWS managed customer master key (CMK).
-
-The AWS KMS key that's used to encrypt your function's environment variables.
-
----
-
-##### `ephemeralStorageSize`<sup>Optional</sup> <a name="ephemeralStorageSize" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.ephemeralStorageSize"></a>
-
-```typescript
-public readonly ephemeralStorageSize: Size;
-```
-
-- *Type:* aws-cdk-lib.Size
-- *Default:* 512 MiB
-
-The size of the function’s /tmp directory in MiB.
-
----
-
-##### `events`<sup>Optional</sup> <a name="events" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.events"></a>
-
-```typescript
-public readonly events: IEventSource[];
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.IEventSource[]
-- *Default:* No event sources.
-
-Event sources for this function.
-
-You can also add event sources using `addEventSource`.
-
----
-
-##### `filesystem`<sup>Optional</sup> <a name="filesystem" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.filesystem"></a>
-
-```typescript
-public readonly filesystem: FileSystem;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.FileSystem
-- *Default:* will not mount any filesystem
-
-The filesystem configuration for the lambda function.
-
----
-
-##### `functionName`<sup>Optional</sup> <a name="functionName" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.functionName"></a>
-
-```typescript
-public readonly functionName: string;
-```
-
-- *Type:* string
-- *Default:* AWS CloudFormation generates a unique physical ID and uses that ID for the function's name. For more information, see Name Type.
-
-A name for the function.
-
----
-
-##### `initialPolicy`<sup>Optional</sup> <a name="initialPolicy" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.initialPolicy"></a>
-
-```typescript
-public readonly initialPolicy: PolicyStatement[];
-```
-
-- *Type:* aws-cdk-lib.aws_iam.PolicyStatement[]
-- *Default:* No policy statements are added to the created Lambda role.
-
-Initial policy statements to add to the created Lambda Role.
-
-You can call `addToRolePolicy` to the created lambda to add statements post creation.
-
----
-
-##### `insightsVersion`<sup>Optional</sup> <a name="insightsVersion" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.insightsVersion"></a>
-
-```typescript
-public readonly insightsVersion: LambdaInsightsVersion;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.LambdaInsightsVersion
-- *Default:* No Lambda Insights
-
-Specify the version of CloudWatch Lambda insights to use for monitoring.
-
-> [https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Lambda-Insights-Getting-Started-docker.html](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Lambda-Insights-Getting-Started-docker.html)
-
----
-
-##### `layers`<sup>Optional</sup> <a name="layers" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.layers"></a>
-
-```typescript
-public readonly layers: ILayerVersion[];
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.ILayerVersion[]
-- *Default:* No layers.
-
-A list of layers to add to the function's execution environment.
-
-You can configure your Lambda function to pull in
-additional code during initialization in the form of layers. Layers are packages of libraries or other dependencies
-that can be used by multiple functions.
-
----
-
-##### `logRetention`<sup>Optional</sup> <a name="logRetention" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.logRetention"></a>
-
-```typescript
-public readonly logRetention: RetentionDays;
-```
-
-- *Type:* aws-cdk-lib.aws_logs.RetentionDays
-- *Default:* logs.RetentionDays.INFINITE
-
-The number of days log events are kept in CloudWatch Logs.
-
-When updating
-this property, unsetting it doesn't remove the log retention policy. To
-remove the retention policy, set the value to `INFINITE`.
-
----
-
-##### `logRetentionRetryOptions`<sup>Optional</sup> <a name="logRetentionRetryOptions" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.logRetentionRetryOptions"></a>
-
-```typescript
-public readonly logRetentionRetryOptions: LogRetentionRetryOptions;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.LogRetentionRetryOptions
-- *Default:* Default AWS SDK retry options.
-
-When log retention is specified, a custom resource attempts to create the CloudWatch log group.
-
-These options control the retry policy when interacting with CloudWatch APIs.
-
----
-
-##### `logRetentionRole`<sup>Optional</sup> <a name="logRetentionRole" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.logRetentionRole"></a>
-
-```typescript
-public readonly logRetentionRole: IRole;
-```
-
-- *Type:* aws-cdk-lib.aws_iam.IRole
-- *Default:* A new role is created.
-
-The IAM role for the Lambda function associated with the custom resource that sets the retention policy.
-
----
-
-##### `memorySize`<sup>Optional</sup> <a name="memorySize" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.memorySize"></a>
-
-```typescript
-public readonly memorySize: number;
-```
-
-- *Type:* number
-- *Default:* 128
-
-The amount of memory, in MB, that is allocated to your Lambda function.
-
-Lambda uses this value to proportionally allocate the amount of CPU
-power. For more information, see Resource Model in the AWS Lambda
-Developer Guide.
-
----
-
-##### `profiling`<sup>Optional</sup> <a name="profiling" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.profiling"></a>
-
-```typescript
-public readonly profiling: boolean;
-```
-
-- *Type:* boolean
-- *Default:* No profiling.
-
-Enable profiling.
-
-> [https://docs.aws.amazon.com/codeguru/latest/profiler-ug/setting-up-lambda.html](https://docs.aws.amazon.com/codeguru/latest/profiler-ug/setting-up-lambda.html)
-
----
-
-##### `profilingGroup`<sup>Optional</sup> <a name="profilingGroup" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.profilingGroup"></a>
-
-```typescript
-public readonly profilingGroup: IProfilingGroup;
-```
-
-- *Type:* aws-cdk-lib.aws_codeguruprofiler.IProfilingGroup
-- *Default:* A new profiling group will be created if `profiling` is set.
-
-Profiling Group.
-
-> [https://docs.aws.amazon.com/codeguru/latest/profiler-ug/setting-up-lambda.html](https://docs.aws.amazon.com/codeguru/latest/profiler-ug/setting-up-lambda.html)
-
----
-
-##### `reservedConcurrentExecutions`<sup>Optional</sup> <a name="reservedConcurrentExecutions" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.reservedConcurrentExecutions"></a>
-
-```typescript
-public readonly reservedConcurrentExecutions: number;
-```
-
-- *Type:* number
-- *Default:* No specific limit - account limit.
-
-The maximum of concurrent executions you want to reserve for the function.
-
-> [https://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html](https://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html)
-
----
-
-##### `role`<sup>Optional</sup> <a name="role" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.role"></a>
-
-```typescript
-public readonly role: IRole;
-```
-
-- *Type:* aws-cdk-lib.aws_iam.IRole
-- *Default:* A unique role will be generated for this lambda function. Both supplied and generated roles can always be changed by calling `addToRolePolicy`.
-
-Lambda execution role.
-
-This is the role that will be assumed by the function upon execution.
-It controls the permissions that the function will have. The Role must
-be assumable by the 'lambda.amazonaws.com' service principal.
-
-The default Role automatically has permissions granted for Lambda execution. If you
-provide a Role, you must add the relevant AWS managed policies yourself.
-
-The relevant managed policies are "service-role/AWSLambdaBasicExecutionRole" and
-"service-role/AWSLambdaVPCAccessExecutionRole".
-
----
-
-##### `securityGroups`<sup>Optional</sup> <a name="securityGroups" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.securityGroups"></a>
-
-```typescript
-public readonly securityGroups: ISecurityGroup[];
-```
-
-- *Type:* aws-cdk-lib.aws_ec2.ISecurityGroup[]
-- *Default:* If the function is placed within a VPC and a security group is not specified, either by this or securityGroup prop, a dedicated security group will be created for this function.
-
-The list of security groups to associate with the Lambda's network interfaces.
-
-Only used if 'vpc' is supplied.
-
----
-
-##### `timeout`<sup>Optional</sup> <a name="timeout" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.timeout"></a>
-
-```typescript
-public readonly timeout: Duration;
-```
-
-- *Type:* aws-cdk-lib.Duration
-- *Default:* Duration.seconds(3)
-
-The function execution time (in seconds) after which Lambda terminates the function.
-
-Because the execution time affects cost, set this value
-based on the function's expected execution time.
-
----
-
-##### `tracing`<sup>Optional</sup> <a name="tracing" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.tracing"></a>
-
-```typescript
-public readonly tracing: Tracing;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.Tracing
-- *Default:* Tracing.Disabled
-
-Enable AWS X-Ray Tracing for Lambda Function.
-
----
-
-##### `vpc`<sup>Optional</sup> <a name="vpc" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.vpc"></a>
-
-```typescript
-public readonly vpc: IVpc;
-```
-
-- *Type:* aws-cdk-lib.aws_ec2.IVpc
-- *Default:* Function is not placed within a VPC.
-
-VPC network to place Lambda network interfaces.
-
-Specify this if the Lambda function needs to access resources in a VPC.
-
----
-
-##### `vpcSubnets`<sup>Optional</sup> <a name="vpcSubnets" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.vpcSubnets"></a>
-
-```typescript
-public readonly vpcSubnets: SubnetSelection;
-```
-
-- *Type:* aws-cdk-lib.aws_ec2.SubnetSelection
-- *Default:* the Vpc default strategy if not specified
-
-Where to place the network interfaces within the VPC.
-
-Only used if 'vpc' is supplied. Note: internet access for Lambdas
-requires a NAT gateway, so picking Public subnets is not allowed.
-
----
-
-##### `awsSdkConnectionReuse`<sup>Optional</sup> <a name="awsSdkConnectionReuse" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.awsSdkConnectionReuse"></a>
-
-```typescript
-public readonly awsSdkConnectionReuse: boolean;
-```
-
-- *Type:* boolean
-- *Default:* true
-
-Whether to automatically reuse TCP connections when working with the AWS SDK for JavaScript.
-
-This sets the `AWS_NODEJS_CONNECTION_REUSE_ENABLED` environment variable
-to `1`.
-
-> [https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/node-reusing-connections.html](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/node-reusing-connections.html)
-
----
-
-##### `bundling`<sup>Optional</sup> <a name="bundling" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.bundling"></a>
-
-```typescript
-public readonly bundling: BundlingOptions;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda_nodejs.BundlingOptions
-- *Default:* use default bundling options: no minify, no sourcemap, all modules are bundled.
-
-Bundling options.
-
----
-
-##### `depsLockFilePath`<sup>Optional</sup> <a name="depsLockFilePath" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.depsLockFilePath"></a>
-
-```typescript
-public readonly depsLockFilePath: string;
-```
-
-- *Type:* string
-- *Default:* the path is found by walking up parent directories searching for a `yarn.lock` or `package-lock.json` file
-
-The path to the dependencies lock file (`yarn.lock` or `package-lock.json`).
-
-This will be used as the source for the volume mounted in the Docker
-container.
-
-Modules specified in `nodeModules` will be installed using the right
-installer (`npm` or `yarn`) along with this lock file.
-
----
-
-##### `entry`<sup>Optional</sup> <a name="entry" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.entry"></a>
-
-```typescript
-public readonly entry: string;
-```
-
-- *Type:* string
-- *Default:* Derived from the name of the defining file and the construct's id. If the `NodejsFunction` is defined in `stack.ts` with `my-handler` as id (`new NodejsFunction(this, 'my-handler')`), the construct will look at `stack.my-handler.ts` and `stack.my-handler.js`.
-
-Path to the entry file (JavaScript or TypeScript).
-
----
-
-##### `handler`<sup>Optional</sup> <a name="handler" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.handler"></a>
-
-```typescript
-public readonly handler: string;
-```
-
-- *Type:* string
-- *Default:* handler
-
-The name of the exported handler in the entry file.
-
----
-
-##### `projectRoot`<sup>Optional</sup> <a name="projectRoot" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.projectRoot"></a>
-
-```typescript
-public readonly projectRoot: string;
-```
-
-- *Type:* string
-- *Default:* the directory containing the `depsLockFilePath`
-
-The path to the directory containing project config files (`package.json` or `tsconfig.json`).
-
----
-
-##### `runtime`<sup>Optional</sup> <a name="runtime" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.runtime"></a>
-
-```typescript
-public readonly runtime: Runtime;
-```
-
-- *Type:* aws-cdk-lib.aws_lambda.Runtime
-- *Default:* Runtime.NODEJS_14_X
-
-The runtime environment.
-
-Only runtimes of the Node.js family are
-supported.
-
----
-
-##### `yarnPnP`<sup>Optional</sup> <a name="yarnPnP" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.yarnPnP"></a>
-
-```typescript
-public readonly yarnPnP: boolean;
-```
-
-- *Type:* boolean
-
-Enable esbuild Yarn PnP support through `@yarnpkg/esbuild-plugin-pnp`.
-
----
-
-##### `uuid`<sup>Required</sup> <a name="uuid" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.uuid"></a>
-
-```typescript
-public readonly uuid: string;
-```
-
-- *Type:* string
-
-A unique identifier to identify this lambda.
-
-The identifier should be unique across all custom resource providers.
-We recommend generating a UUID per provider.
-
----
-
-##### `lambdaPurpose`<sup>Optional</sup> <a name="lambdaPurpose" id="@kikoda/cdk-constructs.TypescriptSingletonFunctionProps.property.lambdaPurpose"></a>
-
-```typescript
-public readonly lambdaPurpose: string;
-```
-
-- *Type:* string
-- *Default:* SingletonLambda
-
-A descriptive name for the purpose of this Lambda.
-
-If the Lambda does not have a physical name, this string will be
-reflected its generated name. The combination of lambdaPurpose
-and uuid must be unique.
 
 ---
 

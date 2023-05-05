@@ -15,7 +15,7 @@ const project = new AwsCdkConstructLibrary({
   keywords: ['cdk', 'awscdk', 'compliance', 'configuration', 'websites', 'scaffolding', 'cicd'],
   stability: 'experimental',
   license: 'Apache-2.0',
-  cdkVersion: '2.26.0',
+  cdkVersion: '2.78.0',
   projenrcTs: true,
   devContainer: true,
   vscode: true,
@@ -35,7 +35,6 @@ const project = new AwsCdkConstructLibrary({
   },
   tsconfig: {
     compilerOptions: { esModuleInterop: true },
-    include: ['src/typescript-function/esbuild.js'],
   },
   deps: ['@kikoda/generated-config'] /* Runtime dependencies of this module. */,
   peerDeps: ['@kikoda/generated-config'] /* Peer dependencies of this module. */,
@@ -76,8 +75,6 @@ const project = new AwsCdkConstructLibrary({
     packageId: 'Kikoda.CdkConstructs',
   },
 });
-
-project.compileTask.exec('cp src/typescript-function/esbuild.js lib/typescript-function/');
 
 new YamlFile(project, 'codecov.yml', {
   obj: {

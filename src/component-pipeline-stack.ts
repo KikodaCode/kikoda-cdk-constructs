@@ -31,7 +31,7 @@ export interface StageConfig<TConfig> extends StageProps {
    * @readonly
    * @type {string}
    */
-  readonly stageName: string;
+  readonly name: string;
   /**
    * Add a manual approval step when deploying this stage.
    *
@@ -137,6 +137,7 @@ export class ComponentPipelineStack<
    */
   constructor(scope: Construct, id: string, props: ComponentPipelineStackProps<TConfig, TBranch>) {
     super(scope, id, props);
+
     const { staticPipelineIdentifier = props.branch.branchName, branchName } = props.branch;
     const { componentName, componentType } = props.component;
     const {
@@ -181,11 +182,14 @@ export class ComponentPipelineStack<
       if (pruneCloudAssembly) pre.push(new TrimCloudAssemblyStep(id, pipelineName));
 
       // add manual approval step if applicable
-      if (stage.manualApproval) pre.push(new ManualApprovalStep(`Promote To ${stage.stageName}`));
+      if (stage.manualApproval) pre.push(new ManualApprovalStep(`Promote To ${stage.name}`));
 
-      this.codePipeline.addStage(new componentType(this, stage.stageName, stage), {
-        pre,
-      });
+      this.codePipeline.addStage(
+        new componentType(this, stage.name, { stageName: stage.name, ...stage }),
+        {
+          pre,
+        },
+      );
     });
 
     this.codePipeline.buildPipeline();

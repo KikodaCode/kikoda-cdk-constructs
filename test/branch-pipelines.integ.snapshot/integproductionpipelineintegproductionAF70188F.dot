@@ -1,0 +1,39 @@
+digraph G {
+  # Arrows represent an "unlocks" relationship (opposite of dependency). So chosen
+  # because the layout looks more natural that way.
+  # To represent subgraph dependencies, subgraphs are represented by BEGIN/END nodes.
+  # To render: `dot -Tsvg integproductionpipelineintegproductionAF70188F.dot > graph.svg`, open in a browser.
+  node [shape="box"];
+"BEGIN Build" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END Build" [shape="cds", style="filled", fillcolor="#b7deff"];
+"Build.Synth";
+"Source.integ" -> "Build.Synth";
+"BEGIN Build" -> "Build.Synth";
+"Build.Synth" -> "END Build";
+"BEGIN UpdatePipeline" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END UpdatePipeline" [shape="cds", style="filled", fillcolor="#b7deff"];
+"UpdatePipeline.SelfMutate";
+"Build.Synth" -> "UpdatePipeline.SelfMutate";
+"BEGIN UpdatePipeline" -> "UpdatePipeline.SelfMutate";
+"UpdatePipeline.SelfMutate" -> "END UpdatePipeline";
+"BEGIN integ" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END integ" [shape="cds", style="filled", fillcolor="#b7deff"];
+"UpdatePipeline.SelfMutate" -> "BEGIN integ";
+"BEGIN integ.IntegStack" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END integ.IntegStack" [shape="cds", style="filled", fillcolor="#b7deff"];
+"integ.TrimCloudAssemblyStep" -> "BEGIN integ.IntegStack";
+"integ.IntegStack.Deploy";
+"integ.IntegStack.Prepare" -> "integ.IntegStack.Deploy";
+"integ.IntegStack.Prepare";
+"Build.Synth" -> "integ.IntegStack.Prepare";
+"BEGIN integ.IntegStack" -> "integ.IntegStack.Prepare";
+"integ.IntegStack.Deploy" -> "END integ.IntegStack";
+"integ.TrimCloudAssemblyStep";
+"BEGIN integ" -> "integ.TrimCloudAssemblyStep";
+"END integ.IntegStack" -> "END integ";
+"BEGIN Source" [shape="cds", style="filled", fillcolor="#b7deff"];
+"END Source" [shape="cds", style="filled", fillcolor="#b7deff"];
+"Source.integ";
+"BEGIN Source" -> "Source.integ";
+"Source.integ" -> "END Source";
+}
