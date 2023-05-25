@@ -151,9 +151,6 @@ export class Website extends Construct {
       throw new Error(`domainName must be provided if onlyDefaultDomain is not true`);
     }
 
-    // export endpoint
-    this.endpoint = `https://${domainName}`;
-
     const spa = new SinglePageApp(this, 'Spa', {
       hostedZone: props.onlyDefaultDomain
         ? undefined
@@ -188,6 +185,13 @@ export class Website extends Construct {
         ? props.cloudfrontInvalidationPaths
         : undefined,
     });
+
+    // export endpoint
+    if (props.onlyDefaultDomain) {
+      this.endpoint = `https://${spa.distribution.distributionDomainName}`;
+    } else {
+      this.endpoint = `https://${domainName}`;
+    }
 
     // create frontend config file asset
     if (!!generateWebConfigProps) {
