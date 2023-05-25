@@ -132,32 +132,22 @@ export class Website extends Construct {
   constructor(scope: Construct, id: string, props: WebsiteProps) {
     super(scope, id);
 
-    const {
-      stage,
-      domainName,
-      alternateDomainNames,
-      acmCertificateArn,
-      hostedZone,
-      appDir,
-      buildDir,
-      indexDoc,
-      generateWebConfigProps,
-      bundling,
-      buildCommand,
-    } = props;
+    const { stage, appDir, buildDir, indexDoc, generateWebConfigProps, bundling, buildCommand } =
+      props;
 
     // check domain props
-    if (!props.onlyDefaultDomain && domainName === undefined) {
+    if (!props.onlyDefaultDomain && props.domainName === undefined) {
       throw new Error(`domainName must be provided if onlyDefaultDomain is not true`);
     }
 
     const spa = new SinglePageApp(this, 'Spa', {
       hostedZone: props.onlyDefaultDomain
         ? undefined
-        : hostedZone ?? HostedZone.fromLookup(this, 'HostedZone', { domainName }),
-      domainName: props.onlyDefaultDomain ? undefined : domainName,
-      alternateDomainNames: props.onlyDefaultDomain ? undefined : alternateDomainNames,
-      acmCertificateArn: props.onlyDefaultDomain ? undefined : acmCertificateArn,
+        : props.hostedZone ??
+          HostedZone.fromLookup(this, 'HostedZone', { domainName: props.domainName! }),
+      domainName: props.onlyDefaultDomain ? undefined : props.domainName,
+      alternateDomainNames: props.onlyDefaultDomain ? undefined : props.alternateDomainNames,
+      acmCertificateArn: props.onlyDefaultDomain ? undefined : props.acmCertificateArn,
       appDir,
       buildDir,
       buildAssetExcludes: [
