@@ -148,6 +148,7 @@ export class Website extends Construct {
       domainName: props.onlyDefaultDomain ? undefined : props.domainName,
       alternateDomainNames: props.onlyDefaultDomain ? undefined : props.alternateDomainNames,
       acmCertificateArn: props.onlyDefaultDomain ? undefined : props.acmCertificateArn,
+      onlyDefaultDomain: props.onlyDefaultDomain,
       appDir,
       buildDir,
       buildAssetExcludes: [

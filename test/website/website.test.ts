@@ -93,3 +93,35 @@ describe('Given a Website', () => {
     ).toBe(true);
   });
 });
+
+describe('Given an only default domain Website ', () => {
+  class WebStack extends Stack {
+    public website: Website;
+    constructor(props: WebsiteProps) {
+      super();
+      this.website = new Website(this, 'Website', props);
+    }
+  }
+  const baseDomain = 'baseDomain';
+  const subDomain = 'subDomain';
+
+  test('domainName required if onlyDefaultDomain is undefined', () => {
+    expect(() => {
+      new WebStack({
+        stage: 'test',
+        appDir: __dirname,
+        onlyDefaultDomain: undefined,
+      });
+    }).toThrow();
+  });
+
+  test('domainName required if onlyDefaultDomain is false', () => {
+    expect(() => {
+      new WebStack({
+        stage: 'test',
+        appDir: __dirname,
+        onlyDefaultDomain: false,
+      });
+    }).toThrow();
+  });
+});
