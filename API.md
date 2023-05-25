@@ -3113,7 +3113,6 @@ const websiteProps: WebsiteProps = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.appDir">appDir</a></code> | <code>string</code> | The full absolute path of the Single Page App. |
-| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.domainName">domainName</a></code> | <code>string</code> | Specify a domain name to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.stage">stage</a></code> | <code>string</code> | String indicator of which environment/stage is being deployed ex. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.acmCertificateArn">acmCertificateArn</a></code> | <code>string</code> | Provide an ACM certificate ARN to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.alternateDomainNames">alternateDomainNames</a></code> | <code>string[]</code> | Specify alternate domain names to use for the website. |
@@ -3123,10 +3122,12 @@ const websiteProps: WebsiteProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.bundling">bundling</a></code> | <code>aws-cdk-lib.BundlingOptions</code> | *No description.* |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.cloudfrontInvalidationPaths">cloudfrontInvalidationPaths</a></code> | <code>string[]</code> | Specify the paths to be invalidated in the Cloudfront Distribution at the end of the deployment. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.corsAllowedOrigins">corsAllowedOrigins</a></code> | <code>string[]</code> | Specify a list of allowed request origins to use when configuring CORS (must also specify `enableCors`). |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.domainName">domainName</a></code> | <code>string</code> | Specify a domain name to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.enableCors">enableCors</a></code> | <code>boolean</code> | Setup S3 bucket and Cloudfront distribution to allow CORS requests. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.generateWebConfigProps">generateWebConfigProps</a></code> | <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps">GenerateWebConfigProps</a></code> | Specify options for gernerating a web config from base and stage level configs. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | Specify an existing hosted zone to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.indexDoc">indexDoc</a></code> | <code>string</code> | The name of the index document to load, typically 'index.html'. |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.onlyDefaultDomain">onlyDefaultDomain</a></code> | <code>boolean</code> | Do not create or look up a hosted zone or certificates for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.repoRoot">repoRoot</a></code> | <code>string</code> | This should be the root directory of the git repository. |
 
 ---
@@ -3140,18 +3141,6 @@ public readonly appDir: string;
 - *Type:* string
 
 The full absolute path of the Single Page App.
-
----
-
-##### `domainName`<sup>Required</sup> <a name="domainName" id="@kikoda/cdk-constructs.WebsiteProps.property.domainName"></a>
-
-```typescript
-public readonly domainName: string;
-```
-
-- *Type:* string
-
-Specify a domain name to use for the website.
 
 ---
 
@@ -3179,6 +3168,8 @@ public readonly acmCertificateArn: string;
 
 Provide an ACM certificate ARN to use for the website.
 
+This property will be ignored if `onlyDefaultDomain` is `true`.
+
 ---
 
 ##### `alternateDomainNames`<sup>Optional</sup> <a name="alternateDomainNames" id="@kikoda/cdk-constructs.WebsiteProps.property.alternateDomainNames"></a>
@@ -3196,6 +3187,7 @@ An Alias record will
 only be created if the alternate domain name is in the provided hosted zone.
 If you need to use a different hosted zone, consider using the `acmCertificateArn`
 option instead to provide a certificate with the alternate domain names.
+This property will be ignored if `onlyDefaultDomain` is `true`.
 
 ---
 
@@ -3275,6 +3267,20 @@ Specify a list of allowed request origins to use when configuring CORS (must als
 
 ---
 
+##### `domainName`<sup>Optional</sup> <a name="domainName" id="@kikoda/cdk-constructs.WebsiteProps.property.domainName"></a>
+
+```typescript
+public readonly domainName: string;
+```
+
+- *Type:* string
+
+Specify a domain name to use for the website.
+
+This property is required unless `onlyDefaultDomain` is `true`, in which case it will be ignored.
+
+---
+
 ##### `enableCors`<sup>Optional</sup> <a name="enableCors" id="@kikoda/cdk-constructs.WebsiteProps.property.enableCors"></a>
 
 ```typescript
@@ -3311,9 +3317,11 @@ public readonly hostedZone: IHostedZone;
 ```
 
 - *Type:* aws-cdk-lib.aws_route53.IHostedZone
-- *Default:* This construct will try to lookup an existing hosted zone for the domain name provided.
+- *Default:* This construct will try to lookup an existing hosted zone for the domain name provided, unless `onlyDefaultDomain` is `true`.
 
 Specify an existing hosted zone to use for the website.
+
+This property will be ignored if `onlyDefaultDomain` is `true`.
 
 ---
 
@@ -3327,6 +3335,22 @@ public readonly indexDoc: string;
 - *Default:* "index.html"
 
 The name of the index document to load, typically 'index.html'.
+
+---
+
+##### `onlyDefaultDomain`<sup>Optional</sup> <a name="onlyDefaultDomain" id="@kikoda/cdk-constructs.WebsiteProps.property.onlyDefaultDomain"></a>
+
+```typescript
+public readonly onlyDefaultDomain: boolean;
+```
+
+- *Type:* boolean
+- *Default:* false
+
+Do not create or look up a hosted zone or certificates for the website.
+
+The website will be served under the default CloudFront domain only.
+Setting this to `true` will ignore the values set for `acmCertificateArn`, `domainName`, `alternateDomainNames`, and `hostedZone`.
 
 ---
 
