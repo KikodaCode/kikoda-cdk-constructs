@@ -180,7 +180,7 @@ export class Website extends Construct {
     if (props.onlyDefaultDomain) {
       this.endpoint = `https://${spa.distribution.distributionDomainName}`;
     } else {
-      this.endpoint = `https://${domainName}`;
+      this.endpoint = `https://${props.domainName}`;
     }
 
     // create frontend config file asset
