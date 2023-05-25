@@ -102,8 +102,6 @@ describe('Given an only default domain Website ', () => {
       this.website = new Website(this, 'Website', props);
     }
   }
-  const baseDomain = 'baseDomain';
-  const subDomain = 'subDomain';
 
   test('domainName required if onlyDefaultDomain is undefined', () => {
     expect(() => {
