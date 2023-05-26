@@ -29,26 +29,35 @@ import minimatch = require('minimatch');
 
 export interface SinglePageAppProps {
   /**
-   * Provide an existing Hosted Zone to use for the domain.
+   * Provide an existing Hosted Zone to use for the domain. This property is required unless `onlyDefaultDomain` is `true`, in which case it will be ignored.
    */
-  readonly hostedZone: IHostedZone;
+  readonly hostedZone?: IHostedZone;
 
   /**
-   * The domain name to use for the SPA
+   * The domain name to use for the SPA. This property is required unless `onlyDefaultDomain` is `true`, in which case it will be ignored.
    */
-  readonly domainName: string;
+  readonly domainName?: string;
 
   /**
-   * Specify alternate domain names to use for the Cloudfront Distribution.
+   * Specify alternate domain names to use for the Cloudfront Distribution. This property will be ignored if `onlyDefaultDomain` is `true`.
    */
   readonly alternateDomainNames?: string[];
 
   /**
    * Specify an ARN of an ACM certificate to use for the Cloudfront Distribution. This is
    * useful when you are deploying to a region other than `us-east-1`, as Cloudfront
-   * requires the certificate to be in `us-east-1`.
+   * requires the certificate to be in `us-east-1`. This property will be ignored if `onlyDefaultDomain` is `true`.
    */
   readonly acmCertificateArn?: string;
+
+  /**
+   * Do not create or look up a hosted zone or certificates for the website. The website will be served under the default CloudFront domain only.
+   * Setting this to `true` will ignore the values set for `acmCertificateArn`, `domainName`, `alternateDomainNames`, and `hostedZone`.
+   *
+   * @default false
+   */
+  readonly onlyDefaultDomain?: boolean;
+
   readonly indexDoc: string;
   readonly errorDoc?: string;
 
@@ -95,41 +104,54 @@ export class SinglePageApp extends Construct {
   constructor(scope: Construct, id: string, props: SinglePageAppProps) {
     super(scope, id);
 
-    // Resolve the ACM certificate if provided or create one
-    let certificate: ICertificate;
-    if (props.acmCertificateArn) {
-      const certificateRegion = Stack.of(this).splitArn(
-        props.acmCertificateArn,
-        ArnFormat.SLASH_RESOURCE_NAME,
-      ).region;
+    // check domain props
+    if (
+      !props.onlyDefaultDomain &&
+      (props.domainName === undefined || props.hostedZone === undefined)
+    ) {
+      throw new Error(
+        `domainName and hostedZone must be provided if onlyDefaultDomain is not true`,
+      );
+    }
 
-      if (!Token.isUnresolved(certificateRegion) && certificateRegion !== 'us-east-1') {
+    let certificate: ICertificate | undefined = undefined;
+
+    if (!props.onlyDefaultDomain) {
+      // Resolve the ACM certificate if provided or create one
+      if (props.acmCertificateArn) {
+        const certificateRegion = Stack.of(this).splitArn(
+          props.acmCertificateArn,
+          ArnFormat.SLASH_RESOURCE_NAME,
+        ).region;
+
+        if (!Token.isUnresolved(certificateRegion) && certificateRegion !== 'us-east-1') {
+          throw new Error(
+            `The certificate must be in the us-east-1 region and the certificate you provided is in ${certificateRegion}.`,
+          );
+        }
+
+        certificate = Certificate.fromCertificateArn(this, 'Certificate', props.acmCertificateArn);
+      }
+      // Create a new certificate only if all the domain names are in the same hosted zone
+      else if (
+        props.alternateDomainNames?.every(domainName =>
+          domainName.endsWith(props.hostedZone!.zoneName),
+        ) ||
+        !props.alternateDomainNames
+      ) {
+        certificate = new DnsValidatedCertificate(this, 'Certificate', {
+          region: 'us-east-1',
+          hostedZone: props.hostedZone!,
+          domainName: props.domainName!,
+          subjectAlternativeNames: props.alternateDomainNames,
+        });
+      }
+      // If the domain names are not in the same hosted zone and no certArn was provided, throw an error
+      else {
         throw new Error(
-          `The certificate must be in the us-east-1 region and the certificate you provided is in ${certificateRegion}.`,
+          'The alternate domain names must be in the same hosted zone as the domain name or you must provide an ACM certificate with the acmCertificateArn prop.',
         );
       }
-
-      certificate = Certificate.fromCertificateArn(this, 'Certificate', props.acmCertificateArn);
-    }
-    // Create a new certificate only if all the domain names are in the same hosted zone
-    else if (
-      props.alternateDomainNames?.every(domainName =>
-        domainName.endsWith(props.hostedZone.zoneName),
-      ) ||
-      !props.alternateDomainNames
-    ) {
-      certificate = new DnsValidatedCertificate(this, 'Certificate', {
-        region: 'us-east-1',
-        hostedZone: props.hostedZone,
-        domainName: props.domainName,
-        subjectAlternativeNames: props.alternateDomainNames,
-      });
-    }
-    // If the domain names are not in the same hosted zone and no certArn was provided, throw an error
-    else {
-      throw new Error(
-        'The alternate domain names must be in the same hosted zone as the domain name or you must provide an ACM certificate with the acmCertificateArn prop.',
-      );
     }
 
     this.websiteBucket = new Bucket(this, 'WebsiteBucket', {
@@ -162,7 +184,9 @@ export class SinglePageApp extends Construct {
           responseHttpStatus: 200,
         },
       ],
-      domainNames: [props.domainName, ...(props.alternateDomainNames ?? [])],
+      domainNames: props.onlyDefaultDomain
+        ? undefined
+        : [props.domainName!, ...(props.alternateDomainNames ?? [])],
       certificate,
       minimumProtocolVersion: props.securityPolicy ?? SecurityPolicyProtocol.TLS_V1_2_2021,
     });
@@ -235,17 +259,19 @@ export class SinglePageApp extends Construct {
       distributionPaths: props.cloudfrontInvalidationPaths,
     });
 
-    // Create an ALIAS record for all the specified domain names
-    [props.domainName, ...(props.alternateDomainNames || [])].forEach(domainName => {
-      // only create the record if it's in the provided hosted zone
-      if (domainName.endsWith(props.hostedZone.zoneName)) {
-        new ARecord(this, `Alias-${domainName}`, {
-          zone: props.hostedZone,
-          recordName: domainName,
-          target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
-        });
-      }
-    });
+    if (!props.onlyDefaultDomain) {
+      // Create an ALIAS record for all the specified domain names
+      [props.domainName!, ...(props.alternateDomainNames || [])].forEach(domainName => {
+        // only create the record if it's in the provided hosted zone
+        if (domainName.endsWith(props.hostedZone!.zoneName)) {
+          new ARecord(this, `Alias-${domainName}`, {
+            zone: props.hostedZone!,
+            recordName: domainName,
+            target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
+          });
+        }
+      });
+    }
   }
 
   /**

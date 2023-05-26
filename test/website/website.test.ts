@@ -93,3 +93,49 @@ describe('Given a Website', () => {
     ).toBe(true);
   });
 });
+
+describe('Given an only default domain Website ', () => {
+  class WebStack extends Stack {
+    public website: Website;
+    constructor(props: WebsiteProps) {
+      super();
+      this.website = new Website(this, 'Website', props);
+    }
+  }
+
+  test('domainName required if onlyDefaultDomain is undefined', () => {
+    expect(() => {
+      new WebStack({
+        stage: 'test',
+        appDir: __dirname,
+        onlyDefaultDomain: undefined,
+      });
+    }).toThrow();
+  });
+
+  test('domainName required if onlyDefaultDomain is false', () => {
+    expect(() => {
+      new WebStack({
+        stage: 'test',
+        appDir: __dirname,
+        onlyDefaultDomain: false,
+      });
+    }).toThrow();
+  });
+
+  // make sure hosted zone is not created when onlyDefaultDomain is true
+  test('hostedZone and record are not created if onlyDefaultDomain prop is true', () => {
+    const webStack = new WebStack({
+      stage: 'test',
+      appDir: __dirname,
+      onlyDefaultDomain: true,
+      domainName: 'example.com ',
+    });
+
+    const template = Template.fromStack(webStack);
+
+    expect(template.findResources('AWS::Route53::HostedZone')).toEqual({});
+    expect(template.findResources('AWS::Route53::RecordSet')).toEqual({});
+    expect(webStack.website.endpoint).not.toEqual('https://example.com');
+  });
+});

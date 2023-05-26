@@ -144,3 +144,79 @@ describe('Given simple Single Page App', () => {
     expect(spaStack1.singlePageApp.bucketDeployment).toBeUndefined();
   });
 });
+
+describe('Given an only default domain Single Page App ', () => {
+  class SPAStack extends Stack {
+    public singlePageApp: SinglePageApp;
+    constructor(props: SinglePageAppProps, addHostedZone: boolean) {
+      super();
+
+      if (addHostedZone) {
+        const givenZone: IHostedZone = HostedZone.fromLookup(this, 'HostedZone', {
+          domainName: givenZoneName,
+        });
+
+        this.singlePageApp = new SinglePageApp(this, 'spa', {
+          ...props,
+          hostedZone: givenZone,
+        });
+      } else {
+        this.singlePageApp = new SinglePageApp(this, 'spa', props);
+      }
+    }
+  }
+
+  test('domainName required if onlyDefaultDomain is undefined', () => {
+    expect(() => {
+      new SPAStack(
+        {
+          appDir: __dirname,
+          indexDoc: 'indexDoc',
+          onlyDefaultDomain: undefined,
+        },
+        true,
+      );
+    }).toThrow();
+  });
+
+  test('domainName required if onlyDefaultDomain is false', () => {
+    expect(() => {
+      new SPAStack(
+        {
+          appDir: __dirname,
+          indexDoc: 'indexDoc',
+          onlyDefaultDomain: false,
+        },
+        true,
+      );
+    }).toThrow();
+  });
+
+  test('hostedZone required if onlyDefaultDomain is undefined', () => {
+    expect(() => {
+      new SPAStack(
+        {
+          appDir: __dirname,
+          indexDoc: 'indexDoc',
+          onlyDefaultDomain: undefined,
+          domainName: 'test.example.com',
+        },
+        false,
+      );
+    }).toThrow();
+  });
+
+  test('hostedZone required if onlyDefaultDomain is false', () => {
+    expect(() => {
+      new SPAStack(
+        {
+          appDir: __dirname,
+          indexDoc: 'indexDoc',
+          onlyDefaultDomain: false,
+          domainName: 'test.example.com',
+        },
+        false,
+      );
+    }).toThrow();
+  });
+});

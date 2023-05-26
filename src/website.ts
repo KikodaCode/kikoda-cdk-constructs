@@ -71,31 +71,40 @@ export interface WebsiteProps {
   readonly generateWebConfigProps?: GenerateWebConfigProps;
 
   /**
-   * Specify a domain name to use for the website.
+   * Specify a domain name to use for the website. This property is required unless `onlyDefaultDomain` is `true`, in which case it will be ignored.
    */
-  readonly domainName: string;
+  readonly domainName?: string;
 
   /**
    * Specify alternate domain names to use for the website. An Alias record will
    * only be created if the alternate domain name is in the provided hosted zone.
    * If you need to use a different hosted zone, consider using the `acmCertificateArn`
    * option instead to provide a certificate with the alternate domain names.
+   * This property will be ignored if `onlyDefaultDomain` is `true`.
    *
    * @default - No alternate domain names
    */
   readonly alternateDomainNames?: string[];
 
   /**
-   * Provide an ACM certificate ARN to use for the website.
+   * Provide an ACM certificate ARN to use for the website. This property will be ignored if `onlyDefaultDomain` is `true`.
    */
   readonly acmCertificateArn?: string;
 
   /**
-   * Specify an existing hosted zone to use for the website.
+   * Specify an existing hosted zone to use for the website. This property will be ignored if `onlyDefaultDomain` is `true`.
    *
-   * @default - This construct will try to lookup an existing hosted zone for the domain name provided.
+   * @default - This construct will try to lookup an existing hosted zone for the domain name provided, unless `onlyDefaultDomain` is `true`.
    */
   readonly hostedZone?: IHostedZone;
+
+  /**
+   * Do not create or look up a hosted zone or certificates for the website. The website will be served under the default CloudFront domain only.
+   * Setting this to `true` will ignore the values set for `acmCertificateArn`, `domainName`, `alternateDomainNames`, and `hostedZone`.
+   *
+   * @default false
+   */
+  readonly onlyDefaultDomain?: boolean;
 
   /** Setup S3 bucket and Cloudfront distribution to allow CORS requests. Optionally specificy the allowed Origins with `corsAllowedOrigins` */
   readonly enableCors?: boolean;
@@ -123,28 +132,23 @@ export class Website extends Construct {
   constructor(scope: Construct, id: string, props: WebsiteProps) {
     super(scope, id);
 
-    const {
-      stage,
-      domainName,
-      alternateDomainNames,
-      acmCertificateArn,
-      hostedZone,
-      appDir,
-      buildDir,
-      indexDoc,
-      generateWebConfigProps,
-      bundling,
-      buildCommand,
-    } = props;
+    const { stage, appDir, buildDir, indexDoc, generateWebConfigProps, bundling, buildCommand } =
+      props;
 
-    // export endpoint
-    this.endpoint = `https://${domainName}`;
+    // check domain props
+    if (!props.onlyDefaultDomain && props.domainName === undefined) {
+      throw new Error(`domainName must be provided if onlyDefaultDomain is not true`);
+    }
 
     const spa = new SinglePageApp(this, 'Spa', {
-      hostedZone: hostedZone ?? HostedZone.fromLookup(this, 'HostedZone', { domainName }),
-      domainName,
-      alternateDomainNames,
-      acmCertificateArn,
+      hostedZone: props.onlyDefaultDomain
+        ? undefined
+        : props.hostedZone ??
+          HostedZone.fromLookup(this, 'HostedZone', { domainName: props.domainName! }),
+      domainName: props.onlyDefaultDomain ? undefined : props.domainName,
+      alternateDomainNames: props.onlyDefaultDomain ? undefined : props.alternateDomainNames,
+      acmCertificateArn: props.onlyDefaultDomain ? undefined : props.acmCertificateArn,
+      onlyDefaultDomain: props.onlyDefaultDomain,
       appDir,
       buildDir,
       buildAssetExcludes: [
@@ -172,6 +176,13 @@ export class Website extends Construct {
         ? props.cloudfrontInvalidationPaths
         : undefined,
     });
+
+    // export endpoint
+    if (props.onlyDefaultDomain) {
+      this.endpoint = `https://${spa.distribution.distributionDomainName}`;
+    } else {
+      this.endpoint = `https://${props.domainName}`;
+    }
 
     // create frontend config file asset
     if (!!generateWebConfigProps) {
