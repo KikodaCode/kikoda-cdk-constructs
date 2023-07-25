@@ -2,7 +2,7 @@ import { execSync, ExecSyncOptions } from 'child_process';
 import { ArnFormat, AssetStaging, DockerImage, FileCopyOptions, Stack, Token } from 'aws-cdk-lib';
 import {
   Certificate,
-  DnsValidatedCertificate,
+  CertificateValidation,
   ICertificate,
 } from 'aws-cdk-lib/aws-certificatemanager';
 import {
@@ -139,11 +139,10 @@ export class SinglePageApp extends Construct {
         ) ||
         !props.alternateDomainNames
       ) {
-        certificate = new DnsValidatedCertificate(this, 'Certificate', {
-          region: 'us-east-1',
-          hostedZone: props.hostedZone!,
+        certificate = new Certificate(this, 'Certificate', {
           domainName: props.domainName!,
           subjectAlternativeNames: props.alternateDomainNames,
+          validation: CertificateValidation.fromDns(props.hostedZone),
         });
       }
       // If the domain names are not in the same hosted zone and no certArn was provided, throw an error
