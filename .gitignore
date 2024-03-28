@@ -33,7 +33,6 @@ jspm_packages/
 .yarn-integrity
 .cache
 test/dist/spa_local_build_artifact
-!/.projenrc.js
 /test-reports/
 junit.xml
 /coverage/
@@ -76,3 +75,4 @@ test/website/website.integ.snapshot/**/tree.json
 !/.github/pull_request_template.md
 !/CONTRIBUTING.md
 !/CODE_OF_CONDUCT.md
+!/.projenrc.ts
