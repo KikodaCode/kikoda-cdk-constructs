@@ -11,6 +11,7 @@ const project = new AwsCdkConstructLibrary({
   author: 'Kikoda, LLC',
   authorAddress: 'platform@kikoda.com',
   repositoryUrl: 'https://github.com/KikodaCode/kikoda-cdk-constructs.git',
+  packageName: '@kikoda/cdk-constructs',
   defaultReleaseBranch: 'main',
   keywords: ['cdk', 'awscdk', 'compliance', 'configuration', 'websites', 'scaffolding', 'cicd'],
   stability: 'experimental',
@@ -20,6 +21,8 @@ const project = new AwsCdkConstructLibrary({
   devContainer: true,
   vscode: true,
   docgen: true,
+  codeCov: true,
+  pullRequestTemplate: false,
   prettier: true,
   prettierOptions: {
     settings: {
@@ -39,7 +42,7 @@ const project = new AwsCdkConstructLibrary({
   deps: ['@kikoda/generated-config'] /* Runtime dependencies of this module. */,
   peerDeps: ['@kikoda/generated-config'] /* Peer dependencies of this module. */,
   bundledDeps: [
-    'esbuild@~0.13',
+    'esbuild',
     '@yarnpkg/esbuild-plugin-pnp',
     'lodash@4.17.21',
     'fs-extra',
@@ -50,17 +53,14 @@ const project = new AwsCdkConstructLibrary({
     '@kikoda/projen-templates',
     '@types/md5',
     '@types/uuid',
-    '@types/lodash',
+    '@types/lodash@4.14.191',
     '@types/fs-extra',
     'delay',
   ] /* Build dependencies for this module. */,
-  packageName: '@kikoda/cdk-constructs',
   gitignore: ['test/dist/spa_local_build_artifact'],
   githubOptions: {
     projenCredentials: GithubCredentials.fromApp(),
   },
-  pullRequestTemplate: false,
-  codeCov: true,
   autoApproveUpgrades: true,
   autoApproveOptions: {
     allowedUsernames: ['projen-workflows[bot]'],
@@ -75,6 +75,18 @@ const project = new AwsCdkConstructLibrary({
     packageId: 'Kikoda.CdkConstructs',
   },
 });
+
+/**
+ * Unable to upgrade to `jsii@5` and `jsii-rosetta@5` because of inclusion of
+ * generic types.
+ *
+ * Generic types are not supported in all jsii target languages so `jsii@5`
+ * reports generic types as a compilation error instead of silently ignoring
+ * them as is done in `jsii@1.x`.
+ *
+ * @ref https://aws.github.io/jsii/user-guides/lib-author/typescript-restrictions/#typescript-mapped-types
+ */
+project.tasks.addEnvironment('JSII_SUPPRESS_UPGRADE_PROMPT', 'true');
 
 new YamlFile(project, 'codecov.yml', {
   obj: {
