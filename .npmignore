@@ -7,6 +7,8 @@ permissions-backup.acl
 /dist/changelog.md
 /dist/version.txt
 /.mergify.yml
+/.prettierignore
+/.prettierrc.json
 /test/
 /tsconfig.dev.json
 /src/
@@ -26,3 +28,6 @@ test/.tmp
 test/branch-pipelines.integ.snapshot
 test/website/.tmp
 test/website/website.integ.snapshot
+/.gitattributes
+/.projenrc.ts
+/projenrc
