@@ -1,4 +1,4 @@
-import { Rule, RuleProps } from 'aws-cdk-lib/aws-events';
+import { IEventBus, IRuleTarget, Rule, Schedule } from 'aws-cdk-lib/aws-events';
 import { DatabaseInstance } from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
 
@@ -22,11 +22,41 @@ export enum DatabaseEventCategories {
   SECURITY_PATCHING = 'security patching',
 }
 
-export interface DatabaseEventRuleProps extends Omit<RuleProps, 'eventPattern'> {
+export interface DatabaseEventRuleProps {
+  /**
+   * The scope to use if the source of the rule and its target are in different Stacks
+   * (but in the same account & region).
+   * This helps dealing with cycles that often arise in these situations.
+   *
+   * @default - none (the main scope will be used, even for cross-stack Events)
+   */
+  readonly crossStackScope?: Construct;
+
   /**
    * Database instance to monitor.
    */
-  database: DatabaseInstance;
+  readonly database: DatabaseInstance;
+
+  /**
+   * A description of the rule's purpose.
+   *
+   * @default - No description
+   */
+  readonly description?: string;
+
+  /**
+   * Indicates whether the rule is enabled.
+   *
+   * @default true
+   */
+  readonly enabled?: boolean;
+
+  /**
+   * The event bus to associate with this rule.
+   *
+   * @default - The default event bus.
+   */
+  readonly eventBus?: IEventBus;
 
   /**
    * Event categories to include in the event filter.
@@ -36,7 +66,7 @@ export interface DatabaseEventRuleProps extends Omit<RuleProps, 'eventPattern'> 
    *
    * @default [AVAILABILITY, FAILOVER]
    */
-  eventCategories?: DatabaseEventCategories[];
+  readonly eventCategories?: DatabaseEventCategories[];
 
   /**
    * Event ids to include in the event filter.
@@ -45,7 +75,39 @@ export interface DatabaseEventRuleProps extends Omit<RuleProps, 'eventPattern'> 
    *
    * @default No additional filtering
    */
-  eventIds?: string[];
+  readonly eventIds?: string[];
+
+  /**
+   * A name for the rule.
+   *
+   * @default AWS CloudFormation generates a unique physical ID.
+   */
+  readonly ruleName?: string;
+
+  /**
+   * The schedule or rate (frequency) that determines when EventBridge
+   * runs the rule.
+   *
+   * You must specify this property, the `eventPattern` property, or both.
+   *
+   * For more information, see Schedule Expression Syntax for
+   * Rules in the Amazon EventBridge User Guide.
+   *
+   * @see https://docs.aws.amazon.com/eventbridge/latest/userguide/scheduled-events.html
+   *
+   * @default - None.
+   */
+  readonly schedule?: Schedule;
+
+  /**
+   * Targets to invoke when this rule matches an event.
+   *
+   * Input will be the full matched event. If you wish to specify custom
+   * target input, use `addTarget(target[, inputOptions])`.
+   *
+   * @default - No targets.
+   */
+  readonly targets?: IRuleTarget[];
 }
 
 /**
