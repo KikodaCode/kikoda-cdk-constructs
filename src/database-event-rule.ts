@@ -1,4 +1,7 @@
 import { IEventBus, IRuleTarget, Rule, Schedule } from 'aws-cdk-lib/aws-events';
+// @ts-ignore
+// eslint-disable-next-line no-duplicate-imports
+import type { RuleProps } from 'aws-cdk-lib/aws-events';
 import { DatabaseInstance } from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
 
@@ -22,6 +25,11 @@ export enum DatabaseEventCategories {
   SECURITY_PATCHING = 'security patching',
 }
 
+/**
+ * Properties for defining a database EventBridge rule.
+ *
+ * @see {@link RuleProps}
+ */
 export interface DatabaseEventRuleProps {
   /**
    * The scope to use if the source of the rule and its target are in different Stacks

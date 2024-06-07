@@ -2875,6 +2875,10 @@ public readonly config: any;
 
 ### DatabaseEventRuleProps <a name="DatabaseEventRuleProps" id="@kikoda/cdk-constructs.DatabaseEventRuleProps"></a>
 
+Properties for defining a database EventBridge rule.
+
+> [{@link RuleProps}]({@link RuleProps})
+
 #### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.DatabaseEventRuleProps.Initializer"></a>
 
 ```typescript
