@@ -2,7 +2,7 @@ import { Duration } from 'aws-cdk-lib';
 import { ComparisonOperator } from 'aws-cdk-lib/aws-cloudwatch';
 import { DatabaseInstance } from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
-import { CreateRecommendedAlarmProps, RecommendedAlarm } from './recommended-alarms';
+import { CreateRecommendedAlarmProps, RecommendedAlarm } from './recommended-alarm';
 
 /**
  * Properties needed to create an RDS connections alarm.

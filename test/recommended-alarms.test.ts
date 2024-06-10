@@ -15,7 +15,7 @@ import {
   RdsCpuUtilizationAlarm,
   RdsFreeStorageSpaceAlarm,
   RdsFreeableMemoryAlarm,
-} from '../src/recommended-alarms';
+} from '../src/recommended-alarm';
 
 function initialize() {
   const stack = new Stack();
@@ -37,6 +37,7 @@ describe('RdsConnectionsAlarm', () => {
 
     template.hasResourceProperties('AWS::CloudWatch::Alarm', {
       ComparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+      Dimensions: [{ Name: 'DBInstanceIdentifier' }],
       MetricName: 'DatabaseConnections',
       Namespace: 'AWS/RDS',
       Statistic: 'Average',
@@ -55,6 +56,7 @@ describe('RdsConnectionsAlarm', () => {
     template.hasResourceProperties('AWS::CloudWatch::Alarm', {
       AlarmActions: [{ Ref: getLogicalId(stack, topic) }],
       ComparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+      Dimensions: [{ Name: 'DBInstanceIdentifier' }],
       MetricName: 'DatabaseConnections',
       Namespace: 'AWS/RDS',
       Statistic: 'Average',
@@ -78,6 +80,7 @@ describe('RdsConnectionsAlarm', () => {
     template.hasResourceProperties('AWS::CloudWatch::Alarm', {
       AlarmDescription: props.alarmDescription,
       ComparisonOperator: props.comparisonOperator,
+      Dimensions: [{ Name: 'DBInstanceIdentifier' }],
       EvaluationPeriods: props.evaluationPeriods,
       MetricName: 'DatabaseConnections',
       Namespace: 'AWS/RDS',
@@ -97,6 +100,7 @@ describe('RdsCpuUtilizationAlarm', () => {
 
     template.hasResourceProperties('AWS::CloudWatch::Alarm', {
       ComparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+      Dimensions: [{ Name: 'DBInstanceIdentifier' }],
       MetricName: 'CPUUtilization',
       Namespace: 'AWS/RDS',
       Statistic: 'Average',
@@ -120,6 +124,7 @@ describe('RdsCpuUtilizationAlarm', () => {
     template.hasResourceProperties('AWS::CloudWatch::Alarm', {
       AlarmDescription: props.alarmDescription,
       ComparisonOperator: props.comparisonOperator,
+      Dimensions: [{ Name: 'DBInstanceIdentifier' }],
       EvaluationPeriods: props.evaluationPeriods,
       MetricName: 'CPUUtilization',
       Namespace: 'AWS/RDS',
@@ -140,6 +145,7 @@ describe('RdsFreeStorageSpaceAlarm', () => {
 
     template.hasResourceProperties('AWS::CloudWatch::Alarm', {
       ComparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+      Dimensions: [{ Name: 'DBInstanceIdentifier' }],
       MetricName: 'FreeStorageSpace',
       Namespace: 'AWS/RDS',
       Statistic: 'Minimum',
@@ -163,6 +169,7 @@ describe('RdsFreeStorageSpaceAlarm', () => {
     template.hasResourceProperties('AWS::CloudWatch::Alarm', {
       AlarmDescription: props.alarmDescription,
       ComparisonOperator: props.comparisonOperator,
+      Dimensions: [{ Name: 'DBInstanceIdentifier' }],
       EvaluationPeriods: props.evaluationPeriods,
       MetricName: 'FreeStorageSpace',
       Namespace: 'AWS/RDS',
@@ -182,6 +189,7 @@ describe('RdsFreeableMemoryAlarm', () => {
 
     template.hasResourceProperties('AWS::CloudWatch::Alarm', {
       ComparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+      Dimensions: [{ Name: 'DBInstanceIdentifier' }],
       MetricName: 'FreeableMemory',
       Namespace: 'AWS/RDS',
       Statistic: 'Average',
@@ -205,6 +213,7 @@ describe('RdsFreeableMemoryAlarm', () => {
     template.hasResourceProperties('AWS::CloudWatch::Alarm', {
       AlarmDescription: props.alarmDescription,
       ComparisonOperator: props.comparisonOperator,
+      Dimensions: [{ Name: 'DBInstanceIdentifier' }],
       EvaluationPeriods: props.evaluationPeriods,
       MetricName: 'FreeableMemory',
       Namespace: 'AWS/RDS',

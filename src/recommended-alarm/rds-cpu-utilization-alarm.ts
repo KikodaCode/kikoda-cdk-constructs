@@ -2,7 +2,7 @@ import { Duration } from 'aws-cdk-lib';
 import { ComparisonOperator } from 'aws-cdk-lib/aws-cloudwatch';
 import { DatabaseInstance } from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
-import { CreateRecommendedAlarmProps, RecommendedAlarm } from './recommended-alarms';
+import { CreateRecommendedAlarmProps, RecommendedAlarm } from './recommended-alarm';
 
 /**
  * Properties needed to create an RDS CPU utilization alarm.
@@ -18,6 +18,19 @@ export interface RdsCpuUtilizationAlarmProps extends CreateRecommendedAlarmProps
    * @default Duration.minutes(1)
    */
   period?: Duration;
+  /**
+   * The highest percentage of CPU utilization that is allowed before
+   * triggering the alarm.
+   *
+   * @remarks
+   * Random spikes in CPU consumption might not hamper database performance,
+   * but sustained high CPU can hinder upcoming database requests. Depending
+   * on the overall database workload, high CPU usage can degrade the overall
+   * performance.
+   *
+   * @default 90
+   */
+  threshold?: number;
 }
 
 /**
