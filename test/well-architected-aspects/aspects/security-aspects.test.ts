@@ -4,6 +4,7 @@ import { InstanceClass, InstanceSize, InstanceType, Vpc } from 'aws-cdk-lib/aws-
 import { Effect, Policy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import {
   AuroraPostgresEngineVersion,
+  ClusterInstance,
   DatabaseCluster,
   DatabaseClusterEngine,
 } from 'aws-cdk-lib/aws-rds';
@@ -174,17 +175,22 @@ describe('SecurityAspects', () => {
 
       const stack = new Stack(app, 'TestStack');
       Aspects.of(stack).add(new SecurityAspects());
+      const vpc = new Vpc(stack, 'VPC');
 
       new DatabaseCluster(stack, 'DBCluster', {
         engine: DatabaseClusterEngine.auroraPostgres({
-          version: AuroraPostgresEngineVersion.VER_10_20,
+          version: AuroraPostgresEngineVersion.VER_16_2,
         }),
-        instances: 2,
-        instanceProps: {
-          vpc: new Vpc(stack, 'VPC'),
+        writer: ClusterInstance.provisioned('Writer', {
           instanceType: InstanceType.of(InstanceClass.BURSTABLE4_GRAVITON, InstanceSize.MEDIUM),
-        },
+        }),
+        readers: [
+          ClusterInstance.provisioned('Reader', {
+            instanceType: InstanceType.of(InstanceClass.BURSTABLE4_GRAVITON, InstanceSize.MEDIUM),
+          }),
+        ],
         storageEncrypted: false,
+        vpc: vpc,
       });
 
       Template.fromStack(stack);
@@ -195,11 +201,11 @@ describe('SecurityAspects', () => {
           message: 'Encryption at rest is not enabled',
         },
         {
-          path: '/TestStack/DBCluster/Instance1',
+          path: '/TestStack/DBCluster/Writer/Resource',
           message: 'Encryption at rest is not enabled',
         },
         {
-          path: '/TestStack/DBCluster/Instance2',
+          path: '/TestStack/DBCluster/Reader/Resource',
           message: 'Encryption at rest is not enabled',
         },
       ]);
