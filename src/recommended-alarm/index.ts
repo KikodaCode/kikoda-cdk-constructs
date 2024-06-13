@@ -1,3 +1,7 @@
+export * from './api-gateway-client-error-alarm';
+export * from './api-gateway-integration-latency-alarm';
+export * from './api-gateway-latency-alarm';
+export * from './api-gateway-server-error-alarm';
 export * from './ecs-cpu-reservation-alarm';
 export * from './ecs-cpu-utilization-alarm';
 export * from './ecs-error-count-alarm';
