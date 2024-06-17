@@ -6,7 +6,7 @@ import {
   DatabaseInstanceEngine,
   PostgresEngineVersion,
 } from 'aws-cdk-lib/aws-rds';
-import { DatabaseEventCategories, DatabaseEventRule } from '../src';
+import { DatabaseEventCategory, DatabaseEventRule } from '../src';
 
 function initialize() {
   const stack = new Stack();
@@ -36,9 +36,9 @@ describe('DatabaseEventRule', () => {
 
   test('with specific event category filtering', () => {
     const eventCategories = [
-      DatabaseEventCategories.FAILURE,
-      DatabaseEventCategories.LOW_STORAGE,
-      DatabaseEventCategories.MAINTENANCE_FAILURE,
+      DatabaseEventCategory.FAILURE,
+      DatabaseEventCategory.LOW_STORAGE,
+      DatabaseEventCategory.MAINTENANCE_FAILURE,
     ];
     const { database, stack } = initialize();
 

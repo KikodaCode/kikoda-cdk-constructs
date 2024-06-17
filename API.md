@@ -2891,12 +2891,12 @@ const databaseEventRuleProps: DatabaseEventRuleProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.database">database</a></code> | <code>aws-cdk-lib.aws_rds.DatabaseInstance</code> | Database instance to monitor. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.database">database</a></code> | <code>aws-cdk-lib.aws_rds.IDatabaseInstance</code> | Database instance to monitor. |
 | <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.crossStackScope">crossStackScope</a></code> | <code>constructs.Construct</code> | The scope to use if the source of the rule and its target are in different Stacks (but in the same account & region). |
 | <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.description">description</a></code> | <code>string</code> | A description of the rule's purpose. |
 | <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.enabled">enabled</a></code> | <code>boolean</code> | Indicates whether the rule is enabled. |
 | <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.eventBus">eventBus</a></code> | <code>aws-cdk-lib.aws_events.IEventBus</code> | The event bus to associate with this rule. |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.eventCategories">eventCategories</a></code> | <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories">DatabaseEventCategories</a>[]</code> | Event categories to include in the event filter. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.eventCategories">eventCategories</a></code> | <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory">DatabaseEventCategory</a>[]</code> | Event categories to include in the event filter. |
 | <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.eventIds">eventIds</a></code> | <code>string[]</code> | Event ids to include in the event filter. |
 | <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.ruleName">ruleName</a></code> | <code>string</code> | A name for the rule. |
 | <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.schedule">schedule</a></code> | <code>aws-cdk-lib.aws_events.Schedule</code> | The schedule or rate (frequency) that determines when EventBridge runs the rule. |
@@ -2907,10 +2907,10 @@ const databaseEventRuleProps: DatabaseEventRuleProps = { ... }
 ##### `database`<sup>Required</sup> <a name="database" id="@kikoda/cdk-constructs.DatabaseEventRuleProps.property.database"></a>
 
 ```typescript
-public readonly database: DatabaseInstance;
+public readonly database: IDatabaseInstance;
 ```
 
-- *Type:* aws-cdk-lib.aws_rds.DatabaseInstance
+- *Type:* aws-cdk-lib.aws_rds.IDatabaseInstance
 
 Database instance to monitor.
 
@@ -2973,10 +2973,10 @@ The event bus to associate with this rule.
 ##### `eventCategories`<sup>Optional</sup> <a name="eventCategories" id="@kikoda/cdk-constructs.DatabaseEventRuleProps.property.eventCategories"></a>
 
 ```typescript
-public readonly eventCategories: DatabaseEventCategories[];
+public readonly eventCategories: DatabaseEventCategory[];
 ```
 
-- *Type:* <a href="#@kikoda/cdk-constructs.DatabaseEventCategories">DatabaseEventCategories</a>[]
+- *Type:* <a href="#@kikoda/cdk-constructs.DatabaseEventCategory">DatabaseEventCategory</a>[]
 - *Default:* [AVAILABILITY, FAILOVER]
 
 Event categories to include in the event filter.
@@ -4379,113 +4379,153 @@ Events that indicate system failures, data loss, and/or blocking errors.
 ---
 
 
-### DatabaseEventCategories <a name="DatabaseEventCategories" id="@kikoda/cdk-constructs.DatabaseEventCategories"></a>
+### DatabaseEventCategory <a name="DatabaseEventCategory" id="@kikoda/cdk-constructs.DatabaseEventCategory"></a>
+
+Category of the database instance event.
+
+Useful for filtering down to specific event types.
 
 #### Members <a name="Members" id="Members"></a>
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.AVAILABILITY">AVAILABILITY</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.BACKUP">BACKUP</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.CONFIGURATION_CHANGE">CONFIGURATION_CHANGE</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.CREATION">CREATION</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.DELETION">DELETION</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.FAILOVER">FAILOVER</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.FAILURE">FAILURE</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.LOW_STORAGE">LOW_STORAGE</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.MAINTENANCE">MAINTENANCE</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.MAINTENANCE_FAILURE">MAINTENANCE_FAILURE</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.MAINTENANCE_NOTIFICATION">MAINTENANCE_NOTIFICATION</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.NOTIFICATION">NOTIFICATION</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.READ_REPLICA">READ_REPLICA</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.RECOVERY">RECOVERY</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.RESTORATION">RESTORATION</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.SECURITY">SECURITY</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategories.SECURITY_PATCHING">SECURITY_PATCHING</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.AVAILABILITY">AVAILABILITY</a></code> | Database availability event: shutdown, restart, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.BACKUP">BACKUP</a></code> | Database backup event: started backup, finished backup, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.CONFIGURATION_CHANGE">CONFIGURATION_CHANGE</a></code> | Database configuration change event: updated parameter group, modified instance class, reset credentials, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.CREATION">CREATION</a></code> | Database creation event: instance created. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.DELETION">DELETION</a></code> | Database deletion event: instance deleted. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.FAILOVER">FAILOVER</a></code> | Database failover event: failover started, failover complete, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.FAILURE">FAILURE</a></code> | Database failure event: instance failure, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.LOW_STORAGE">LOW_STORAGE</a></code> | Database low storage event: storage exhausted, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.MAINTENANCE">MAINTENANCE</a></code> | Database maintenance event: instance patched, version upgrade, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.MAINTENANCE_FAILURE">MAINTENANCE_FAILURE</a></code> | Database maintenance failure event: update of Oracle time zone failed. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.MAINTENANCE_NOTIFICATION">MAINTENANCE_NOTIFICATION</a></code> | Database maintenance notification event: time zone update, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.NOTIFICATION">NOTIFICATION</a></code> | Database notification event: patching delayed, operator issued notification, exceeding best practices, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.READ_REPLICA">READ_REPLICA</a></code> | Database read replica event: replication started, stopped, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.RECOVERY">RECOVERY</a></code> | Database recovery event: recovery started, complete. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.RESTORATION">RESTORATION</a></code> | Database restoration event: restored instance. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.SECURITY">SECURITY</a></code> | Database security event: decrypting HSM password to update instance. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.SECURITY_PATCHING">SECURITY_PATCHING</a></code> | Database security patching event: system update available. |
 
 ---
 
-##### `AVAILABILITY` <a name="AVAILABILITY" id="@kikoda/cdk-constructs.DatabaseEventCategories.AVAILABILITY"></a>
+##### `AVAILABILITY` <a name="AVAILABILITY" id="@kikoda/cdk-constructs.DatabaseEventCategory.AVAILABILITY"></a>
 
----
-
-
-##### `BACKUP` <a name="BACKUP" id="@kikoda/cdk-constructs.DatabaseEventCategories.BACKUP"></a>
+Database availability event: shutdown, restart, etc.
 
 ---
 
 
-##### `CONFIGURATION_CHANGE` <a name="CONFIGURATION_CHANGE" id="@kikoda/cdk-constructs.DatabaseEventCategories.CONFIGURATION_CHANGE"></a>
+##### `BACKUP` <a name="BACKUP" id="@kikoda/cdk-constructs.DatabaseEventCategory.BACKUP"></a>
+
+Database backup event: started backup, finished backup, etc.
 
 ---
 
 
-##### `CREATION` <a name="CREATION" id="@kikoda/cdk-constructs.DatabaseEventCategories.CREATION"></a>
+##### `CONFIGURATION_CHANGE` <a name="CONFIGURATION_CHANGE" id="@kikoda/cdk-constructs.DatabaseEventCategory.CONFIGURATION_CHANGE"></a>
+
+Database configuration change event: updated parameter group, modified instance class, reset credentials, etc.
 
 ---
 
 
-##### `DELETION` <a name="DELETION" id="@kikoda/cdk-constructs.DatabaseEventCategories.DELETION"></a>
+##### `CREATION` <a name="CREATION" id="@kikoda/cdk-constructs.DatabaseEventCategory.CREATION"></a>
+
+Database creation event: instance created.
 
 ---
 
 
-##### `FAILOVER` <a name="FAILOVER" id="@kikoda/cdk-constructs.DatabaseEventCategories.FAILOVER"></a>
+##### `DELETION` <a name="DELETION" id="@kikoda/cdk-constructs.DatabaseEventCategory.DELETION"></a>
+
+Database deletion event: instance deleted.
 
 ---
 
 
-##### `FAILURE` <a name="FAILURE" id="@kikoda/cdk-constructs.DatabaseEventCategories.FAILURE"></a>
+##### `FAILOVER` <a name="FAILOVER" id="@kikoda/cdk-constructs.DatabaseEventCategory.FAILOVER"></a>
+
+Database failover event: failover started, failover complete, etc.
 
 ---
 
 
-##### `LOW_STORAGE` <a name="LOW_STORAGE" id="@kikoda/cdk-constructs.DatabaseEventCategories.LOW_STORAGE"></a>
+##### `FAILURE` <a name="FAILURE" id="@kikoda/cdk-constructs.DatabaseEventCategory.FAILURE"></a>
+
+Database failure event: instance failure, etc.
 
 ---
 
 
-##### `MAINTENANCE` <a name="MAINTENANCE" id="@kikoda/cdk-constructs.DatabaseEventCategories.MAINTENANCE"></a>
+##### `LOW_STORAGE` <a name="LOW_STORAGE" id="@kikoda/cdk-constructs.DatabaseEventCategory.LOW_STORAGE"></a>
+
+Database low storage event: storage exhausted, etc.
 
 ---
 
 
-##### `MAINTENANCE_FAILURE` <a name="MAINTENANCE_FAILURE" id="@kikoda/cdk-constructs.DatabaseEventCategories.MAINTENANCE_FAILURE"></a>
+##### `MAINTENANCE` <a name="MAINTENANCE" id="@kikoda/cdk-constructs.DatabaseEventCategory.MAINTENANCE"></a>
+
+Database maintenance event: instance patched, version upgrade, etc.
 
 ---
 
 
-##### `MAINTENANCE_NOTIFICATION` <a name="MAINTENANCE_NOTIFICATION" id="@kikoda/cdk-constructs.DatabaseEventCategories.MAINTENANCE_NOTIFICATION"></a>
+##### `MAINTENANCE_FAILURE` <a name="MAINTENANCE_FAILURE" id="@kikoda/cdk-constructs.DatabaseEventCategory.MAINTENANCE_FAILURE"></a>
+
+Database maintenance failure event: update of Oracle time zone failed.
 
 ---
 
 
-##### `NOTIFICATION` <a name="NOTIFICATION" id="@kikoda/cdk-constructs.DatabaseEventCategories.NOTIFICATION"></a>
+##### `MAINTENANCE_NOTIFICATION` <a name="MAINTENANCE_NOTIFICATION" id="@kikoda/cdk-constructs.DatabaseEventCategory.MAINTENANCE_NOTIFICATION"></a>
+
+Database maintenance notification event: time zone update, etc.
 
 ---
 
 
-##### `READ_REPLICA` <a name="READ_REPLICA" id="@kikoda/cdk-constructs.DatabaseEventCategories.READ_REPLICA"></a>
+##### `NOTIFICATION` <a name="NOTIFICATION" id="@kikoda/cdk-constructs.DatabaseEventCategory.NOTIFICATION"></a>
+
+Database notification event: patching delayed, operator issued notification, exceeding best practices, etc.
 
 ---
 
 
-##### `RECOVERY` <a name="RECOVERY" id="@kikoda/cdk-constructs.DatabaseEventCategories.RECOVERY"></a>
+##### `READ_REPLICA` <a name="READ_REPLICA" id="@kikoda/cdk-constructs.DatabaseEventCategory.READ_REPLICA"></a>
+
+Database read replica event: replication started, stopped, etc.
 
 ---
 
 
-##### `RESTORATION` <a name="RESTORATION" id="@kikoda/cdk-constructs.DatabaseEventCategories.RESTORATION"></a>
+##### `RECOVERY` <a name="RECOVERY" id="@kikoda/cdk-constructs.DatabaseEventCategory.RECOVERY"></a>
+
+Database recovery event: recovery started, complete.
+
+etc.
 
 ---
 
 
-##### `SECURITY` <a name="SECURITY" id="@kikoda/cdk-constructs.DatabaseEventCategories.SECURITY"></a>
+##### `RESTORATION` <a name="RESTORATION" id="@kikoda/cdk-constructs.DatabaseEventCategory.RESTORATION"></a>
+
+Database restoration event: restored instance.
 
 ---
 
 
-##### `SECURITY_PATCHING` <a name="SECURITY_PATCHING" id="@kikoda/cdk-constructs.DatabaseEventCategories.SECURITY_PATCHING"></a>
+##### `SECURITY` <a name="SECURITY" id="@kikoda/cdk-constructs.DatabaseEventCategory.SECURITY"></a>
+
+Database security event: decrypting HSM password to update instance.
+
+---
+
+
+##### `SECURITY_PATCHING` <a name="SECURITY_PATCHING" id="@kikoda/cdk-constructs.DatabaseEventCategory.SECURITY_PATCHING"></a>
+
+Database security patching event: system update available.
 
 ---
 

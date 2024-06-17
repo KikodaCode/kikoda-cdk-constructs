@@ -2,26 +2,55 @@ import { IEventBus, IRuleTarget, Rule, Schedule } from 'aws-cdk-lib/aws-events';
 // @ts-ignore
 // eslint-disable-next-line no-duplicate-imports
 import type { RuleProps } from 'aws-cdk-lib/aws-events';
-import { DatabaseInstance } from 'aws-cdk-lib/aws-rds';
+import { IDatabaseInstance } from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
 
-export enum DatabaseEventCategories {
+/**
+ * Category of the database instance event.
+ *
+ * Useful for filtering down to specific event types.
+ *
+ * @ref {@link https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Events.Messages.html#USER_Events.Messages.instance}
+ */
+export enum DatabaseEventCategory {
+  /** Database availability event: shutdown, restart, etc. */
   AVAILABILITY = 'availability',
+  /** Database backup event: started backup, finished backup, etc. */
   BACKUP = 'backup',
+  /**
+   * Database configuration change event: updated parameter group, modified
+   * instance class, reset credentials, etc.
+   */
   CONFIGURATION_CHANGE = 'configuration change',
+  /** Database creation event: instance created. */
   CREATION = 'creation',
+  /** Database deletion event: instance deleted. */
   DELETION = 'deletion',
+  /** Database failover event: failover started, failover complete, etc. */
   FAILOVER = 'failover',
+  /** Database failure event: instance failure, etc. */
   FAILURE = 'failure',
+  /** Database low storage event: storage exhausted, etc. */
   LOW_STORAGE = 'low storage',
+  /** Database maintenance event: instance patched, version upgrade, etc. */
   MAINTENANCE = 'maintenance',
+  /** Database maintenance failure event: update of Oracle time zone failed. */
   MAINTENANCE_FAILURE = 'maintenance, failure',
+  /** Database maintenance notification event: time zone update, etc. */
   MAINTENANCE_NOTIFICATION = 'maintenance, notification',
+  /**
+   * Database notification event: patching delayed, operator issued
+   * notification, exceeding best practices, etc. */
   NOTIFICATION = 'notification',
+  /** Database read replica event: replication started, stopped, etc. */
   READ_REPLICA = 'read replica',
+  /** Database recovery event: recovery started, complete. etc. */
   RECOVERY = 'recovery',
+  /** Database restoration event: restored instance. */
   RESTORATION = 'restoration',
+  /** Database security event: decrypting HSM password to update instance. */
   SECURITY = 'security',
+  /** Database security patching event: system update available. */
   SECURITY_PATCHING = 'security patching',
 }
 
@@ -43,7 +72,7 @@ export interface DatabaseEventRuleProps {
   /**
    * Database instance to monitor.
    */
-  readonly database: DatabaseInstance;
+  readonly database: IDatabaseInstance;
 
   /**
    * A description of the rule's purpose.
@@ -74,7 +103,7 @@ export interface DatabaseEventRuleProps {
    *
    * @default [AVAILABILITY, FAILOVER]
    */
-  readonly eventCategories?: DatabaseEventCategories[];
+  readonly eventCategories?: DatabaseEventCategory[];
 
   /**
    * Event ids to include in the event filter.
@@ -127,8 +156,8 @@ export class DatabaseEventRule extends Rule {
   constructor(scope: Construct, id: string, props: DatabaseEventRuleProps) {
     function getDetail({ eventCategories, eventIds }: DatabaseEventRuleProps) {
       const categories = eventCategories ?? [
-        DatabaseEventCategories.AVAILABILITY,
-        DatabaseEventCategories.FAILOVER,
+        DatabaseEventCategory.AVAILABILITY,
+        DatabaseEventCategory.FAILOVER,
       ];
 
       const detail = {
