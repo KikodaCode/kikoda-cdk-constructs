@@ -29,30 +29,48 @@ import minimatch = require('minimatch');
 
 export interface SinglePageAppProps {
   /**
-   * Provide an existing Hosted Zone to use for the domain. This property is required unless `onlyDefaultDomain` is `true`, in which case it will be ignored.
+   * Provide an existing Hosted Zone to use for the domain.
+   *
+   * @default - this property is required unless `onlyDefaultDomain` is `true`, in which case it will be ignored.
    */
   readonly hostedZone?: IHostedZone;
 
   /**
-   * The domain name to use for the SPA. This property is required unless `onlyDefaultDomain` is `true`, in which case it will be ignored.
+   * The domain name to use for the SPA.
+   *
+   * @default - this property is required unless `onlyDefaultDomain` is `true`, in which case it will be ignored.
    */
   readonly domainName?: string;
 
   /**
-   * Specify alternate domain names to use for the Cloudfront Distribution. This property will be ignored if `onlyDefaultDomain` is `true`.
+   * Specify alternate domain names to use for the Cloudfront Distribution.
+   *
+   * @remarks
+   * This property will be ignored if `onlyDefaultDomain` is `true`.
+   *
+   * @default - no alternate domain names.
    */
   readonly alternateDomainNames?: string[];
 
   /**
-   * Specify an ARN of an ACM certificate to use for the Cloudfront Distribution. This is
-   * useful when you are deploying to a region other than `us-east-1`, as Cloudfront
-   * requires the certificate to be in `us-east-1`. This property will be ignored if `onlyDefaultDomain` is `true`.
+   * Specify an ARN of an ACM certificate to use for the Cloudfront
+   * Distribution.
+   *
+   * @remarks
+   * This is useful when you are deploying to a region other than `us-east-1`,
+   * as Cloudfront requires the certificate to be in `us-east-1`.
+   *
+   * This property will be ignored if `onlyDefaultDomain` is `true`.
    */
   readonly acmCertificateArn?: string;
 
   /**
-   * Do not create or look up a hosted zone or certificates for the website. The website will be served under the default CloudFront domain only.
-   * Setting this to `true` will ignore the values set for `acmCertificateArn`, `domainName`, `alternateDomainNames`, and `hostedZone`.
+   * Do not create or look up a hosted zone or certificates for the website.
+   * The website will be served under the default CloudFront domain only.
+   *
+   * @remarks
+   * Setting this to `true` will ignore the values set for `acmCertificateArn`,
+   * `domainName`, `alternateDomainNames`, and `hostedZone`.
    *
    * @default false
    */
@@ -61,26 +79,46 @@ export interface SinglePageAppProps {
   readonly indexDoc: string;
   readonly errorDoc?: string;
 
-  /** list of glob patterns to exclude from the build artifact when deploying */
+  /**
+   * List of glob patterns to exclude from the build artifact when deploying.
+   */
   readonly buildAssetExcludes?: FileCopyOptions['exclude'];
 
   readonly bundling?: AssetOptions['bundling'];
 
-  /** This should be the full absolute path of root directory of the git repository. Dependending on your repository setup
-   * this may be required for Docker-based bundling. This path, if provided will be used as the mount point
-   * for the Docker container during bundling. If this is not provided, the `appDir` path will be used.
+  /**
+   * This should be the full absolute path of root directory of the git
+   * repository. Depending on your repository setup this may be required for
+   * Docker-based bundling. This path, if provided will be used as the mount
+   * point for the Docker container during bundling.
+   *
+   * @default - if this is not provided, the `appDir` path will be used.
    */
   readonly repoRoot?: string;
 
   /** The full absolute path of the Single Page App */
   readonly appDir: string;
 
-  /** Specify with `buildCommand` to configure bundling. This should be the path relative to `appDir`
-   * that contains the build output/artifacts
+  /**
+   * Path to the build output, relative to the `appDir` that contains the build
+   * output/artifacts.
+   *
+   * @remarks
+   * Specify with `buildCommand` to configure bundling or use the `bundling`
+   * prop.
+   *
+   * @default - No build direction. If this property is undefined the build step should be specified using the `bundling` prop.
    */
   readonly buildDir?: string;
 
-  /** Specify a build command to use with the default bundling options, or specify the `bundling` prop */
+  /**
+   * The command for building the website (e.g. "yarn run build").
+   *
+   * @remarks
+   * Specify with `buildDir` to configure bundling or use the `bundling` prop.
+   *
+   * @default - No build command. If this property is undefined the build step should be specified using the `bundling` prop.
+   */
   readonly buildCommand?: string;
   readonly blockPublicAccess?: BlockPublicAccess;
   readonly bucketCorsRules?: CorsRule[];
@@ -91,9 +129,10 @@ export interface SinglePageAppProps {
 }
 
 /**
- * A construct that deploys a Single Page App using S3 and Cloudfront. This construct
- * will create a S3 bucket, deploy the contents of the specified directory to the bucket,
- * and create a Cloudfront distribution that serves the contents of the bucket.
+ * A construct that deploys a Single Page App using S3 and Cloudfront. This
+ * construct will create a S3 bucket, deploy the contents of the specified
+ * directory to the bucket, and create a Cloudfront distribution that serves
+ * the contents of the bucket.
  */
 export class SinglePageApp extends Construct {
   public readonly distribution: Distribution;
@@ -189,7 +228,6 @@ export class SinglePageApp extends Construct {
       certificate,
       minimumProtocolVersion: props.securityPolicy ?? SecurityPolicyProtocol.TLS_V1_2_2021,
     });
-    // console.log(this.distribution);
 
     let assetOpts: AssetOptions = {
       exclude: props.buildAssetExcludes,

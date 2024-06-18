@@ -4,48 +4,41 @@ import { CodePipeline } from 'aws-cdk-lib/pipelines';
 import AllowCodeStarSnsPublishStatement from './codestar-sns-publish-access-statement';
 
 /**
- * TODO: Update documentation
- *
- * @export
- * @interface PipelineEventNotificationRuleProps
- * @typedef {PipelineEventNotificationRuleProps}
+ * Properties for a new pipeline event notification rule.
  */
 export interface PipelineEventNotificationRuleProps {
   /**
-   * TODO: Update documentation
-   *
-   * @type {string}
+   * Arn of the notification topic to send pipeline event notifications to.
    */
-  notificationTopicArn: string;
+  readonly notificationTopicArn: string;
   /**
-   * TODO: Update documentation
+   * List of event types associated with this notification rule.
    *
-   * @type {?string[]}
+   * @default [
+   * 'codepipeline-pipeline-pipeline-execution-failed',
+   * 'codepipeline-pipeline-pipeline-execution-succeeded',
+   * 'codepipeline-pipeline-manual-approval-needed'
+   * ]
    */
-  events?: string[];
+  readonly events?: string[];
   /**
-   * TODO: Update documentation
+   * The level of detail to include in the notifications for this resource.
    *
-   * @type {?DetailType}
+   * @default DetailType.BASIC
    */
-  detailType?: DetailType;
+  readonly detailType?: DetailType;
 }
 
 /**
- * TODO: Update documentation
- *
- * @export
- * @class PipelineEventNotificationRule
- * @typedef {PipelineEventNotificationRule}
- * @extends {NotificationRule}
+ * A new pipeline event notification rule.
  */
 export class PipelineEventNotificationRule extends NotificationRule {
   /**
-   * TODO: Creates an instance of PipelineEventNotificationRule.
+   * Create an instance of PipelineEventNotificationRule.
    *
    * @constructor
-   * @param {CodePipeline} scope
-   * @param {string} notificationTopicArn
+   * @param scope
+   * @param props
    */
   constructor(scope: CodePipeline, props: PipelineEventNotificationRuleProps) {
     const targetTopic = Topic.fromTopicArn(scope, 'NotificationTopic', props.notificationTopicArn);

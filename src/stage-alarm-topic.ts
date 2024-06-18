@@ -4,45 +4,42 @@ import { Construct } from 'constructs';
 
 /**
  * The Alarm levels.
- *
- * @export
- * @enum {number}
  */
 export enum AlarmLevels {
-  /** For general information these are typically the most verbose. */
+  /**
+   * For general information. These are typically the most verbose.
+   */
   INFO = 'Information',
-  /** Events that indicate service degredation, inefficency, and/or non blocking errors. */
+  /**
+   * Events that indicate service degradation, inefficiency, and/or non
+   * blocking errors.
+   */
   WARNING = 'Warning',
-  /** Events that indicate system failures, data loss, and/or blocking errors. */
+  /**
+   * Events that indicate system failures, data loss, and/or blocking errors.
+   */
   CRITICAL = 'Critical',
 }
 
 /**
  * Configuration for StageAlarmTopic.
- * @export
- * @interface StageAlarmTopicProps
- * @typedef {StageAlarmTopicProps}
  */
 export interface StageAlarmTopicProps {
   /**
-   * The alert level. This is used in the Topic displayName and topicName, and the cfn export name.
-   *
-   * @readonly
-   * @type {AlarmLevels}
+   * The alert level. This is used in the Topic displayName and topicName, and
+   * the cfn export name.
    */
   readonly level: AlarmLevels;
   /**
    * The identifier prefix. This could be a stage name or similar identifier.
    *
-   * @readonly
-   * @type {?string}
+   * @default - no prefix is added to the identifier.
    */
   readonly prefix?: string;
   /**
-   * If true a CFN export will be created.
+   * If true, a CFN export will be created.
    *
-   * @readonly
-   * @type {?boolean}
+   * @default - no CFN export is created.
    */
   readonly createCfnExport?: boolean;
 }
@@ -50,28 +47,19 @@ export interface StageAlarmTopicProps {
 /**
  * An alarm topic and optional cfn export of the topic name.
  *
- * @export
- * @class StageAlarmTopic
- * @typedef {StageAlarmTopic}
  * @extends {Construct}
  */
 export class StageAlarmTopic extends Construct {
   /**
    * The CFN Export, will be populated if createCfnExport is true.
-   *
-   * @public
-   * @type {?CfnOutput}
    */
   public cfnOutput?: CfnOutput = undefined;
   /**
    * The SNS Topic
-   *
-   * @public
-   * @type {Topic}
    */
   public topic: Topic;
   /**
-   * TODO: Creates an instance of StageAlarmTopic.
+   * Create an instance of StageAlarmTopic.
    *
    * @constructor
    * @param {Construct} scope - The scope of the construct.

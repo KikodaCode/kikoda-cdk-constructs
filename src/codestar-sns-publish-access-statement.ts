@@ -1,16 +1,15 @@
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 
 /**
- * Creates a policy statement that allows codestar-notifications principle the SNS:Publish action on the specified SNS Topic arn.
+ * Creates a policy statement that allows codestar-notifications principle the
+ * SNS:Publish action on the specified SNS Topic arn.
  *
- * @export
- * @class CodeStarSnsPublishAccessStatement
- * @typedef {CodeStarSnsPublishAccessStatement}
  * @extends {PolicyStatement}
  */
 export default class CodeStarSnsPublishAccessStatement extends PolicyStatement {
   /**
-   * Creates a policy statement that allows codestar-notifications principle the SNS:Publish action on the specified SNS Topic arn.
+   * Creates a policy statement that allows codestar-notifications principle
+   * the SNS:Publish action on the specified SNS Topic arn.
    *
    * @constructor
    * @param {string} notificationTopicArn

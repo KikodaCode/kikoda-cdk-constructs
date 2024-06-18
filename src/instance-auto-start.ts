@@ -6,6 +6,9 @@ import * as constructs from 'constructs';
 import * as targets from './aws-events-targets';
 import * as ssm from './aws-ssm';
 
+/**
+ * Properties for the InstanceAutoStart construct.
+ */
 export interface InstanceAutoStartProps {
   /**
    * The Instance to start on a schedule.
@@ -19,7 +22,8 @@ export interface InstanceAutoStartProps {
 }
 
 /**
- * `InstanceAutoStart` creates an AWS CloudWatch Event Rule that starts an EC2 instance on a schedule.
+ * `InstanceAutoStart` creates an AWS CloudWatch Event Rule that starts an EC2
+ * instance on a schedule.
  */
 export class InstanceAutoStart extends constructs.Construct {
   constructor(scope: constructs.Construct, id: string, props: InstanceAutoStartProps) {

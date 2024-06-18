@@ -1,5 +1,15 @@
 {
   "tasks": {
+    "awslint": {
+      "name": "awslint",
+      "description": "Runs awslint against the codebase",
+      "steps": [
+        {
+          "exec": "awslint",
+          "receiveArgs": true
+        }
+      ]
+    },
     "build": {
       "name": "build",
       "description": "Full release build",
@@ -287,6 +297,18 @@
         }
       ]
     },
+    "lint": {
+      "name": "lint",
+      "description": "Lint the codebase",
+      "steps": [
+        {
+          "spawn": "eslint"
+        },
+        {
+          "spawn": "awslint"
+        }
+      ]
+    },
     "package": {
       "name": "package",
       "description": "Creates the distribution package",
@@ -376,7 +398,7 @@
           "receiveArgs": true
         },
         {
-          "spawn": "eslint"
+          "spawn": "lint"
         },
         {
           "spawn": "integ:branch-pipelines:assert"
@@ -419,13 +441,13 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@kikoda/generated-config,@kikoda/projen-templates,@types/fs-extra,@types/md5,@types/uuid,delay,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,jsii-diff,jsii-docgen,jsii-pacmak,prettier,projen,ts-node,typescript,@yarnpkg/esbuild-plugin-pnp,esbuild,fs-extra,minimatch"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@kikoda/generated-config,@kikoda/projen-templates,@types/fs-extra,@types/md5,@types/uuid,awslint,delay,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,jsii-diff,jsii-docgen,jsii-pacmak,prettier,projen,ts-node,typescript,@yarnpkg/esbuild-plugin-pnp,esbuild,fs-extra,minimatch"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @kikoda/generated-config @kikoda/projen-templates @types/fs-extra @types/jest @types/lodash @types/md5 @types/node @types/uuid @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk delay eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest-junit jest jsii-diff jsii-docgen jsii-pacmak jsii-rosetta jsii prettier projen standard-version ts-jest ts-node typescript @yarnpkg/esbuild-plugin-pnp esbuild fs-extra lodash minimatch aws-cdk-lib constructs"
+          "exec": "yarn upgrade @kikoda/generated-config @kikoda/projen-templates @types/fs-extra @types/jest @types/lodash @types/md5 @types/node @types/uuid @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk awslint delay eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest-junit jest jsii-diff jsii-docgen jsii-pacmak jsii-rosetta jsii prettier projen standard-version ts-jest ts-node typescript @yarnpkg/esbuild-plugin-pnp esbuild fs-extra lodash minimatch aws-cdk-lib constructs"
         },
         {
           "exec": "npx projen"

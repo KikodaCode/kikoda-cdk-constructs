@@ -1,8 +1,3 @@
-/**
- * Well Architected Framework - Operational Excellence Pillar CDK Aspects
- * https://docs.aws.amazon.com/wellarchitected/latest/framework/operational-excellence.html
- */
-
 import { IAspect } from 'aws-cdk-lib';
 import { CfnFunction } from 'aws-cdk-lib/aws-lambda';
 import { IConstruct } from 'constructs';
@@ -12,6 +7,14 @@ import {
   FlagLevel,
 } from '../flag-based-annotator';
 
+/**
+ * The Operational Excellence pillar of the Well-Architected Framework includes
+ * the ability to support development and run workloads effectively, gain
+ * insight into their operations, and to continuously improve supporting
+ * processes and procedures to deliver business value.
+ *
+ * @ref {@link https://docs.aws.amazon.com/wellarchitected/latest/framework/operational-excellence.html}
+ */
 export class OperationalExcellenceAspects implements IAspect {
   public visit(node: IConstruct): void {
     if (node instanceof CfnFunction) {

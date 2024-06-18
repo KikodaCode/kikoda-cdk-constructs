@@ -1,8 +1,3 @@
-/**
- * Well Architected Framework - Security Pillar CDK Aspects
- * https://docs.aws.amazon.com/wellarchitected/latest/framework/security.html
- */
-
 import { Annotations, IAspect } from 'aws-cdk-lib';
 import { CfnPolicy, Effect } from 'aws-cdk-lib/aws-iam';
 import { CfnDBCluster, CfnDBInstance } from 'aws-cdk-lib/aws-rds';
@@ -15,6 +10,13 @@ import {
   WellArchitectedAspectsFeatureFlags,
 } from '../flag-based-annotator';
 
+/**
+ * The Security pillar of the Well-Architected Framework encompasses the
+ * ability to protect data, systems, and assets to take advantage of cloud
+ * technologies to improve your security.
+ *
+ * @ref {@link https://docs.aws.amazon.com/wellarchitected/latest/framework/security.html}
+ */
 export class SecurityAspects implements IAspect {
   public visit(node: IConstruct): void {
     /** S3 Bucket Security */

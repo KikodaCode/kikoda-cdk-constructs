@@ -7,7 +7,7 @@
 Configuration properties for the code source repository.
 
 Currently supports CodeCommit and GitHub Sources.
-GitHub source requrires a preexisting CodeStarConnection.
+GitHub source requires a preexisting CodeStarConnection.
 
 #### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.CodeSource.Initializer"></a>
 
@@ -1162,10 +1162,10 @@ ConfiguredStage.extOf(construct: IConstruct)
 
 Return the `ConfiguredStage` this construct is contained with, if available.
 
-If called
-on a nested stage, returns its parent. This method is most useful when you need to
-load the configuration in a nested construct. This works exactly like Stage.of() but
-returns the ConfiguredStage instead of the Stage.
+If called on a nested stage, returns its parent. This method is
+most useful when you need to load the configuration in a nested construct.
+This works exactly like Stage.of() but returns the ConfiguredStage instead
+of the Stage.
 
 ###### `construct`<sup>Required</sup> <a name="construct" id="@kikoda/cdk-constructs.ConfiguredStage.extOf.parameter.construct"></a>
 
@@ -1677,10 +1677,6 @@ The CFN Export, will be populated if createCfnExport is true.
 
 Deploy a single page app with a standard static website architecture to AWS using CloudFront, S3, and Route53.
 
-This is typically
-coupled with the `configProvider` hooks in the `@kikoda/delivery-hooks` package using the `generateWebConfig`
-and `generateWebConfigProps` options.
-
 #### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.Website.Initializer"></a>
 
 ```typescript
@@ -1762,8 +1758,8 @@ Any object.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.Website.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@kikoda/cdk-constructs.Website.property.endpoint">endpoint</a></code> | <code>string</code> | Full website endpoint w/protocol. |
-| <code><a href="#@kikoda/cdk-constructs.Website.property.generatedWebConfig">generatedWebConfig</a></code> | <code>@kikoda/generated-config.GeneratedConfig</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.Website.property.endpoint">endpoint</a></code> | <code>string</code> | Full website endpoint with protocol. |
+| <code><a href="#@kikoda/cdk-constructs.Website.property.generatedWebConfig">generatedWebConfig</a></code> | <code>@kikoda/generated-config.GeneratedConfig</code> | Generated website configuration. |
 
 ---
 
@@ -1787,7 +1783,7 @@ public readonly endpoint: string;
 
 - *Type:* string
 
-Full website endpoint w/protocol.
+Full website endpoint with protocol.
 
 ---
 
@@ -1798,6 +1794,8 @@ public readonly generatedWebConfig: GeneratedConfig;
 ```
 
 - *Type:* @kikoda/generated-config.GeneratedConfig
+
+Generated website configuration.
 
 ---
 
@@ -1829,9 +1827,9 @@ const branchPipelinesProps: BranchPipelinesProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.synthesizer">synthesizer</a></code> | <code>aws-cdk-lib.IStackSynthesizer</code> | Synthesis method to use while deploying this stack. |
 | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Stack tags that will be applied to all the taggable resources and the stack itself. |
 | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether to enable termination protection for this stack. |
-| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.component">component</a></code> | <code><a href="#@kikoda/cdk-constructs.ComponentConfig">ComponentConfig</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.deploymentBranches">deploymentBranches</a></code> | <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch">IDeploymentBranch</a>[]</code> | An interface representing the configutation for each branch and its related stage. |
-| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.pipelineConfig">pipelineConfig</a></code> | <code><a href="#@kikoda/cdk-constructs.PipelineConfig">PipelineConfig</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.component">component</a></code> | <code><a href="#@kikoda/cdk-constructs.ComponentConfig">ComponentConfig</a></code> | Configuration for the component to be deployed. |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.deploymentBranches">deploymentBranches</a></code> | <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch">IDeploymentBranch</a>[]</code> | An interface representing the configuration for each branch and its related stage. |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.pipelineConfig">pipelineConfig</a></code> | <code><a href="#@kikoda/cdk-constructs.PipelineConfig">PipelineConfig</a></code> | Configuration for the pipeline. |
 | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.repository">repository</a></code> | <code><a href="#@kikoda/cdk-constructs.RepositoryConfig">RepositoryConfig</a></code> | Configuration for the source code repository. |
 
 ---
@@ -2037,6 +2035,8 @@ public readonly component: ComponentConfig;
 
 - *Type:* <a href="#@kikoda/cdk-constructs.ComponentConfig">ComponentConfig</a>
 
+Configuration for the component to be deployed.
+
 ---
 
 ##### `deploymentBranches`<sup>Required</sup> <a name="deploymentBranches" id="@kikoda/cdk-constructs.BranchPipelinesProps.property.deploymentBranches"></a>
@@ -2047,7 +2047,7 @@ public readonly deploymentBranches: IDeploymentBranch[];
 
 - *Type:* <a href="#@kikoda/cdk-constructs.IDeploymentBranch">IDeploymentBranch</a>[]
 
-An interface representing the configutation for each branch and its related stage.
+An interface representing the configuration for each branch and its related stage.
 
 ---
 
@@ -2058,6 +2058,8 @@ public readonly pipelineConfig: PipelineConfig;
 ```
 
 - *Type:* <a href="#@kikoda/cdk-constructs.PipelineConfig">PipelineConfig</a>
+
+Configuration for the pipeline.
 
 ---
 
@@ -2071,7 +2073,8 @@ public readonly repository: RepositoryConfig;
 
 Configuration for the source code repository.
 
-Currently supports GitHub and CodeArtifacts.
+Currently supports GitHub
+and CodeArtifacts.
 
 ---
 
@@ -2180,9 +2183,9 @@ const componentPipelineStackProps: ComponentPipelineStackProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Stack tags that will be applied to all the taggable resources and the stack itself. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether to enable termination protection for this stack. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.branch">branch</a></code> | <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch">IDeploymentBranch</a></code> | The deployment branch that this stack represents. |
-| <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.component">component</a></code> | <code><a href="#@kikoda/cdk-constructs.ComponentConfig">ComponentConfig</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.pipelineConfig">pipelineConfig</a></code> | <code><a href="#@kikoda/cdk-constructs.PipelineConfig">PipelineConfig</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.repository">repository</a></code> | <code><a href="#@kikoda/cdk-constructs.RepositoryConfig">RepositoryConfig</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.component">component</a></code> | <code><a href="#@kikoda/cdk-constructs.ComponentConfig">ComponentConfig</a></code> | Configuration for the component to be deployed. |
+| <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.pipelineConfig">pipelineConfig</a></code> | <code><a href="#@kikoda/cdk-constructs.PipelineConfig">PipelineConfig</a></code> | Configuration for the pipeline. |
+| <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.repository">repository</a></code> | <code><a href="#@kikoda/cdk-constructs.RepositoryConfig">RepositoryConfig</a></code> | Configuration for the source code repository. |
 
 ---
 
@@ -2399,6 +2402,8 @@ public readonly component: ComponentConfig;
 
 - *Type:* <a href="#@kikoda/cdk-constructs.ComponentConfig">ComponentConfig</a>
 
+Configuration for the component to be deployed.
+
 ---
 
 ##### `pipelineConfig`<sup>Required</sup> <a name="pipelineConfig" id="@kikoda/cdk-constructs.ComponentPipelineStackProps.property.pipelineConfig"></a>
@@ -2409,6 +2414,8 @@ public readonly pipelineConfig: PipelineConfig;
 
 - *Type:* <a href="#@kikoda/cdk-constructs.PipelineConfig">PipelineConfig</a>
 
+Configuration for the pipeline.
+
 ---
 
 ##### `repository`<sup>Required</sup> <a name="repository" id="@kikoda/cdk-constructs.ComponentPipelineStackProps.property.repository"></a>
@@ -2418,6 +2425,11 @@ public readonly repository: RepositoryConfig;
 ```
 
 - *Type:* <a href="#@kikoda/cdk-constructs.RepositoryConfig">RepositoryConfig</a>
+
+Configuration for the source code repository.
+
+Currently supports GitHub
+and CodeArtifacts.
 
 ---
 
@@ -2442,7 +2454,7 @@ const configuredStageProps: ConfiguredStageProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStageProps.property.permissionsBoundary">permissionsBoundary</a></code> | <code>aws-cdk-lib.PermissionsBoundary</code> | Options for applying a permissions boundary to all IAM Roles and Users created within this Stage. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStageProps.property.policyValidationBeta1">policyValidationBeta1</a></code> | <code>aws-cdk-lib.IPolicyValidationPluginBeta1[]</code> | Validation plugins to run during synthesis. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStageProps.property.stageName">stageName</a></code> | <code>string</code> | Name of this stage. |
-| <code><a href="#@kikoda/cdk-constructs.ConfiguredStageProps.property.config">config</a></code> | <code>any</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.ConfiguredStageProps.property.config">config</a></code> | <code>any</code> | The configuration for the stage. |
 
 ---
 
@@ -2554,9 +2566,16 @@ public readonly config: any;
 
 - *Type:* any
 
+The configuration for the stage.
+
 ---
 
 ### GenerateWebConfigProps <a name="GenerateWebConfigProps" id="@kikoda/cdk-constructs.GenerateWebConfigProps"></a>
+
+Configuration options used for generating a web config from base and stage level configs.
+
+This is used to provide deploy-time configuration items to
+the application.
 
 #### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.GenerateWebConfigProps.Initializer"></a>
 
@@ -2600,11 +2619,11 @@ public readonly configDir: string;
 
 The directory where base (optional) and stage level config (json) files are stored.
 
-This
-should be relative to `appDir`. When using `generateConfig`, there needs to at least be a
-`${stage}.config.json` in this directory. You can optionally include a `base.config.json`
-file that all stage configs will inherit from (likewise you can override base config values
-in stage level configs if needed).
+This should be relative to `appDir`. When using
+`generateConfig`, there needs to at least be a `${stage}.config.json` in
+this directory. You can optionally include a `base.config.json` file that
+all stage configs will inherit from (likewise you can override base config
+values in stage level configs if needed).
 
 ---
 
@@ -2639,7 +2658,8 @@ public readonly options: ConnectionSourceOptions;
 
 CodeStar connection options.
 
-GitHub sources require use of a CodeStar connection.
+GitHub sources require use of a CodeStar
+connection.
 
 ---
 
@@ -2656,6 +2676,8 @@ The owner of the GitHub repository.
 ---
 
 ### InstanceAutoStartProps <a name="InstanceAutoStartProps" id="@kikoda/cdk-constructs.InstanceAutoStartProps"></a>
+
+Properties for the InstanceAutoStart construct.
 
 #### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.InstanceAutoStartProps.Initializer"></a>
 
@@ -2700,6 +2722,8 @@ The schedule to start the instance.
 
 ### InstanceAutoStopProps <a name="InstanceAutoStopProps" id="@kikoda/cdk-constructs.InstanceAutoStopProps"></a>
 
+Properties for the InstanceAutoStop construct.
+
 #### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.InstanceAutoStopProps.Initializer"></a>
 
 ```typescript
@@ -2743,6 +2767,8 @@ The schedule to stop the instance.
 
 ### PipelineConfig <a name="PipelineConfig" id="@kikoda/cdk-constructs.PipelineConfig"></a>
 
+Pipeline configuration.
+
 #### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.PipelineConfig.Initializer"></a>
 
 ```typescript
@@ -2756,7 +2782,7 @@ const pipelineConfig: PipelineConfig = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.assetPublishingCodeBuildDefaults">assetPublishingCodeBuildDefaults</a></code> | <code>aws-cdk-lib.pipelines.CodeBuildOptions</code> | CodeBuild options for the asset publishing step. |
-| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.notificationTopicArn">notificationTopicArn</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.notificationTopicArn">notificationTopicArn</a></code> | <code>string</code> | Arn of the notification topic to send pipeline event notifications to. |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.pruneCloudAssembly">pruneCloudAssembly</a></code> | <code>boolean</code> | Add a step to pull down and remove asset zips from the cloud assembly output from the Synth step. |
 | <code><a href="#@kikoda/cdk-constructs.PipelineConfig.property.synthCodeBuildDefaults">synthCodeBuildDefaults</a></code> | <code>aws-cdk-lib.pipelines.CodeBuildOptions</code> | Additional customizations to apply to the synthesize CodeBuild projects. |
 
@@ -2769,11 +2795,16 @@ public readonly assetPublishingCodeBuildDefaults: CodeBuildOptions;
 ```
 
 - *Type:* aws-cdk-lib.pipelines.CodeBuildOptions
+- *Default:* Only `codeBuildDefaults` are applied
 
 CodeBuild options for the asset publishing step.
 
-Maps to the CodePipelineProps assetPublishingCodeBuildDefaults.
-These will be merged with options to handle CodeArtifacts repositories if `codeArtifactRepositoryArn` is also specified.
+Maps to the
+CodePipelineProps assetPublishingCodeBuildDefaults. These will be merged
+with options to handle CodeArtifacts repositories if
+`codeArtifactRepositoryArn` is also specified.
+
+> [{@link CodePipelineProps.assetPublishingCodeBuildDefaults}]({@link CodePipelineProps.assetPublishingCodeBuildDefaults})
 
 ---
 
@@ -2784,6 +2815,9 @@ public readonly notificationTopicArn: string;
 ```
 
 - *Type:* string
+- *Default:* event notifications are not sent.
+
+Arn of the notification topic to send pipeline event notifications to.
 
 ---
 
@@ -2794,11 +2828,12 @@ public readonly pruneCloudAssembly: boolean;
 ```
 
 - *Type:* boolean
+- *Default:* true
 
 Add a step to pull down and remove asset zips from the cloud assembly output from the Synth step.
 
-This is usefull when you have a lot of resources and are hitting the CFN limit for input
-artifact size.
+This is useful when you have a lot of
+resources and are hitting the CFN limit for input artifact size.
 
 ---
 
@@ -2812,6 +2847,8 @@ public readonly synthCodeBuildDefaults: CodeBuildOptions;
 - *Default:* Only `codeBuildDefaults` are applied
 
 Additional customizations to apply to the synthesize CodeBuild projects.
+
+> [{@link CodePipelineProps.synthCodeBuildDefaults}]({@link CodePipelineProps.synthCodeBuildDefaults})
 
 ---
 
@@ -2831,9 +2868,9 @@ const repositoryConfig: RepositoryConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.RepositoryConfig.property.source">source</a></code> | <code><a href="#@kikoda/cdk-constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a> \| <a href="#@kikoda/cdk-constructs.GitHubSourceConfig">GitHubSourceConfig</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.RepositoryConfig.property.source">source</a></code> | <code><a href="#@kikoda/cdk-constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a> \| <a href="#@kikoda/cdk-constructs.GitHubSourceConfig">GitHubSourceConfig</a></code> | Configuration for specifying the source repository. |
 | <code><a href="#@kikoda/cdk-constructs.RepositoryConfig.property.baseDir">baseDir</a></code> | <code>string</code> | Base directory for the repository. |
-| <code><a href="#@kikoda/cdk-constructs.RepositoryConfig.property.synthOuputDir">synthOuputDir</a></code> | <code>string</code> | Output directory for the cloudformation synthisis. |
+| <code><a href="#@kikoda/cdk-constructs.RepositoryConfig.property.synthOuputDir">synthOuputDir</a></code> | <code>string</code> | Output directory for the cloudformation synthesis. |
 
 ---
 
@@ -2844,6 +2881,8 @@ public readonly source: CodeCommitSourceConfig | GitHubSourceConfig;
 ```
 
 - *Type:* <a href="#@kikoda/cdk-constructs.CodeCommitSourceConfig">CodeCommitSourceConfig</a> | <a href="#@kikoda/cdk-constructs.GitHubSourceConfig">GitHubSourceConfig</a>
+
+Configuration for specifying the source repository.
 
 ---
 
@@ -2869,7 +2908,7 @@ public readonly synthOuputDir: string;
 - *Type:* string
 - *Default:* './out'
 
-Output directory for the cloudformation synthisis.
+Output directory for the cloudformation synthesis.
 
 ---
 
@@ -3093,12 +3132,15 @@ public readonly manualApproval: boolean;
 ```
 
 - *Type:* boolean
+- *Default:* no manual approval step added.
 
 Add a manual approval step when deploying this stage.
 
 ---
 
 ### WebsiteProps <a name="WebsiteProps" id="@kikoda/cdk-constructs.WebsiteProps"></a>
+
+Properties for the Website construct.
 
 #### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.WebsiteProps.Initializer"></a>
 
@@ -3118,13 +3160,13 @@ const websiteProps: WebsiteProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.alternateDomainNames">alternateDomainNames</a></code> | <code>string[]</code> | Specify alternate domain names to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildAssetExcludes">buildAssetExcludes</a></code> | <code>string[]</code> | Provide an array of glob patterns to exclude from the build output. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildCommand">buildCommand</a></code> | <code>string</code> | The command for building the website (e.g. "yarn run build"). |
-| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildDir">buildDir</a></code> | <code>string</code> | Path to the build output, relative to the `appDir`. |
-| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.bundling">bundling</a></code> | <code>aws-cdk-lib.BundlingOptions</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.buildDir">buildDir</a></code> | <code>string</code> | Path to the build output, relative to the `appDir` that contains the build output/artifacts. |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.bundling">bundling</a></code> | <code>aws-cdk-lib.BundlingOptions</code> | Bundle the asset by executing a command in a Docker container or a custom bundling provider. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.cloudfrontInvalidationPaths">cloudfrontInvalidationPaths</a></code> | <code>string[]</code> | Specify the paths to be invalidated in the Cloudfront Distribution at the end of the deployment. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.corsAllowedOrigins">corsAllowedOrigins</a></code> | <code>string[]</code> | Specify a list of allowed request origins to use when configuring CORS (must also specify `enableCors`). |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.domainName">domainName</a></code> | <code>string</code> | Specify a domain name to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.enableCors">enableCors</a></code> | <code>boolean</code> | Setup S3 bucket and Cloudfront distribution to allow CORS requests. |
-| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.generateWebConfigProps">generateWebConfigProps</a></code> | <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps">GenerateWebConfigProps</a></code> | Specify options for gernerating a web config from base and stage level configs. |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.generateWebConfigProps">generateWebConfigProps</a></code> | <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps">GenerateWebConfigProps</a></code> | Specify options for generating a web config from base and stage level configs. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | Specify an existing hosted zone to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.indexDoc">indexDoc</a></code> | <code>string</code> | The name of the index document to load, typically 'index.html'. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.onlyDefaultDomain">onlyDefaultDomain</a></code> | <code>boolean</code> | Do not create or look up a hosted zone or certificates for the website. |
@@ -3154,7 +3196,8 @@ public readonly stage: string;
 
 String indicator of which environment/stage is being deployed ex.
 
-'dev', 'test', 'prod'
+'dev',
+'test', 'prod'
 
 ---
 
@@ -3165,10 +3208,9 @@ public readonly acmCertificateArn: string;
 ```
 
 - *Type:* string
+- *Default:* if `onlyDefaultDomain` is `false` and this property is undefined and all the domain names are in the same hosted zone, a new certificate will be create
 
 Provide an ACM certificate ARN to use for the website.
-
-This property will be ignored if `onlyDefaultDomain` is `true`.
 
 ---
 
@@ -3183,11 +3225,9 @@ public readonly alternateDomainNames: string[];
 
 Specify alternate domain names to use for the website.
 
-An Alias record will
-only be created if the alternate domain name is in the provided hosted zone.
-If you need to use a different hosted zone, consider using the `acmCertificateArn`
-option instead to provide a certificate with the alternate domain names.
-This property will be ignored if `onlyDefaultDomain` is `true`.
+An Alias record
+will only be created if the alternate domain name is in the provided
+hosted zone.
 
 ---
 
@@ -3198,12 +3238,13 @@ public readonly buildAssetExcludes: string[];
 ```
 
 - *Type:* string[]
+- *Default:* No build assets are excluded.
 
 Provide an array of glob patterns to exclude from the build output.
 
-This is useful if you have
-files that are generated during the build process that you don't want to include in the
-final build output.
+This
+is useful if you have files that are generated during the build process
+that you do not want to include in the final build output.
 
 ---
 
@@ -3214,6 +3255,7 @@ public readonly buildCommand: string;
 ```
 
 - *Type:* string
+- *Default:* No build command. If this property is undefined the build step should be specified using the `bundling` prop.
 
 The command for building the website (e.g. "yarn run build").
 
@@ -3226,8 +3268,9 @@ public readonly buildDir: string;
 ```
 
 - *Type:* string
+- *Default:* No build direction. If this property is undefined the build step should be specified using the `bundling` prop.
 
-Path to the build output, relative to the `appDir`.
+Path to the build output, relative to the `appDir` that contains the build output/artifacts.
 
 ---
 
@@ -3238,6 +3281,11 @@ public readonly bundling: BundlingOptions;
 ```
 
 - *Type:* aws-cdk-lib.BundlingOptions
+- *Default:* uploaded as-is to S3 if the asset is a regular file or a .zip file, archived into a .zip file and uploaded to S3 otherwise
+
+Bundle the asset by executing a command in a Docker container or a custom bundling provider.
+
+> [{@link AssetOptions.bundling}]({@link AssetOptions.bundling})
 
 ---
 
@@ -3274,10 +3322,9 @@ public readonly domainName: string;
 ```
 
 - *Type:* string
+- *Default:* This property is required unless `onlyDefaultDomain` is `true`, in which case it will be ignored.
 
 Specify a domain name to use for the website.
-
-This property is required unless `onlyDefaultDomain` is `true`, in which case it will be ignored.
 
 ---
 
@@ -3288,10 +3335,11 @@ public readonly enableCors: boolean;
 ```
 
 - *Type:* boolean
+- *Default:* CORS is not enabled.
 
 Setup S3 bucket and Cloudfront distribution to allow CORS requests.
 
-Optionally specificy the allowed Origins with `corsAllowedOrigins`
+Optionally specify the allowed Origins with `corsAllowedOrigins`.
 
 ---
 
@@ -3302,11 +3350,9 @@ public readonly generateWebConfigProps: GenerateWebConfigProps;
 ```
 
 - *Type:* <a href="#@kikoda/cdk-constructs.GenerateWebConfigProps">GenerateWebConfigProps</a>
+- *Default:* Do not generate a web config.
 
-Specify options for gernerating a web config from base and stage level configs.
-
-Must
-enable `generateWebConfig`
+Specify options for generating a web config from base and stage level configs.
 
 ---
 
@@ -3320,8 +3366,6 @@ public readonly hostedZone: IHostedZone;
 - *Default:* This construct will try to lookup an existing hosted zone for the domain name provided, unless `onlyDefaultDomain` is `true`.
 
 Specify an existing hosted zone to use for the website.
-
-This property will be ignored if `onlyDefaultDomain` is `true`.
 
 ---
 
@@ -3350,7 +3394,6 @@ public readonly onlyDefaultDomain: boolean;
 Do not create or look up a hosted zone or certificates for the website.
 
 The website will be served under the default CloudFront domain only.
-Setting this to `true` will ignore the values set for `acmCertificateArn`, `domainName`, `alternateDomainNames`, and `hostedZone`.
 
 ---
 
@@ -3361,12 +3404,14 @@ public readonly repoRoot: string;
 ```
 
 - *Type:* string
+- *Default:* if not provided, the `appDir` path will be used.
 
 This should be the root directory of the git repository.
 
-Dependending on your repository setup
-this may be required for Docker-based bundling. This path, if provided will be used as the mount point
-for the Docker container during bundling. If this is not provided, the `appDir` path will be used.
+Depending on your
+repository setup this may be required for Docker-based bundling. This
+path, if provided, will be used as the mount point for the Docker
+container during bundling.
 
 ---
 
@@ -3374,7 +3419,7 @@ for the Docker container during bundling. If this is not provided, the `appDir` 
 
 ### BranchPipelines <a name="BranchPipelines" id="@kikoda/cdk-constructs.BranchPipelines"></a>
 
-Branch  pipelines creates an individual component deployment pipeline stack for each branch.
+Branch pipelines creates an individual component deployment pipeline stack for each branch.
 
 #### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.BranchPipelines.Initializer"></a>
 
@@ -3430,6 +3475,8 @@ Instance(s) of ComponentPipelineStacks created.
 
 - *Implements:* aws-cdk-lib.IAspect
 
+The Cost Optimization pillar of the Well-Architected Framework includes the ability to run systems to deliver business value at the lowest price point.
+
 #### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.CostOptimizationAspects.Initializer"></a>
 
 ```typescript
@@ -3470,6 +3517,8 @@ All aspects can visit an IConstruct.
 
 ### FlagBasedAnnotator <a name="FlagBasedAnnotator" id="@kikoda/cdk-constructs.FlagBasedAnnotator"></a>
 
+Write annotations under the given feature flag using the derived flag level.
+
 #### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.FlagBasedAnnotator.Initializer"></a>
 
 ```typescript
@@ -3501,7 +3550,7 @@ new FlagBasedAnnotator(scope: IConstruct, featureFlag: WellArchitectedAspectsFea
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.FlagBasedAnnotator.annotate">annotate</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.FlagBasedAnnotator.annotate">annotate</a></code> | Adds a metadata entry with the derived `flagLevel` to this construct. |
 
 ---
 
@@ -3511,9 +3560,16 @@ new FlagBasedAnnotator(scope: IConstruct, featureFlag: WellArchitectedAspectsFea
 public annotate(message: string): void
 ```
 
+Adds a metadata entry with the derived `flagLevel` to this construct.
+
+The CLI will display the message when the app is synthesized, potentially
+failing depending on the `flagLevel`.
+
 ###### `message`<sup>Required</sup> <a name="message" id="@kikoda/cdk-constructs.FlagBasedAnnotator.annotate.parameter.message"></a>
 
 - *Type:* string
+
+The message to display.
 
 ---
 
@@ -3522,7 +3578,7 @@ public annotate(message: string): void
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.FlagBasedAnnotator.property.flagLevel">flagLevel</a></code> | <code><a href="#@kikoda/cdk-constructs.FlagLevel">FlagLevel</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.FlagBasedAnnotator.property.flagLevel">flagLevel</a></code> | <code><a href="#@kikoda/cdk-constructs.FlagLevel">FlagLevel</a></code> | Level of the annotation entry to write. |
 
 ---
 
@@ -3534,12 +3590,16 @@ public readonly flagLevel: FlagLevel;
 
 - *Type:* <a href="#@kikoda/cdk-constructs.FlagLevel">FlagLevel</a>
 
+Level of the annotation entry to write.
+
 ---
 
 
 ### OperationalExcellenceAspects <a name="OperationalExcellenceAspects" id="@kikoda/cdk-constructs.OperationalExcellenceAspects"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
+
+The Operational Excellence pillar of the Well-Architected Framework includes the ability to support development and run workloads effectively, gain insight into their operations, and to continuously improve supporting processes and procedures to deliver business value.
 
 #### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.OperationalExcellenceAspects.Initializer"></a>
 
@@ -3583,6 +3643,8 @@ All aspects can visit an IConstruct.
 
 - *Implements:* aws-cdk-lib.IAspect
 
+The Performance Efficiency pillar of the Well-Architected Framework includes the ability to use computing resources efficiently to meet system requirements, and to maintain that efficiency as demand changes and technologies evolve.
+
 #### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.PerformanceEfficiencyAspects.Initializer"></a>
 
 ```typescript
@@ -3624,6 +3686,11 @@ All aspects can visit an IConstruct.
 ### ReliabilityAspects <a name="ReliabilityAspects" id="@kikoda/cdk-constructs.ReliabilityAspects"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
+
+The Reliability pillar of the Well-Architected Framework encompasses the ability of a workload to perform its intended function correctly and consistently when it is expected to.
+
+This includes the ability to operate
+and test the workload through its total lifecycle.
 
 #### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.ReliabilityAspects.Initializer"></a>
 
@@ -3667,6 +3734,8 @@ All aspects can visit an IConstruct.
 
 - *Implements:* aws-cdk-lib.IAspect
 
+The Security pillar of the Well-Architected Framework encompasses the ability to protect data, systems, and assets to take advantage of cloud technologies to improve your security.
+
 #### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.SecurityAspects.Initializer"></a>
 
 ```typescript
@@ -3708,6 +3777,8 @@ All aspects can visit an IConstruct.
 ### SustainabilityAspects <a name="SustainabilityAspects" id="@kikoda/cdk-constructs.SustainabilityAspects"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
+
+The Sustainability pillar of the Well-Architected Framework focuses on environmental impacts, especially energy consumption and efficiency, since they are important levers for architects to inform direct action to reduce resource usage.
 
 #### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.SustainabilityAspects.Initializer"></a>
 
@@ -3806,7 +3877,7 @@ Configuration for the specific deployment.
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch.property.branchName">branchName</a></code> | <code>string</code> | The name of the code branch that this deployment branch represents. |
 | <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch.property.stages">stages</a></code> | <code><a href="#@kikoda/cdk-constructs.StageConfig">StageConfig</a>[]</code> | Configuration for the stages represented by this deployment branch. |
-| <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch.property.staticPipelineIdentifier">staticPipelineIdentifier</a></code> | <code>string</code> | The name to be used by the pipeline stack, it is possible to configure this sperately from the branch name so that updating the branch name does not require destroy/recreate. |
+| <code><a href="#@kikoda/cdk-constructs.IDeploymentBranch.property.staticPipelineIdentifier">staticPipelineIdentifier</a></code> | <code>string</code> | The name to be used by the pipeline stack, it is possible to configure this separately from the branch name so that updating the branch name does not require destroy/recreate. |
 
 ---
 
@@ -3842,7 +3913,7 @@ public readonly staticPipelineIdentifier: string;
 
 - *Type:* string
 
-The name to be used by the pipeline stack, it is possible to configure this sperately from the branch name so that updating the branch name does not require destroy/recreate.
+The name to be used by the pipeline stack, it is possible to configure this separately from the branch name so that updating the branch name does not require destroy/recreate.
 
 ---
 
@@ -3856,22 +3927,22 @@ The Alarm levels.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.AlarmLevels.INFO">INFO</a></code> | For general information these are typically the most verbose. |
-| <code><a href="#@kikoda/cdk-constructs.AlarmLevels.WARNING">WARNING</a></code> | Events that indicate service degredation, inefficency, and/or non blocking errors. |
+| <code><a href="#@kikoda/cdk-constructs.AlarmLevels.INFO">INFO</a></code> | For general information, these are typically the most verbose. |
+| <code><a href="#@kikoda/cdk-constructs.AlarmLevels.WARNING">WARNING</a></code> | Events that indicate service degradation, inefficiency, and/or non blocking errors. |
 | <code><a href="#@kikoda/cdk-constructs.AlarmLevels.CRITICAL">CRITICAL</a></code> | Events that indicate system failures, data loss, and/or blocking errors. |
 
 ---
 
 ##### `INFO` <a name="INFO" id="@kikoda/cdk-constructs.AlarmLevels.INFO"></a>
 
-For general information these are typically the most verbose.
+For general information, these are typically the most verbose.
 
 ---
 
 
 ##### `WARNING` <a name="WARNING" id="@kikoda/cdk-constructs.AlarmLevels.WARNING"></a>
 
-Events that indicate service degredation, inefficency, and/or non blocking errors.
+Events that indicate service degradation, inefficiency, and/or non blocking errors.
 
 ---
 
@@ -3885,38 +3956,54 @@ Events that indicate system failures, data loss, and/or blocking errors.
 
 ### FlagLevel <a name="FlagLevel" id="@kikoda/cdk-constructs.FlagLevel"></a>
 
+Level of the annotation entry to write.
+
 #### Members <a name="Members" id="Members"></a>
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.FlagLevel.INFO">INFO</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.FlagLevel.WARN">WARN</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.FlagLevel.ERROR">ERROR</a></code> | *No description.* |
-| <code><a href="#@kikoda/cdk-constructs.FlagLevel.FIX">FIX</a></code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.FlagLevel.INFO">INFO</a></code> | Info level annotation. |
+| <code><a href="#@kikoda/cdk-constructs.FlagLevel.WARN">WARN</a></code> | Warning level annotation. |
+| <code><a href="#@kikoda/cdk-constructs.FlagLevel.ERROR">ERROR</a></code> | Error level annotation. |
+| <code><a href="#@kikoda/cdk-constructs.FlagLevel.FIX">FIX</a></code> | Auto-fix warning level annotation. |
 
 ---
 
 ##### `INFO` <a name="INFO" id="@kikoda/cdk-constructs.FlagLevel.INFO"></a>
+
+Info level annotation.
 
 ---
 
 
 ##### `WARN` <a name="WARN" id="@kikoda/cdk-constructs.FlagLevel.WARN"></a>
 
+Warning level annotation.
+
+Causes failure when run in --strict mode.
+
 ---
 
 
 ##### `ERROR` <a name="ERROR" id="@kikoda/cdk-constructs.FlagLevel.ERROR"></a>
+
+Error level annotation.
+
+Causes failure when run.
 
 ---
 
 
 ##### `FIX` <a name="FIX" id="@kikoda/cdk-constructs.FlagLevel.FIX"></a>
 
+Auto-fix warning level annotation.
+
 ---
 
 
 ### WellArchitectedAspectsFeatureFlags <a name="WellArchitectedAspectsFeatureFlags" id="@kikoda/cdk-constructs.WellArchitectedAspectsFeatureFlags"></a>
+
+Feature flags to enable specific aspect behavior.
 
 #### Members <a name="Members" id="Members"></a>
 

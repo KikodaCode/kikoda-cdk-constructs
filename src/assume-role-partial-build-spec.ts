@@ -1,19 +1,17 @@
 import { BuildSpec } from 'aws-cdk-lib/aws-codebuild';
 
 /**
- * The partial buildspec that includes commands to assume a role and pass credentials to a docker build call.
- * This is designed to be used with CodePipelineProps.assetPublishingCodeBuildDefaults.partialBuildSpec.
+ * The partial buildspec that includes commands to assume a role and pass
+ * credentials to a docker build call.
  *
- * @export
- * @class AssumeRolePartialBuildSpec
- * @typedef {AssumeRolePartialBuildSpec}
+ * @remarks
+ * This is designed to be used with
+ * `CodePipelineProps.assetPublishingCodeBuildDefaults.partialBuildSpec`.
  */
 export class AssumeRolePartialBuildSpec {
   /**
-   * The partial buildspec. This is designed to be used with CodePipelineProps.assetPublishingCodeBuildDefaults.partialBuildSpec.
-   *
-   * @public
-   * @type {BuildSpec}
+   * The partial buildspec. This is designed to be used with
+   * `CodePipelineProps.assetPublishingCodeBuildDefaults.partialBuildSpec`.
    */
   public partialBuildSpec: BuildSpec;
   /**
