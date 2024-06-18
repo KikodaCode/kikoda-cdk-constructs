@@ -2572,10 +2572,7 @@ The configuration for the stage.
 
 ### GenerateWebConfigProps <a name="GenerateWebConfigProps" id="@kikoda/cdk-constructs.GenerateWebConfigProps"></a>
 
-Configuration options used for generating a web config from base and stage level configs.
-
-This is used to provide deploy-time configuration items to
-the application.
+Configuration options for generating a web config from base and stage level configs.
 
 #### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.GenerateWebConfigProps.Initializer"></a>
 
@@ -2929,7 +2926,7 @@ const stageAlarmTopicProps: StageAlarmTopicProps = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.StageAlarmTopicProps.property.level">level</a></code> | <code><a href="#@kikoda/cdk-constructs.AlarmLevels">AlarmLevels</a></code> | The alert level. |
-| <code><a href="#@kikoda/cdk-constructs.StageAlarmTopicProps.property.createCfnExport">createCfnExport</a></code> | <code>boolean</code> | If true a CFN export will be created. |
+| <code><a href="#@kikoda/cdk-constructs.StageAlarmTopicProps.property.createCfnExport">createCfnExport</a></code> | <code>boolean</code> | If true, a CFN export will be created. |
 | <code><a href="#@kikoda/cdk-constructs.StageAlarmTopicProps.property.prefix">prefix</a></code> | <code>string</code> | The identifier prefix. |
 
 ---
@@ -2944,7 +2941,8 @@ public readonly level: AlarmLevels;
 
 The alert level.
 
-This is used in the Topic displayName and topicName, and the cfn export name.
+This is used in the Topic displayName and topicName, and
+the cfn export name.
 
 ---
 
@@ -2955,8 +2953,9 @@ public readonly createCfnExport: boolean;
 ```
 
 - *Type:* boolean
+- *Default:* no CFN export is created.
 
-If true a CFN export will be created.
+If true, a CFN export will be created.
 
 ---
 
@@ -2967,6 +2966,7 @@ public readonly prefix: string;
 ```
 
 - *Type:* string
+- *Default:* no prefix is added to the identifier.
 
 The identifier prefix.
 
@@ -3927,7 +3927,7 @@ The Alarm levels.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@kikoda/cdk-constructs.AlarmLevels.INFO">INFO</a></code> | For general information, these are typically the most verbose. |
+| <code><a href="#@kikoda/cdk-constructs.AlarmLevels.INFO">INFO</a></code> | For general information. |
 | <code><a href="#@kikoda/cdk-constructs.AlarmLevels.WARNING">WARNING</a></code> | Events that indicate service degradation, inefficiency, and/or non blocking errors. |
 | <code><a href="#@kikoda/cdk-constructs.AlarmLevels.CRITICAL">CRITICAL</a></code> | Events that indicate system failures, data loss, and/or blocking errors. |
 
@@ -3935,7 +3935,9 @@ The Alarm levels.
 
 ##### `INFO` <a name="INFO" id="@kikoda/cdk-constructs.AlarmLevels.INFO"></a>
 
-For general information, these are typically the most verbose.
+For general information.
+
+These are typically the most verbose.
 
 ---
 
