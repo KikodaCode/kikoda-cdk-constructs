@@ -6,51 +6,30 @@ import { findUpMultiple } from './util';
 
 /**
  * PackageManager properties.
- *
- * @interface PackageManagerProps
- * @typedef {PackageManagerProps}
  */
 interface PackageManagerProps {
   /**
    * Lockfile filename.
-   *
-   * @readonly
-   * @type {string}
    */
   readonly lockFile: string;
   /**
    * Install command parts.
-   *
-   * @readonly
-   * @type {string[]}
    */
   readonly installCommand: string[];
   /**
    * Run command parts.
-   *
-   * @readonly
-   * @type {string[]}
    */
   readonly runCommand: string[];
   /**
    * Run command parts.
-   *
-   * @readonly
-   * @type {string[]}
    */
   readonly scriptCommand: string[];
   /**
    * The separator for passing arguments to commands.
-   *
-   * @readonly
-   * @type {?string}
    */
   readonly argsSeparator?: string;
   /**
    * The separator for passing arguments to commands.
-   *
-   * @readonly
-   * @type {?string}
    */
   readonly scriptArgFlag?: string;
 }
@@ -176,14 +155,14 @@ export class PackageManager {
     ].join(' ');
   }
 
-  public runScript(script: string, ...additonalArgs: string[]): string {
+  public runScript(script: string, ...additionalArgs: string[]): string {
     return [
       ...this.scriptCommand,
       script,
-      ...(additonalArgs.length > 0
+      ...(additionalArgs.length > 0
         ? this.scriptArgFlag
-          ? [this.scriptArgFlag, ...additonalArgs]
-          : [...additonalArgs]
+          ? [this.scriptArgFlag, ...additionalArgs]
+          : [...additionalArgs]
         : []),
     ].join(' ');
   }

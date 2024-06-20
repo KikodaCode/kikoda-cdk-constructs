@@ -6,67 +6,40 @@ export { StageConfig, PipelineConfig } from './component-pipeline-stack';
 
 /**
  * Configuration for the component to be deployed.
- *
- * @export
- * @interface ComponentConfig
- * @typedef {ComponentConfig}
  */
 export interface ComponentConfig {
   /**
    * The name of this component.
-   *
-   * @readonly
-   * @type {string}
    */
   readonly componentName: string;
   /**
    * A class that extends Stage. This class will be used to create the individual component stages for each specified stage configuration.
-   *
-   * @readonly
-   * @type {typeof Stage}
    */
   readonly componentType: typeof Stage;
 }
 
 /**
  * Configuration for the specific deployment
- *
- * @export
- * @interface IDeploymentBranch
- * @typedef {IDeploymentBranch}
- * @template TConfig
  */
 export interface IDeploymentBranch<TConfig> {
   /**
    * The name of the code branch that this deployment branch represents.
-   *
-   * @readonly
-   * @type {string}
    */
   readonly branchName: string;
   /**
-   * The name to be used by the pipeline stack, it is possible to configure this sperately from the branch name so that updating the branch name does not require destroy/recreate.
-   *
-   * @readonly
-   * @type {string}
+   * The name to be used by the pipeline stack, it is possible to configure
+   * this separately from the branch name so that updating the branch name does
+   * not require destroy/recreate.
    */
   readonly staticPipelineIdentifier?: string;
   /**
    * Configuration for the stages represented by this deployment branch.
-   *
-   * @readonly
-   * @type {StageConfig<TConfig>[]}
    */
   readonly stages: StageConfig<TConfig>[];
 }
 /**
  * Configuration for the BranchPipelines construct.
  *
- * @export
- * @interface BranchPipelinesProps
- * @typedef {BranchPipelinesProps}
- * @template TConfig
- * @template TBranch extends IDeploymentBranch<TConfig> = IDeploymentBranch<TConfig>
  * @extends {StackProps}
  */
 export interface BranchPipelinesProps<
@@ -74,30 +47,28 @@ export interface BranchPipelinesProps<
   TBranch extends IDeploymentBranch<TConfig> = IDeploymentBranch<TConfig>,
 > extends StackProps {
   /**
-   * An interface representing the configutation for each branch and its related stage.
-   *
-   * @readonly
-   * @type {TBranch[]}
+   * An interface representing the configuration for each branch and its
+   * related stage.
    */
   readonly deploymentBranches: TBranch[];
+  /**
+   * Configuration for the pipeline.
+   */
   readonly pipelineConfig: PipelineConfig;
   /**
-   * Configuration for the source code repository. Currently supports GitHub and CodeArtifacts.
-   * @readonly
-   * @type {RepositoryConfig}
+   * Configuration for the source code repository. Currently supports GitHub
+   * and CodeArtifacts.
    */
   readonly repository: RepositoryConfig;
+  /**
+   * Configuration for the component to be deployed.
+   */
   readonly component: ComponentConfig;
 }
 
 /**
- * Branch  pipelines creates an individual component deployment pipeline stack for each branch.
- *
- * @export
- * @class BranchPipelines
- * @typedef {BranchPipelines}
- * @template TConfig
- * @template TBranch extends IDeploymentBranch<TConfig> = IDeploymentBranch<TConfig>
+ * Branch pipelines creates an individual component deployment pipeline stack
+ * for each branch.
  */
 export class BranchPipelines<
   TConfig,
@@ -106,7 +77,7 @@ export class BranchPipelines<
   /**
    * Instance(s) of ComponentPipelineStacks created
    */
-  readonly componentPipelineStacks: ComponentPipelineStack<TConfig, TBranch>[] = [];
+  public readonly componentPipelineStacks: ComponentPipelineStack<TConfig, TBranch>[] = [];
 
   /**
    * Creates an instance of DeploymentPipelines.

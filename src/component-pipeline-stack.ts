@@ -19,66 +19,58 @@ import { defineSynthCommands } from './util';
 /**
  * Configuration for the stage.
  *
- * @export
- * @interface StageConfig
- * @typedef {StageConfig}
- * @template TConfig
+ * @extends StageProps
  */
 export interface StageConfig<TConfig> extends StageProps {
   /**
    * The name of the stage.
-   *
-   * @readonly
-   * @type {string}
    */
   readonly name: string;
   /**
    * Add a manual approval step when deploying this stage.
    *
-   * @readonly
-   * @type {?boolean}
+   * @default - no manual approval step added.
    */
   readonly manualApproval?: boolean;
   /**
    * The generic config.
-   *
-   * @readonly
-   * @type {TConfig}
    */
   readonly config: TConfig;
 }
 
 /**
- *
- * @export
- * @interface PipelineConfig
- * @typedef {PipelineConfig}
+ * Pipeline configuration.
  */
 export interface PipelineConfig {
   /**
-   * Add a step to pull down and remove asset zips from the cloud assembly output from the Synth
-   * step. This is usefull when you have a lot of resources and are hitting the CFN limit for input
-   * artifact size.
+   * Add a step to pull down and remove asset zips from the cloud assembly
+   * output from the Synth step. This is useful when you have a lot of
+   * resources and are hitting the CFN limit for input artifact size.
    *
-   * @readonly
-   * @type {?boolean}
+   * @default true
    */
   readonly pruneCloudAssembly?: boolean;
   /**
+   * Arn of the notification topic to send pipeline event notifications to.
    *
-   * @readonly
-   * @type {?string}
+   * @default - event notifications are not sent.
    */
   readonly notificationTopicArn?: string;
-
   /**
-   * CodeBuild options for the asset publishing step. Maps to the CodePipelineProps assetPublishingCodeBuildDefaults.
-   * These will be merged with options to handle CodeArtifacts repositories if `codeArtifactRepositoryArn` is also specified.
-   * @readonly
+   * CodeBuild options for the asset publishing step. Maps to the
+   * CodePipelineProps assetPublishingCodeBuildDefaults. These will be merged
+   * with options to handle CodeArtifacts repositories if
+   * `codeArtifactRepositoryArn` is also specified.
+   *
+   * @see {@link CodePipelineProps.assetPublishingCodeBuildDefaults}
+   *
+   * @default - Only `codeBuildDefaults` are applied
    */
   readonly assetPublishingCodeBuildDefaults?: CodePipelineProps['assetPublishingCodeBuildDefaults'];
   /**
-   * Additional customizations to apply to the synthesize CodeBuild projects
+   * Additional customizations to apply to the synthesize CodeBuild projects.
+   *
+   * @see {@link CodePipelineProps.synthCodeBuildDefaults}
    *
    * @default - Only `codeBuildDefaults` are applied
    */
@@ -88,34 +80,32 @@ export interface PipelineConfig {
 /**
  * The properties for the ComponentPipelineStack construct.
  *
- * @export
- * @interface ComponentPipelineStackProps
- * @typedef {ComponentPipelineStackProps}
- * @template TConfig
- * @template TBranch extends IDeploymentBranch<TConfig>
- * @extends {DeploymentPipelinesProps<TConfig, TBranch>}
+ * @extends {StackProps}
  */
 export interface ComponentPipelineStackProps<TConfig, TBranch extends IDeploymentBranch<TConfig>>
   extends StackProps {
   /**
    * The deployment branch that this stack represents.
-   *
-   * @type {TBranch}
    */
   readonly branch: TBranch;
+  /**
+   * Configuration for the source code repository. Currently supports GitHub
+   * and CodeArtifacts.
+   */
   readonly repository: RepositoryConfig;
+  /**
+   * Configuration for the pipeline.
+   */
   readonly pipelineConfig: PipelineConfig;
+  /**
+   * Configuration for the component to be deployed.
+   */
   readonly component: ComponentConfig;
 }
 
 /**
  * An individual component deployment pipeline stack.
  *
- * @export
- * @class ComponentPipelineStack
- * @typedef {ComponentPipelineStack}
- * @template TConfig
- * @template TBranch extends IDeploymentBranch<TConfig>
  * @extends {Stack}
  */
 export class ComponentPipelineStack<

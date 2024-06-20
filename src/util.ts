@@ -6,11 +6,10 @@ import { findLockFile, PackageManager } from './package-manager';
  * Creates synth commands based on input parameters.
  *
  * @private
- * @param {?string} [synthOutputDir]
- * @param {?string} [baseDir]
- * @param {?string} [assumeRoleArn]
- * @param {boolean} [installRequired=true]
- * @returns {{}}
+ * @param baseDir
+ * @param synthOutputDir
+ * @param depsLockFilePath
+ * @param installRequired - defaults to true
  */
 export function defineSynthCommands(
   baseDir?: string,
@@ -34,6 +33,7 @@ export function defineSynthCommands(
   }
   return commands;
 }
+
 /**
  * Find a file by walking up parent directories
  */

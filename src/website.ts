@@ -1,4 +1,6 @@
 import { ConfigManifest, GeneratedConfig, AdditionalConfigObject } from '@kikoda/generated-config';
+// @ts-ignore - Type used in TSDoc @see {@link} comment.
+import type { AssetOptions } from 'aws-cdk-lib';
 import { OriginRequestPolicy, SecurityPolicyProtocol } from 'aws-cdk-lib/aws-cloudfront';
 import { HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { HttpMethods } from 'aws-cdk-lib/aws-s3';
@@ -7,9 +9,11 @@ import { Construct } from 'constructs';
 import { SinglePageApp, SinglePageAppProps } from './single-page-app';
 import { WebConfig } from './web-config';
 
-/** Presets used for invalidation after deployments to Cloudfront Distributions */
+/**
+ * Presets used for invalidation after deployments to Cloudfront Distributions */
 export const DistributionPathsConfig = {
-  /** Typical React app build with Create React App/react-scripts
+  /**
+   * Typical React app build with Create React App/react-scripts
    * that includes a custom config file and config-manifest.json
    */
   REACT_APP: [
@@ -21,65 +25,124 @@ export const DistributionPathsConfig = {
   ],
 };
 
+/**
+ * Configuration options for generating a web config from base and stage level
+ * configs.
+ *
+ * @remarks This is used to provide deploy-time configuration items to the
+ * application.
+ */
 export interface GenerateWebConfigProps extends AdditionalConfigObject {
-  /** The directory where base (optional) and stage level config (json) files are stored. This
-   * should be relative to `appDir`. When using `generateConfig`, there needs to at least be a
-   * `${stage}.config.json` in this directory. You can optionally include a `base.config.json`
-   * file that all stage configs will inherit from (likewise you can override base config values
-   * in stage level configs if needed).
+  /**
+   * The directory where base (optional) and stage level config (json) files
+   * are stored. This should be relative to `appDir`. When using
+   * `generateConfig`, there needs to at least be a `${stage}.config.json` in
+   * this directory. You can optionally include a `base.config.json` file that
+   * all stage configs will inherit from (likewise you can override base config
+   * values in stage level configs if needed).
    */
   readonly configDir: string;
 }
 
+/**
+ * Properties for the Website construct.
+ */
 export interface WebsiteProps {
-  /** String indicator of which environment/stage is being deployed ex. 'dev', 'test', 'prod' */
+  /**
+   * String indicator of which environment/stage is being deployed ex. 'dev',
+   * 'test', 'prod'
+   */
   readonly stage: string;
 
-  /** This should be the root directory of the git repository. Dependending on your repository setup
-   * this may be required for Docker-based bundling. This path, if provided will be used as the mount point
-   * for the Docker container during bundling. If this is not provided, the `appDir` path will be used.
+  /**
+   * This should be the root directory of the git repository. Depending on your
+   * repository setup this may be required for Docker-based bundling. This
+   * path, if provided, will be used as the mount point for the Docker
+   * container during bundling.
+   *
+   * @default - if not provided, the `appDir` path will be used.
    */
   readonly repoRoot?: string;
 
   /** The full absolute path of the Single Page App */
   readonly appDir: string;
 
-  /** The command for building the website (e.g. "yarn run build"). */
+  /**
+   * The command for building the website (e.g. "yarn run build").
+   *
+   * @remarks
+   * Specify with `buildDir` to configure bundling or use the `bundling` prop.
+   *
+   * @default - No build command. If this property is undefined the build step should be specified using the `bundling` prop.
+   */
   readonly buildCommand?: string;
 
-  /** Path to the build output, relative to the `appDir` */
+  /**
+   * Path to the build output, relative to the `appDir` that contains the build
+   * output/artifacts.
+   *
+   * @remarks
+   * Specify with `buildCommand` to configure bundling or use the `bundling`
+   * prop.
+   *
+   * @default - No build direction. If this property is undefined the build step should be specified using the `bundling` prop.
+   */
   readonly buildDir?: string;
 
   /**
-   * Provide an array of glob patterns to exclude from the build output. This is useful if you have
-   * files that are generated during the build process that you don't want to include in the
-   * final build output.
+   * Provide an array of glob patterns to exclude from the build output. This
+   * is useful if you have files that are generated during the build process
+   * that you do not want to include in the final build output.
+   *
+   * @default - No build assets are excluded.
    */
   readonly buildAssetExcludes?: string[];
 
+  /**
+   * Bundle the asset by executing a command in a Docker container or a custom
+   * bundling provider.
+   *
+   * @see {@link AssetOptions.bundling}
+   *
+   * @default - uploaded as-is to S3 if the asset is a regular file or a .zip file, archived into a .zip file and uploaded to S3 otherwise
+   */
   readonly bundling?: SinglePageAppProps['bundling'];
 
-  /** The name of the index document to load, typically 'index.html'
+  /**
+   * The name of the index document to load, typically 'index.html'
    *
    * @default "index.html"
    */
   readonly indexDoc?: string;
 
-  /** Specify options for gernerating a web config from base and stage level configs. Must
-   * enable `generateWebConfig`
+  /**
+   * Specify options for generating a web config from base and stage level
+   * configs.
+   *
+   * @remarks
+   * Must enable `generateWebConfig`.
+   *
+   * @default - Do not generate a web config.
    */
   readonly generateWebConfigProps?: GenerateWebConfigProps;
 
   /**
-   * Specify a domain name to use for the website. This property is required unless `onlyDefaultDomain` is `true`, in which case it will be ignored.
+   * Specify a domain name to use for the website.
+   *
+   * @default - This property is required unless `onlyDefaultDomain` is `true`, in which case it will be ignored.
    */
   readonly domainName?: string;
 
   /**
-   * Specify alternate domain names to use for the website. An Alias record will
-   * only be created if the alternate domain name is in the provided hosted zone.
-   * If you need to use a different hosted zone, consider using the `acmCertificateArn`
-   * option instead to provide a certificate with the alternate domain names.
+   * Specify alternate domain names to use for the website. An Alias record
+   * will only be created if the alternate domain name is in the provided
+   * hosted zone.
+   *
+   * @remarks
+   * If you need to use a different hosted zone, consider using the
+   * `acmCertificateArn` option instead to provide a certificate with the
+   * alternate domain names.
+   *
    * This property will be ignored if `onlyDefaultDomain` is `true`.
    *
    * @default - No alternate domain names
@@ -87,46 +150,75 @@ export interface WebsiteProps {
   readonly alternateDomainNames?: string[];
 
   /**
-   * Provide an ACM certificate ARN to use for the website. This property will be ignored if `onlyDefaultDomain` is `true`.
+   * Provide an ACM certificate ARN to use for the website.
+   *
+   * @remarks
+   * This property will be ignored if `onlyDefaultDomain` is `true`.
+   *
+   * @default - if `onlyDefaultDomain` is `false` and this property is undefined and all the domain names are in the same hosted zone, a new certificate will be create
    */
   readonly acmCertificateArn?: string;
 
   /**
-   * Specify an existing hosted zone to use for the website. This property will be ignored if `onlyDefaultDomain` is `true`.
+   * Specify an existing hosted zone to use for the website.
+   *
+   * @remarks
+   * This property will be ignored if `onlyDefaultDomain` is `true`.
    *
    * @default - This construct will try to lookup an existing hosted zone for the domain name provided, unless `onlyDefaultDomain` is `true`.
    */
   readonly hostedZone?: IHostedZone;
 
   /**
-   * Do not create or look up a hosted zone or certificates for the website. The website will be served under the default CloudFront domain only.
-   * Setting this to `true` will ignore the values set for `acmCertificateArn`, `domainName`, `alternateDomainNames`, and `hostedZone`.
+   * Do not create or look up a hosted zone or certificates for the website.
+   * The website will be served under the default CloudFront domain only.
+   *
+   * @remarks
+   * Setting this to `true` will ignore the values set for `acmCertificateArn`,
+   * `domainName`, `alternateDomainNames`, and `hostedZone`.
    *
    * @default false
    */
   readonly onlyDefaultDomain?: boolean;
 
-  /** Setup S3 bucket and Cloudfront distribution to allow CORS requests. Optionally specificy the allowed Origins with `corsAllowedOrigins` */
+  /**
+   * Setup S3 bucket and Cloudfront distribution to allow CORS requests.
+   * Optionally specify the allowed Origins with `corsAllowedOrigins`.
+   *
+   * @default CORS is not enabled.
+   */
   readonly enableCors?: boolean;
 
-  /** Specify a list of allowed request origins to use when configuring CORS (must also specify `enableCors`)
+  /**
+   * Specify a list of allowed request origins to use when configuring CORS
+   * (must also specify `enableCors`).
+   *
    * @default ['*']
    */
   readonly corsAllowedOrigins?: string[];
 
-  /** Specify the paths to be invalidated in the Cloudfront Distribution at the end of the deployment
+  /**
+   * Specify the paths to be invalidated in the Cloudfront Distribution at the
+   * end of the deployment.
+   *
    * @default - wildcard invalidation ['/*']
    */
   readonly cloudfrontInvalidationPaths?: string[];
 }
 
-/** Deploy a single page app with a standard static website architecture to AWS using CloudFront, S3, and Route53. This is typically
- * coupled with the `configProvider` hooks in the `@kikoda/delivery-hooks` package using the `generateWebConfig`
- * and `generateWebConfigProps` options.
+/**
+ * Deploy a single page app with a standard static website architecture to AWS
+ * using CloudFront, S3, and Route53.
+ *
+ * @remarks
+ * This is typically coupled with the `configProvider` hooks in the
+ * `@kikoda/delivery-hooks` package using the `generateWebConfig` and
+ * `generateWebConfigProps` options.
  */
 export class Website extends Construct {
-  /** Full website endpoint w/protocol. */
+  /** Full website endpoint with protocol. */
   public readonly endpoint: string;
+  /** Generated website configuration. */
   public readonly generatedWebConfig?: GeneratedConfig<AdditionalConfigObject>;
 
   constructor(scope: Construct, id: string, props: WebsiteProps) {

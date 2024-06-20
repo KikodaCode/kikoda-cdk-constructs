@@ -6,33 +6,21 @@ import { SinglePageApp } from './single-page-app';
 export interface WebConfigProps<T> {
   /**
    * The SinglePageApp to deploy the config file to/for
-   *
-   * @readonly
-   * @type {SinglePageApp}
    */
   readonly spa: SinglePageApp;
 
   /**
    * The filename that should be used for the config file
-   *
-   * @readonly
-   * @type {string}
    */
   readonly configFileName: string;
 
   /**
    * The configuration object to be written to the config file
-   *
-   * @readonly
-   * @type {T}
    */
   readonly config: T;
 
   /**
    * Specify the paths to invalidate after deployment to Cloudfront Distribution
-   *
-   * @readonly
-   * @type {?string[]}
    */
   readonly cloudfrontInvalidationPaths?: string[];
 }

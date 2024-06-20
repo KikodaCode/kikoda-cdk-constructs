@@ -51,6 +51,10 @@
       "type": "build"
     },
     {
+      "name": "awslint",
+      "type": "build"
+    },
+    {
       "name": "delay",
       "type": "build"
     },

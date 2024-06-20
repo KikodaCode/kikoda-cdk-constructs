@@ -5,11 +5,11 @@ import { CodeArtifactAuthTokenAccessStatement } from './codeartifact-auth-token-
 
 export interface CodeArtifactAuthTokenAccessRoleProps {
   /**
-   * The arn of the CodeArtifacts repository. The CodeArtifactAuthTokenAccessStatement is added as an inline policy.
-   * The assumedBy principal defaults to AccountRootPrincipal.
+   * The arn of the CodeArtifacts repository. The
+   * CodeArtifactAuthTokenAccessStatement is added as an inline policy.
    *
-   * @readonly
-   * @type {string}
+   * @remarks
+   * The assumedBy principal defaults to AccountRootPrincipal.
    */
   readonly codeArtifactRepositoryArn: string;
   readonly assumedBy?: RoleProps['assumedBy'];
@@ -26,9 +26,6 @@ export interface CodeArtifactAuthTokenAccessRoleProps {
 /**
  * Access role for a CodeArtifacts repository.
  *
- * @export
- * @class CodeArtifactAuthTokenAccessRole
- * @typedef {CodeArtifactAuthTokenAccessRole}
  * @extends {Role}
  */
 export class CodeArtifactAuthTokenAccessRole extends Role {

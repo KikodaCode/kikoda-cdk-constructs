@@ -55,6 +55,7 @@ const project = new AwsCdkConstructLibrary({
     '@types/uuid',
     '@types/lodash@4.14.191',
     '@types/fs-extra',
+    'awslint',
     'delay',
   ] /* Build dependencies for this module. */,
   gitignore: ['test/dist/spa_local_build_artifact'],
@@ -87,6 +88,22 @@ const project = new AwsCdkConstructLibrary({
  * @ref https://aws.github.io/jsii/user-guides/lib-author/typescript-restrictions/#typescript-mapped-types
  */
 project.tasks.addEnvironment('JSII_SUPPRESS_UPGRADE_PROMPT', 'true');
+
+// Add awslint and eslint to linter step.
+// Replace test.eslint step with lint step.
+{
+  const awslint = project.addTask('awslint', {
+    description: 'Runs awslint against the codebase',
+    steps: [{ exec: 'awslint', receiveArgs: true }],
+  });
+  const lint = project.addTask('lint', {
+    description: 'Lint the codebase',
+    steps: [{ spawn: 'eslint' }, { spawn: awslint.name }],
+  });
+  const test = project.tasks.tryFind('test')!;
+  const index = test.steps.findIndex(e => e.spawn === 'eslint');
+  test.updateStep(index, { spawn: lint.name });
+}
 
 new YamlFile(project, 'codecov.yml', {
   obj: {

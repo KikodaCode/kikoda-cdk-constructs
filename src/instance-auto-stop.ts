@@ -6,6 +6,9 @@ import * as constructs from 'constructs';
 import * as targets from './aws-events-targets';
 import * as ssm from './aws-ssm';
 
+/**
+ * Properties for the InstanceAutoStop construct.
+ */
 export interface InstanceAutoStopProps {
   /**
    * The Instance to stop on a schedule.
@@ -19,7 +22,8 @@ export interface InstanceAutoStopProps {
 }
 
 /**
- * `InstanceAutoStop` creates an AWS CloudWatch Event Rule that stops an EC2 instance on a schedule.
+ * `InstanceAutoStop` creates an AWS CloudWatch Event Rule that stops an EC2
+ * instance on a schedule.
  */
 export class InstanceAutoStop extends constructs.Construct {
   constructor(scope: constructs.Construct, id: string, props: InstanceAutoStopProps) {

@@ -6,6 +6,7 @@
     "url": "https://github.com/KikodaCode/kikoda-cdk-constructs.git"
   },
   "scripts": {
+    "awslint": "npx projen awslint",
     "build": "npx projen build",
     "bump": "npx projen bump",
     "clobber": "npx projen clobber",
@@ -26,6 +27,7 @@
     "integ:website:destroy": "npx projen integ:website:destroy",
     "integ:website:snapshot": "npx projen integ:website:snapshot",
     "integ:website:watch": "npx projen integ:website:watch",
+    "lint": "npx projen lint",
     "package": "npx projen package",
     "package-all": "npx projen package-all",
     "package:dotnet": "npx projen package:dotnet",
@@ -58,6 +60,7 @@
     "@typescript-eslint/parser": "^7",
     "aws-cdk": "^2",
     "aws-cdk-lib": "2.78.0",
+    "awslint": "^2.72.1",
     "constructs": "10.0.5",
     "delay": "^5.0.0",
     "eslint": "^8",
