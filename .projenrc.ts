@@ -22,6 +22,7 @@ const project = new AwsCdkConstructLibrary({
   vscode: true,
   docgen: true,
   codeCov: true,
+  codeCovTokenSecret: 'CODECOV_TOKEN',
   pullRequestTemplate: false,
   prettier: true,
   prettierOptions: {
