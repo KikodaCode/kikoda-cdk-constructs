@@ -1,4 +1,4 @@
-import { IEventBus, IRuleTarget, Rule, Schedule } from 'aws-cdk-lib/aws-events';
+import { IEventBus, IRuleTarget, Rule } from 'aws-cdk-lib/aws-events';
 // @ts-ignore
 // eslint-disable-next-line no-duplicate-imports
 import type { RuleProps } from 'aws-cdk-lib/aws-events';
@@ -61,9 +61,9 @@ export enum DatabaseEventCategory {
  */
 export interface DatabaseEventRuleProps {
   /**
-   * The scope to use if the source of the rule and its target are in different Stacks
-   * (but in the same account & region).
-   * This helps dealing with cycles that often arise in these situations.
+   * The scope to use if the source of the rule and its target are in
+   * different Stacks (but in the same account & region). This helps dealing
+   * with cycles that often arise in these situations.
    *
    * @default - none (the main scope will be used, even for cross-stack Events)
    */
@@ -77,7 +77,7 @@ export interface DatabaseEventRuleProps {
   /**
    * A description of the rule's purpose.
    *
-   * @default - No description
+   * @default - No description.
    */
   readonly description?: string;
 
@@ -110,31 +110,16 @@ export interface DatabaseEventRuleProps {
    *
    * @example ['RDS-EVENT-0004', 'RDS-EVENT-0006', etc.]
    *
-   * @default No additional filtering
+   * @default - No additional filtering.
    */
   readonly eventIds?: string[];
 
   /**
    * A name for the rule.
    *
-   * @default AWS CloudFormation generates a unique physical ID.
+   * @default - AWS CloudFormation generates a unique physical ID.
    */
   readonly ruleName?: string;
-
-  /**
-   * The schedule or rate (frequency) that determines when EventBridge
-   * runs the rule.
-   *
-   * You must specify this property, the `eventPattern` property, or both.
-   *
-   * For more information, see Schedule Expression Syntax for
-   * Rules in the Amazon EventBridge User Guide.
-   *
-   * @see https://docs.aws.amazon.com/eventbridge/latest/userguide/scheduled-events.html
-   *
-   * @default - None.
-   */
-  readonly schedule?: Schedule;
 
   /**
    * Targets to invoke when this rule matches an event.
@@ -171,7 +156,12 @@ export class DatabaseEventRule extends Rule {
     const detail = getDetail(props);
 
     super(scope, id, {
-      ...props,
+      crossStackScope: props.crossStackScope,
+      description: props.description,
+      enabled: props.enabled,
+      eventBus: props.eventBus,
+      ruleName: props.ruleName,
+      targets: props.targets,
       eventPattern: {
         source: ['aws.rds'],
         detailType: ['RDS DB Instance Event'],

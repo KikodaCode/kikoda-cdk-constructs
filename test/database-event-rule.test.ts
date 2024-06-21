@@ -1,6 +1,7 @@
 import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
+import { Schedule } from 'aws-cdk-lib/aws-events';
 import {
   DatabaseInstance,
   DatabaseInstanceEngine,
@@ -87,6 +88,22 @@ describe('DatabaseEventRule', () => {
         source: ['aws.rds'],
         detail: Match.absent(),
       },
+    });
+  });
+
+  test('ignore schedule', () => {
+    const { database, stack } = initialize();
+    const props = { schedule: Schedule.cron({}) };
+
+    new DatabaseEventRule(stack, 'DatabaseEventRule', {
+      database,
+      ...props,
+    });
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties('AWS::Events::Rule', {
+      EventPattern: { source: ['aws.rds'] },
+      ScheduleExpression: Match.absent(),
     });
   });
 });

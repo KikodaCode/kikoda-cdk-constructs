@@ -2899,7 +2899,6 @@ const databaseEventRuleProps: DatabaseEventRuleProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.eventCategories">eventCategories</a></code> | <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory">DatabaseEventCategory</a>[]</code> | Event categories to include in the event filter. |
 | <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.eventIds">eventIds</a></code> | <code>string[]</code> | Event ids to include in the event filter. |
 | <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.ruleName">ruleName</a></code> | <code>string</code> | A name for the rule. |
-| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.schedule">schedule</a></code> | <code>aws-cdk-lib.aws_events.Schedule</code> | The schedule or rate (frequency) that determines when EventBridge runs the rule. |
 | <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.targets">targets</a></code> | <code>aws-cdk-lib.aws_events.IRuleTarget[]</code> | Targets to invoke when this rule matches an event. |
 
 ---
@@ -2927,7 +2926,8 @@ public readonly crossStackScope: Construct;
 
 The scope to use if the source of the rule and its target are in different Stacks (but in the same account & region).
 
-This helps dealing with cycles that often arise in these situations.
+This helps dealing
+with cycles that often arise in these situations.
 
 ---
 
@@ -2938,7 +2938,7 @@ public readonly description: string;
 ```
 
 - *Type:* string
-- *Default:* No description
+- *Default:* No description.
 
 A description of the rule's purpose.
 
@@ -2990,7 +2990,7 @@ public readonly eventIds: string[];
 ```
 
 - *Type:* string[]
-- *Default:* No additional filtering
+- *Default:* No additional filtering.
 
 Event ids to include in the event filter.
 
@@ -3013,26 +3013,6 @@ public readonly ruleName: string;
 - *Default:* AWS CloudFormation generates a unique physical ID.
 
 A name for the rule.
-
----
-
-##### `schedule`<sup>Optional</sup> <a name="schedule" id="@kikoda/cdk-constructs.DatabaseEventRuleProps.property.schedule"></a>
-
-```typescript
-public readonly schedule: Schedule;
-```
-
-- *Type:* aws-cdk-lib.aws_events.Schedule
-- *Default:* None.
-
-The schedule or rate (frequency) that determines when EventBridge runs the rule.
-
-You must specify this property, the `eventPattern` property, or both.
-
-For more information, see Schedule Expression Syntax for
-Rules in the Amazon EventBridge User Guide.
-
-> [https://docs.aws.amazon.com/eventbridge/latest/userguide/scheduled-events.html](https://docs.aws.amazon.com/eventbridge/latest/userguide/scheduled-events.html)
 
 ---
 
