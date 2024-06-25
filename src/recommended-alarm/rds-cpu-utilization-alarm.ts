@@ -1,6 +1,6 @@
 import { Duration } from 'aws-cdk-lib';
 import { ComparisonOperator } from 'aws-cdk-lib/aws-cloudwatch';
-import { DatabaseInstance } from 'aws-cdk-lib/aws-rds';
+import { IDatabaseInstance } from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
 import { CreateRecommendedAlarmProps, RecommendedAlarm } from './recommended-alarm';
 
@@ -11,7 +11,7 @@ export interface RdsCpuUtilizationAlarmProps extends CreateRecommendedAlarmProps
   /**
    * The database instance to monitor.
    */
-  database: DatabaseInstance;
+  database: IDatabaseInstance;
   /**
    * The period over which the average is applied.
    *

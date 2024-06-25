@@ -28,6 +28,22 @@ function initialize() {
   return { database, stack, vpc };
 }
 
+function initializeImported() {
+  const stack = new Stack();
+  const databaseImported = DatabaseInstance.fromDatabaseInstanceAttributes(
+    stack,
+    'DatabaseImported',
+    {
+      instanceEndpointAddress: 'instanceEndpointAddress',
+      instanceIdentifier: 'instanceIdentifier',
+      port: 0,
+      securityGroups: [],
+    },
+  );
+
+  return { databaseImported, stack };
+}
+
 describe('RdsConnectionsAlarm', () => {
   test('with default props', () => {
     const { database, stack } = initialize();
@@ -138,9 +154,8 @@ describe('RdsCpuUtilizationAlarm', () => {
 describe('RdsFreeStorageSpaceAlarm', () => {
   test('with default props', () => {
     const { database, stack } = initialize();
-    const threshold = 200_000;
 
-    new RdsFreeStorageSpaceAlarm(stack, 'RdsFreeStorageSpaceAlarm', { database, threshold });
+    new RdsFreeStorageSpaceAlarm(stack, 'RdsFreeStorageSpaceAlarm', { database });
     const template = Template.fromStack(stack);
 
     template.hasResourceProperties('AWS::CloudWatch::Alarm', {
@@ -149,7 +164,7 @@ describe('RdsFreeStorageSpaceAlarm', () => {
       MetricName: 'FreeStorageSpace',
       Namespace: 'AWS/RDS',
       Statistic: 'Minimum',
-      Threshold: threshold,
+      Threshold: 10 * 1024 * 1024 * 1024,
     });
   });
 
@@ -160,7 +175,7 @@ describe('RdsFreeStorageSpaceAlarm', () => {
       comparisonOperator: ComparisonOperator.LESS_THAN_OR_EQUAL_TO_THRESHOLD,
       evaluationPeriods: 1,
       period: Duration.minutes(5),
-      threshold: 10_000,
+      threshold: 1 * 1024 * 1024 * 1024, // 1 GiB
     };
 
     new RdsFreeStorageSpaceAlarm(stack, 'RdsFreeStorageSpaceAlarm', { database, ...props });
@@ -176,6 +191,22 @@ describe('RdsFreeStorageSpaceAlarm', () => {
       Period: props.period.toSeconds(),
       Statistic: 'Minimum',
       Threshold: props.threshold,
+    });
+  });
+
+  test('from imported database', () => {
+    const { databaseImported, stack } = initializeImported();
+
+    new RdsFreeStorageSpaceAlarm(stack, 'RdsFreeStorageSpaceAlarm', { database: databaseImported });
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties('AWS::CloudWatch::Alarm', {
+      ComparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+      Dimensions: [{ Name: 'DBInstanceIdentifier' }],
+      MetricName: 'FreeStorageSpace',
+      Namespace: 'AWS/RDS',
+      Statistic: 'Minimum',
+      Threshold: 10 * 1024 * 1024 * 1024,
     });
   });
 });
