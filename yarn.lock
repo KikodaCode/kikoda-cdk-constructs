@@ -745,10 +745,10 @@
     lodash "^4.17.21"
     md5 "^2.3.0"
 
-"@kikoda/projen-templates@^0.2.403":
-  version "0.2.403"
-  resolved "https://registry.yarnpkg.com/@kikoda/projen-templates/-/projen-templates-0.2.403.tgz#f447d02bfb315c1c2ccd873c7c1c643d14e3f606"
-  integrity sha512-veh4XQc2ZsYipLQxuIPj9T8Wk6C3+d1AVzDhOqyf8QiDsamr/8b+q5n7SsxlxmplvFK0boJdnw7KgqKow6ZhHg==
+"@kikoda/projen-templates@^0.2.404":
+  version "0.2.404"
+  resolved "https://registry.yarnpkg.com/@kikoda/projen-templates/-/projen-templates-0.2.404.tgz#e6d8360da3a9283db34d69cb328405b2e661779c"
+  integrity sha512-RHt2CyNQo88doGQZ/hOzIvKgrnCi60AzT3wCa0ca/khF+g612VwAiGSPzQky99M+UnX2PQ3/T/I5fyvLzj6jGw==
   dependencies:
     projen "^0.82.8"
 
@@ -2110,9 +2110,9 @@ dotgitignore@^2.1.0:
     minimatch "^3.0.4"
 
 electron-to-chromium@^1.4.796:
-  version "1.4.814"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.814.tgz#176535a0b899c9c473464502ab77576aa8bb1cbe"
-  integrity sha512-GVulpHjFu1Y9ZvikvbArHmAhZXtm3wHlpjTMcXNGKl4IQ4jMQjlnz8yMQYYqdLHKi/jEL2+CBC2akWVCoIGUdw==
+  version "1.4.815"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.815.tgz#e901b195c57c3e0fae8dc6d596e4188a33c3e82c"
+  integrity sha512-OvpTT2ItpOXJL7IGcYakRjHCt8L5GrrN/wHCQsRB4PQa1X9fe+X9oen245mIId7s14xvArCGSTIq644yPUKKLg==
 
 emittery@^0.8.1:
   version "0.8.1"
