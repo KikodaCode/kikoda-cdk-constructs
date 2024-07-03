@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@kikoda/generated-config": "0.5.1",
-    "@kikoda/projen-templates": "^0.2.405",
+    "@kikoda/projen-templates": "^0.2.407",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27",
     "@types/lodash": "4.14.191",
@@ -87,7 +87,7 @@
   "dependencies": {
     "@kikoda/generated-config": "0.5.1",
     "@yarnpkg/esbuild-plugin-pnp": "^2.0.3",
-    "esbuild": "^0.22",
+    "esbuild": "^0.23",
     "fs-extra": "^10.1.0",
     "lodash": "4.17.21",
     "minimatch": "^5.1.6"
