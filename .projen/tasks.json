@@ -426,13 +426,13 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@kikoda/generated-config,@kikoda/projen-templates,@types/fs-extra,@types/md5,@types/uuid,delay,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,jsii-diff,jsii-pacmak,prettier,projen,ts-node,typescript,@yarnpkg/esbuild-plugin-pnp,esbuild,fs-extra,minimatch"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@kikoda/generated-config,@kikoda/projen-templates,@types/fs-extra,@types/md5,@types/minimatch,@types/uuid,delay,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,jsii-diff,jsii-pacmak,prettier,projen,ts-node,typescript,@yarnpkg/esbuild-plugin-pnp,esbuild,fs-extra,minimatch"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @kikoda/generated-config @kikoda/projen-templates @types/fs-extra @types/jest @types/lodash @types/md5 @types/node @types/uuid @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk commit-and-tag-version delay eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest-junit jest jsii-diff jsii-docgen jsii-pacmak jsii-rosetta jsii prettier projen ts-jest ts-node typescript @yarnpkg/esbuild-plugin-pnp esbuild fs-extra lodash minimatch aws-cdk-lib constructs"
+          "exec": "yarn upgrade @kikoda/generated-config @kikoda/projen-templates @types/fs-extra @types/jest @types/lodash @types/md5 @types/minimatch @types/node @types/uuid @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk commit-and-tag-version delay eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest-junit jest jsii-diff jsii-docgen jsii-pacmak jsii-rosetta jsii prettier projen ts-jest ts-node typescript @yarnpkg/esbuild-plugin-pnp esbuild fs-extra lodash minimatch aws-cdk-lib constructs"
         },
         {
           "exec": "npx projen"

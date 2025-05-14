@@ -52,6 +52,7 @@
     "@types/jest": "^27",
     "@types/lodash": "4.14.191",
     "@types/md5": "^2.3.5",
+    "@types/minimatch": "^5.1.2",
     "@types/node": "^16 <= 16.18.78",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^7",

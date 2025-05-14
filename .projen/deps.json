@@ -27,6 +27,10 @@
       "type": "build"
     },
     {
+      "name": "@types/minimatch",
+      "type": "build"
+    },
+    {
       "name": "@types/node",
       "version": "^16 <= 16.18.78",
       "type": "build"
