@@ -56,6 +56,7 @@ const project = new AwsCdkConstructLibrary({
     '@types/uuid',
     '@types/lodash@4.14.191',
     '@types/fs-extra',
+    '@types/minimatch',
     'delay',
   ] /* Build dependencies for this module. */,
   gitignore: ['test/dist/spa_local_build_artifact'],
