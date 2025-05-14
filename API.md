@@ -3600,7 +3600,7 @@ const websiteProps: WebsiteProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.corsAllowedOrigins">corsAllowedOrigins</a></code> | <code>string[]</code> | Specify a list of allowed request origins to use when configuring CORS (must also specify `enableCors`). |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.domainName">domainName</a></code> | <code>string</code> | Specify a domain name to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.enableCors">enableCors</a></code> | <code>boolean</code> | Setup S3 bucket and Cloudfront distribution to allow CORS requests. |
-| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.generateWebConfigProps">generateWebConfigProps</a></code> | <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps">GenerateWebConfigProps</a></code> | Specify options for gernerating a web config from base and stage level configs. |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.generateWebConfigProps">generateWebConfigProps</a></code> | <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps">GenerateWebConfigProps</a></code> | Specify options for generating a web config from base and stage level configs. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | Specify an existing hosted zone to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.indexDoc">indexDoc</a></code> | <code>string</code> | The name of the index document to load, typically 'index.html'. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.onlyDefaultDomain">onlyDefaultDomain</a></code> | <code>boolean</code> | Do not create or look up a hosted zone or certificates for the website. |
@@ -3767,7 +3767,7 @@ public readonly enableCors: boolean;
 
 Setup S3 bucket and Cloudfront distribution to allow CORS requests.
 
-Optionally specificy the allowed Origins with `corsAllowedOrigins`
+Optionally specify the allowed Origins with `corsAllowedOrigins`
 
 ---
 
@@ -3779,10 +3779,9 @@ public readonly generateWebConfigProps: GenerateWebConfigProps;
 
 - *Type:* <a href="#@kikoda/cdk-constructs.GenerateWebConfigProps">GenerateWebConfigProps</a>
 
-Specify options for gernerating a web config from base and stage level configs.
+Specify options for generating a web config from base and stage level configs.
 
-Must
-enable `generateWebConfig`
+Must enable `generateWebConfig`.
 
 ---
 
@@ -3840,9 +3839,7 @@ public readonly repoRoot: string;
 
 This should be the root directory of the git repository.
 
-Dependending on your repository setup
-this may be required for Docker-based bundling. This path, if provided will be used as the mount point
-for the Docker container during bundling. If this is not provided, the `appDir` path will be used.
+Depending on your repository setup this may be required for Docker-based bundling. This path, if provided will be used as the mount point for the Docker container during bundling. If this is not provided, the `appDir` path will be used.
 
 ---
 
