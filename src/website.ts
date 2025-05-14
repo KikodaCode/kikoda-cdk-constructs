@@ -35,10 +35,7 @@ export interface WebsiteProps {
   /** String indicator of which environment/stage is being deployed ex. 'dev', 'test', 'prod' */
   readonly stage: string;
 
-  /** This should be the root directory of the git repository. Dependending on your repository setup
-   * this may be required for Docker-based bundling. This path, if provided will be used as the mount point
-   * for the Docker container during bundling. If this is not provided, the `appDir` path will be used.
-   */
+  /** This should be the root directory of the git repository. Depending on your repository setup this may be required for Docker-based bundling. This path, if provided will be used as the mount point for the Docker container during bundling. If this is not provided, the `appDir` path will be used. */
   readonly repoRoot?: string;
 
   /** The full absolute path of the Single Page App */
@@ -65,9 +62,7 @@ export interface WebsiteProps {
    */
   readonly indexDoc?: string;
 
-  /** Specify options for gernerating a web config from base and stage level configs. Must
-   * enable `generateWebConfig`
-   */
+  /** Specify options for generating a web config from base and stage level configs. Must enable `generateWebConfig`. */
   readonly generateWebConfigProps?: GenerateWebConfigProps;
 
   /**
@@ -106,7 +101,7 @@ export interface WebsiteProps {
    */
   readonly onlyDefaultDomain?: boolean;
 
-  /** Setup S3 bucket and Cloudfront distribution to allow CORS requests. Optionally specificy the allowed Origins with `corsAllowedOrigins` */
+  /** Setup S3 bucket and Cloudfront distribution to allow CORS requests. Optionally specify the allowed Origins with `corsAllowedOrigins` */
   readonly enableCors?: boolean;
 
   /** Specify a list of allowed request origins to use when configuring CORS (must also specify `enableCors`)
@@ -132,40 +127,57 @@ export class Website extends Construct {
   constructor(scope: Construct, id: string, props: WebsiteProps) {
     super(scope, id);
 
-    const { stage, appDir, buildDir, indexDoc, generateWebConfigProps, bundling, buildCommand } =
-      props;
+    const {
+      acmCertificateArn,
+      alternateDomainNames,
+      appDir,
+      buildAssetExcludes,
+      buildCommand,
+      buildDir,
+      bundling,
+      cloudfrontInvalidationPaths,
+      corsAllowedOrigins,
+      domainName,
+      enableCors,
+      generateWebConfigProps,
+      hostedZone,
+      indexDoc,
+      onlyDefaultDomain,
+      repoRoot,
+      stage,
+    } = props;
 
     // check domain props
-    if (!props.onlyDefaultDomain && props.domainName === undefined) {
+    if (!onlyDefaultDomain && domainName === undefined) {
       throw new Error(`domainName must be provided if onlyDefaultDomain is not true`);
     }
 
     const spa = new SinglePageApp(this, 'Spa', {
-      hostedZone: props.onlyDefaultDomain
+      hostedZone: onlyDefaultDomain
         ? undefined
-        : props.hostedZone ??
-          HostedZone.fromLookup(this, 'HostedZone', { domainName: props.domainName! }),
-      domainName: props.onlyDefaultDomain ? undefined : props.domainName,
-      alternateDomainNames: props.onlyDefaultDomain ? undefined : props.alternateDomainNames,
-      acmCertificateArn: props.onlyDefaultDomain ? undefined : props.acmCertificateArn,
-      onlyDefaultDomain: props.onlyDefaultDomain,
+        : hostedZone ?? HostedZone.fromLookup(this, 'HostedZone', { domainName: domainName! }),
+      domainName: onlyDefaultDomain ? undefined : domainName,
+      alternateDomainNames: onlyDefaultDomain ? undefined : alternateDomainNames,
+      acmCertificateArn: onlyDefaultDomain ? undefined : acmCertificateArn,
+      onlyDefaultDomain: onlyDefaultDomain,
+      repoRoot,
       appDir,
       buildDir,
       buildAssetExcludes: [
-        ...(props.buildAssetExcludes ?? []),
+        ...(buildAssetExcludes ?? []),
         ...[ConfigManifest.CONFIG_MANIFEST_FILENAME, '*.config.json'],
       ],
       buildCommand,
       bundling,
       indexDoc: indexDoc ?? 'index.html',
       securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
-      originRequestPolicy: props.enableCors ? OriginRequestPolicy.CORS_S3_ORIGIN : undefined,
-      bucketCorsRules: props.enableCors
+      originRequestPolicy: enableCors ? OriginRequestPolicy.CORS_S3_ORIGIN : undefined,
+      bucketCorsRules: enableCors
         ? [
             {
               allowedHeaders: ['*'],
               allowedMethods: [HttpMethods.GET],
-              allowedOrigins: props.corsAllowedOrigins ?? ['*'],
+              allowedOrigins: corsAllowedOrigins ?? ['*'],
               exposedHeaders: ['x-amz-server-side-encryption', 'x-amz-request-id', 'x-amz-id-2'],
               maxAge: 3000,
             },
@@ -173,15 +185,15 @@ export class Website extends Construct {
         : undefined,
       // If we're not deploying a webconfig, we'll pass the invalidation paths through to the SPA construct
       cloudfrontInvalidationPaths: !generateWebConfigProps
-        ? props.cloudfrontInvalidationPaths
+        ? cloudfrontInvalidationPaths
         : undefined,
     });
 
     // export endpoint
-    if (props.onlyDefaultDomain) {
+    if (onlyDefaultDomain) {
       this.endpoint = `https://${spa.distribution.distributionDomainName}`;
     } else {
-      this.endpoint = `https://${props.domainName}`;
+      this.endpoint = `https://${domainName}`;
     }
 
     // create frontend config file asset
@@ -199,7 +211,7 @@ export class Website extends Construct {
         spa,
         config: this.generatedWebConfig.config,
         configFileName: this.generatedWebConfig.fileName,
-        cloudfrontInvalidationPaths: props.cloudfrontInvalidationPaths ?? ['/*'],
+        cloudfrontInvalidationPaths: cloudfrontInvalidationPaths ?? ['/*'],
       });
     }
   }
