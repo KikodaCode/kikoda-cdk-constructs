@@ -11,7 +11,7 @@ import { Construct } from 'constructs';
 export enum AlarmLevels {
   /** For general information these are typically the most verbose. */
   INFO = 'Information',
-  /** Events that indicate service degredation, inefficency, and/or non blocking errors. */
+  /** Events that indicate service degradation, inefficiency, and/or non blocking errors. */
   WARNING = 'Warning',
   /** Events that indicate system failures, data loss, and/or blocking errors. */
   CRITICAL = 'Critical',

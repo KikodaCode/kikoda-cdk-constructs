@@ -1338,6 +1338,323 @@ The configuration for the stage.
 ---
 
 
+### DatabaseEventRule <a name="DatabaseEventRule" id="@kikoda/cdk-constructs.DatabaseEventRule"></a>
+
+Create a CloudWatch event rule which triggers for database instance events.
+
+> [{@link https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Events.Messages.html} for a listing of the RDS event categories and event messages.]({@link https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Events.Messages.html} for a listing of the RDS event categories and event messages.)
+
+#### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.DatabaseEventRule.Initializer"></a>
+
+```typescript
+import { DatabaseEventRule } from '@kikoda/cdk-constructs'
+
+new DatabaseEventRule(scope: Construct, id: string, props: DatabaseEventRuleProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.Initializer.parameter.props">props</a></code> | <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps">DatabaseEventRuleProps</a></code> | *No description.* |
+
+---
+
+##### `scope`<sup>Required</sup> <a name="scope" id="@kikoda/cdk-constructs.DatabaseEventRule.Initializer.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+---
+
+##### `id`<sup>Required</sup> <a name="id" id="@kikoda/cdk-constructs.DatabaseEventRule.Initializer.parameter.id"></a>
+
+- *Type:* string
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@kikoda/cdk-constructs.DatabaseEventRule.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps">DatabaseEventRuleProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.addEventPattern">addEventPattern</a></code> | Adds an event pattern filter to this rule. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.addTarget">addTarget</a></code> | Adds a target to the rule. The abstract class RuleTarget can be extended to define new targets. |
+
+---
+
+##### `toString` <a name="toString" id="@kikoda/cdk-constructs.DatabaseEventRule.toString"></a>
+
+```typescript
+public toString(): string
+```
+
+Returns a string representation of this construct.
+
+##### `applyRemovalPolicy` <a name="applyRemovalPolicy" id="@kikoda/cdk-constructs.DatabaseEventRule.applyRemovalPolicy"></a>
+
+```typescript
+public applyRemovalPolicy(policy: RemovalPolicy): void
+```
+
+Apply the given removal policy to this resource.
+
+The Removal Policy controls what happens to this resource when it stops
+being managed by CloudFormation, either because you've removed it from the
+CDK application or because you've made a change that requires the resource
+to be replaced.
+
+The resource can be deleted (`RemovalPolicy.DESTROY`), or left in your AWS
+account for data recovery and cleanup later (`RemovalPolicy.RETAIN`).
+
+###### `policy`<sup>Required</sup> <a name="policy" id="@kikoda/cdk-constructs.DatabaseEventRule.applyRemovalPolicy.parameter.policy"></a>
+
+- *Type:* aws-cdk-lib.RemovalPolicy
+
+---
+
+##### `addEventPattern` <a name="addEventPattern" id="@kikoda/cdk-constructs.DatabaseEventRule.addEventPattern"></a>
+
+```typescript
+public addEventPattern(eventPattern?: EventPattern): void
+```
+
+Adds an event pattern filter to this rule.
+
+If a pattern was already specified,
+these values are merged into the existing pattern.
+
+For example, if the rule already contains the pattern:
+
+   {
+     "resources": [ "r1" ],
+     "detail": {
+       "hello": [ 1 ]
+     }
+   }
+
+And `addEventPattern` is called with the pattern:
+
+   {
+     "resources": [ "r2" ],
+     "detail": {
+       "foo": [ "bar" ]
+     }
+   }
+
+The resulting event pattern will be:
+
+   {
+     "resources": [ "r1", "r2" ],
+     "detail": {
+       "hello": [ 1 ],
+       "foo": [ "bar" ]
+     }
+   }
+
+###### `eventPattern`<sup>Optional</sup> <a name="eventPattern" id="@kikoda/cdk-constructs.DatabaseEventRule.addEventPattern.parameter.eventPattern"></a>
+
+- *Type:* aws-cdk-lib.aws_events.EventPattern
+
+---
+
+##### `addTarget` <a name="addTarget" id="@kikoda/cdk-constructs.DatabaseEventRule.addTarget"></a>
+
+```typescript
+public addTarget(target?: IRuleTarget): void
+```
+
+Adds a target to the rule. The abstract class RuleTarget can be extended to define new targets.
+
+No-op if target is undefined.
+
+###### `target`<sup>Optional</sup> <a name="target" id="@kikoda/cdk-constructs.DatabaseEventRule.addTarget.parameter.target"></a>
+
+- *Type:* aws-cdk-lib.aws_events.IRuleTarget
+
+---
+
+#### Static Functions <a name="Static Functions" id="Static Functions"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.isOwnedResource">isOwnedResource</a></code> | Returns true if the construct was created by CDK, and false otherwise. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.isResource">isResource</a></code> | Check whether the given construct is a Resource. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.fromEventRuleArn">fromEventRuleArn</a></code> | Import an existing EventBridge Rule provided an ARN. |
+
+---
+
+##### ~~`isConstruct`~~ <a name="isConstruct" id="@kikoda/cdk-constructs.DatabaseEventRule.isConstruct"></a>
+
+```typescript
+import { DatabaseEventRule } from '@kikoda/cdk-constructs'
+
+DatabaseEventRule.isConstruct(x: any)
+```
+
+Checks if `x` is a construct.
+
+###### `x`<sup>Required</sup> <a name="x" id="@kikoda/cdk-constructs.DatabaseEventRule.isConstruct.parameter.x"></a>
+
+- *Type:* any
+
+Any object.
+
+---
+
+##### `isOwnedResource` <a name="isOwnedResource" id="@kikoda/cdk-constructs.DatabaseEventRule.isOwnedResource"></a>
+
+```typescript
+import { DatabaseEventRule } from '@kikoda/cdk-constructs'
+
+DatabaseEventRule.isOwnedResource(construct: IConstruct)
+```
+
+Returns true if the construct was created by CDK, and false otherwise.
+
+###### `construct`<sup>Required</sup> <a name="construct" id="@kikoda/cdk-constructs.DatabaseEventRule.isOwnedResource.parameter.construct"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+##### `isResource` <a name="isResource" id="@kikoda/cdk-constructs.DatabaseEventRule.isResource"></a>
+
+```typescript
+import { DatabaseEventRule } from '@kikoda/cdk-constructs'
+
+DatabaseEventRule.isResource(construct: IConstruct)
+```
+
+Check whether the given construct is a Resource.
+
+###### `construct`<sup>Required</sup> <a name="construct" id="@kikoda/cdk-constructs.DatabaseEventRule.isResource.parameter.construct"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+##### `fromEventRuleArn` <a name="fromEventRuleArn" id="@kikoda/cdk-constructs.DatabaseEventRule.fromEventRuleArn"></a>
+
+```typescript
+import { DatabaseEventRule } from '@kikoda/cdk-constructs'
+
+DatabaseEventRule.fromEventRuleArn(scope: Construct, id: string, eventRuleArn: string)
+```
+
+Import an existing EventBridge Rule provided an ARN.
+
+###### `scope`<sup>Required</sup> <a name="scope" id="@kikoda/cdk-constructs.DatabaseEventRule.fromEventRuleArn.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+The parent creating construct (usually `this`).
+
+---
+
+###### `id`<sup>Required</sup> <a name="id" id="@kikoda/cdk-constructs.DatabaseEventRule.fromEventRuleArn.parameter.id"></a>
+
+- *Type:* string
+
+The construct's name.
+
+---
+
+###### `eventRuleArn`<sup>Required</sup> <a name="eventRuleArn" id="@kikoda/cdk-constructs.DatabaseEventRule.fromEventRuleArn.parameter.eventRuleArn"></a>
+
+- *Type:* string
+
+Event Rule ARN (i.e. arn:aws:events:<region>:<account-id>:rule/MyScheduledRule).
+
+---
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.property.ruleArn">ruleArn</a></code> | <code>string</code> | The value of the event rule Amazon Resource Name (ARN), such as arn:aws:events:us-east-2:123456789012:rule/example. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.property.ruleName">ruleName</a></code> | <code>string</code> | The name event rule. |
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="@kikoda/cdk-constructs.DatabaseEventRule.property.node"></a>
+
+```typescript
+public readonly node: Node;
+```
+
+- *Type:* constructs.Node
+
+The tree node.
+
+---
+
+##### `env`<sup>Required</sup> <a name="env" id="@kikoda/cdk-constructs.DatabaseEventRule.property.env"></a>
+
+```typescript
+public readonly env: ResourceEnvironment;
+```
+
+- *Type:* aws-cdk-lib.ResourceEnvironment
+
+The environment this resource belongs to.
+
+For resources that are created and managed by the CDK
+(generally, those created by creating new class instances like Role, Bucket, etc.),
+this is always the same as the environment of the stack they belong to;
+however, for imported resources
+(those obtained from static methods like fromRoleArn, fromBucketName, etc.),
+that might be different than the stack they were imported into.
+
+---
+
+##### `stack`<sup>Required</sup> <a name="stack" id="@kikoda/cdk-constructs.DatabaseEventRule.property.stack"></a>
+
+```typescript
+public readonly stack: Stack;
+```
+
+- *Type:* aws-cdk-lib.Stack
+
+The stack in which this resource is defined.
+
+---
+
+##### `ruleArn`<sup>Required</sup> <a name="ruleArn" id="@kikoda/cdk-constructs.DatabaseEventRule.property.ruleArn"></a>
+
+```typescript
+public readonly ruleArn: string;
+```
+
+- *Type:* string
+
+The value of the event rule Amazon Resource Name (ARN), such as arn:aws:events:us-east-2:123456789012:rule/example.
+
+---
+
+##### `ruleName`<sup>Required</sup> <a name="ruleName" id="@kikoda/cdk-constructs.DatabaseEventRule.property.ruleName"></a>
+
+```typescript
+public readonly ruleName: string;
+```
+
+- *Type:* string
+
+The name event rule.
+
+---
+
+
 ### InstanceAutoStart <a name="InstanceAutoStart" id="@kikoda/cdk-constructs.InstanceAutoStart"></a>
 
 `InstanceAutoStart` creates an AWS CloudWatch Event Rule that starts an EC2 instance on a schedule.
@@ -2592,6 +2909,165 @@ public readonly config: any;
 
 ---
 
+### DatabaseEventRuleProps <a name="DatabaseEventRuleProps" id="@kikoda/cdk-constructs.DatabaseEventRuleProps"></a>
+
+Properties for defining a database EventBridge rule.
+
+> [{@link RuleProps}]({@link RuleProps})
+
+#### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.DatabaseEventRuleProps.Initializer"></a>
+
+```typescript
+import { DatabaseEventRuleProps } from '@kikoda/cdk-constructs'
+
+const databaseEventRuleProps: DatabaseEventRuleProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.database">database</a></code> | <code>aws-cdk-lib.aws_rds.IDatabaseInstance</code> | Database instance to monitor. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.crossStackScope">crossStackScope</a></code> | <code>constructs.Construct</code> | The scope to use if the source of the rule and its target are in different Stacks (but in the same account & region). |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.description">description</a></code> | <code>string</code> | A description of the rule's purpose. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.enabled">enabled</a></code> | <code>boolean</code> | Indicates whether the rule is enabled. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.eventBus">eventBus</a></code> | <code>aws-cdk-lib.aws_events.IEventBus</code> | The event bus to associate with this rule. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.eventCategories">eventCategories</a></code> | <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory">DatabaseEventCategory</a>[]</code> | Event categories to include in the event filter. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.eventIds">eventIds</a></code> | <code>string[]</code> | Event ids to include in the event filter. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.ruleName">ruleName</a></code> | <code>string</code> | A name for the rule. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRuleProps.property.targets">targets</a></code> | <code>aws-cdk-lib.aws_events.IRuleTarget[]</code> | Targets to invoke when this rule matches an event. |
+
+---
+
+##### `database`<sup>Required</sup> <a name="database" id="@kikoda/cdk-constructs.DatabaseEventRuleProps.property.database"></a>
+
+```typescript
+public readonly database: IDatabaseInstance;
+```
+
+- *Type:* aws-cdk-lib.aws_rds.IDatabaseInstance
+
+Database instance to monitor.
+
+---
+
+##### `crossStackScope`<sup>Optional</sup> <a name="crossStackScope" id="@kikoda/cdk-constructs.DatabaseEventRuleProps.property.crossStackScope"></a>
+
+```typescript
+public readonly crossStackScope: Construct;
+```
+
+- *Type:* constructs.Construct
+- *Default:* none (the main scope will be used, even for cross-stack Events)
+
+The scope to use if the source of the rule and its target are in different Stacks (but in the same account & region).
+
+This helps dealing
+with cycles that often arise in these situations.
+
+---
+
+##### `description`<sup>Optional</sup> <a name="description" id="@kikoda/cdk-constructs.DatabaseEventRuleProps.property.description"></a>
+
+```typescript
+public readonly description: string;
+```
+
+- *Type:* string
+- *Default:* No description.
+
+A description of the rule's purpose.
+
+---
+
+##### `enabled`<sup>Optional</sup> <a name="enabled" id="@kikoda/cdk-constructs.DatabaseEventRuleProps.property.enabled"></a>
+
+```typescript
+public readonly enabled: boolean;
+```
+
+- *Type:* boolean
+- *Default:* true
+
+Indicates whether the rule is enabled.
+
+---
+
+##### `eventBus`<sup>Optional</sup> <a name="eventBus" id="@kikoda/cdk-constructs.DatabaseEventRuleProps.property.eventBus"></a>
+
+```typescript
+public readonly eventBus: IEventBus;
+```
+
+- *Type:* aws-cdk-lib.aws_events.IEventBus
+- *Default:* The default event bus.
+
+The event bus to associate with this rule.
+
+---
+
+##### `eventCategories`<sup>Optional</sup> <a name="eventCategories" id="@kikoda/cdk-constructs.DatabaseEventRuleProps.property.eventCategories"></a>
+
+```typescript
+public readonly eventCategories: DatabaseEventCategory[];
+```
+
+- *Type:* <a href="#@kikoda/cdk-constructs.DatabaseEventCategory">DatabaseEventCategory</a>[]
+- *Default:* [AVAILABILITY, FAILOVER]
+
+Event categories to include in the event filter.
+
+---
+
+##### `eventIds`<sup>Optional</sup> <a name="eventIds" id="@kikoda/cdk-constructs.DatabaseEventRuleProps.property.eventIds"></a>
+
+```typescript
+public readonly eventIds: string[];
+```
+
+- *Type:* string[]
+- *Default:* No additional filtering.
+
+Event ids to include in the event filter.
+
+---
+
+*Example*
+
+```typescript
+['RDS-EVENT-0004', 'RDS-EVENT-0006', etc.]
+```
+
+
+##### `ruleName`<sup>Optional</sup> <a name="ruleName" id="@kikoda/cdk-constructs.DatabaseEventRuleProps.property.ruleName"></a>
+
+```typescript
+public readonly ruleName: string;
+```
+
+- *Type:* string
+- *Default:* AWS CloudFormation generates a unique physical ID.
+
+A name for the rule.
+
+---
+
+##### `targets`<sup>Optional</sup> <a name="targets" id="@kikoda/cdk-constructs.DatabaseEventRuleProps.property.targets"></a>
+
+```typescript
+public readonly targets: IRuleTarget[];
+```
+
+- *Type:* aws-cdk-lib.aws_events.IRuleTarget[]
+- *Default:* No targets.
+
+Targets to invoke when this rule matches an event.
+
+Input will be the full matched event. If you wish to specify custom
+target input, use `addTarget(target[, inputOptions])`.
+
+---
+
 ### GenerateWebConfigProps <a name="GenerateWebConfigProps" id="@kikoda/cdk-constructs.GenerateWebConfigProps"></a>
 
 #### Initializer <a name="Initializer" id="@kikoda/cdk-constructs.GenerateWebConfigProps.Initializer"></a>
@@ -3160,7 +3636,7 @@ const websiteProps: WebsiteProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.corsAllowedOrigins">corsAllowedOrigins</a></code> | <code>string[]</code> | Specify a list of allowed request origins to use when configuring CORS (must also specify `enableCors`). |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.domainName">domainName</a></code> | <code>string</code> | Specify a domain name to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.enableCors">enableCors</a></code> | <code>boolean</code> | Setup S3 bucket and Cloudfront distribution to allow CORS requests. |
-| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.generateWebConfigProps">generateWebConfigProps</a></code> | <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps">GenerateWebConfigProps</a></code> | Specify options for gernerating a web config from base and stage level configs. |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.generateWebConfigProps">generateWebConfigProps</a></code> | <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps">GenerateWebConfigProps</a></code> | Specify options for generating a web config from base and stage level configs. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | Specify an existing hosted zone to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.indexDoc">indexDoc</a></code> | <code>string</code> | The name of the index document to load, typically 'index.html'. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.onlyDefaultDomain">onlyDefaultDomain</a></code> | <code>boolean</code> | Do not create or look up a hosted zone or certificates for the website. |
@@ -3327,7 +3803,7 @@ public readonly enableCors: boolean;
 
 Setup S3 bucket and Cloudfront distribution to allow CORS requests.
 
-Optionally specificy the allowed Origins with `corsAllowedOrigins`
+Optionally specify the allowed Origins with `corsAllowedOrigins`
 
 ---
 
@@ -3339,10 +3815,9 @@ public readonly generateWebConfigProps: GenerateWebConfigProps;
 
 - *Type:* <a href="#@kikoda/cdk-constructs.GenerateWebConfigProps">GenerateWebConfigProps</a>
 
-Specify options for gernerating a web config from base and stage level configs.
+Specify options for generating a web config from base and stage level configs.
 
-Must
-enable `generateWebConfig`
+Must enable `generateWebConfig`.
 
 ---
 
@@ -3400,9 +3875,7 @@ public readonly repoRoot: string;
 
 This should be the root directory of the git repository.
 
-Dependending on your repository setup
-this may be required for Docker-based bundling. This path, if provided will be used as the mount point
-for the Docker container during bundling. If this is not provided, the `appDir` path will be used.
+Depending on your repository setup this may be required for Docker-based bundling. This path, if provided will be used as the mount point for the Docker container during bundling. If this is not provided, the `appDir` path will be used.
 
 ---
 
@@ -3893,7 +4366,7 @@ The Alarm levels.
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.AlarmLevels.INFO">INFO</a></code> | For general information these are typically the most verbose. |
-| <code><a href="#@kikoda/cdk-constructs.AlarmLevels.WARNING">WARNING</a></code> | Events that indicate service degredation, inefficency, and/or non blocking errors. |
+| <code><a href="#@kikoda/cdk-constructs.AlarmLevels.WARNING">WARNING</a></code> | Events that indicate service degradation, inefficiency, and/or non blocking errors. |
 | <code><a href="#@kikoda/cdk-constructs.AlarmLevels.CRITICAL">CRITICAL</a></code> | Events that indicate system failures, data loss, and/or blocking errors. |
 
 ---
@@ -3907,7 +4380,7 @@ For general information these are typically the most verbose.
 
 ##### `WARNING` <a name="WARNING" id="@kikoda/cdk-constructs.AlarmLevels.WARNING"></a>
 
-Events that indicate service degredation, inefficency, and/or non blocking errors.
+Events that indicate service degradation, inefficiency, and/or non blocking errors.
 
 ---
 
@@ -3915,6 +4388,157 @@ Events that indicate service degredation, inefficency, and/or non blocking error
 ##### `CRITICAL` <a name="CRITICAL" id="@kikoda/cdk-constructs.AlarmLevels.CRITICAL"></a>
 
 Events that indicate system failures, data loss, and/or blocking errors.
+
+---
+
+
+### DatabaseEventCategory <a name="DatabaseEventCategory" id="@kikoda/cdk-constructs.DatabaseEventCategory"></a>
+
+Category of the database instance event.
+
+Useful for filtering down to specific event types.
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.AVAILABILITY">AVAILABILITY</a></code> | Database availability event: shutdown, restart, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.BACKUP">BACKUP</a></code> | Database backup event: started backup, finished backup, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.CONFIGURATION_CHANGE">CONFIGURATION_CHANGE</a></code> | Database configuration change event: updated parameter group, modified instance class, reset credentials, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.CREATION">CREATION</a></code> | Database creation event: instance created. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.DELETION">DELETION</a></code> | Database deletion event: instance deleted. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.FAILOVER">FAILOVER</a></code> | Database failover event: failover started, failover complete, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.FAILURE">FAILURE</a></code> | Database failure event: instance failure, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.LOW_STORAGE">LOW_STORAGE</a></code> | Database low storage event: storage exhausted, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.MAINTENANCE">MAINTENANCE</a></code> | Database maintenance event: instance patched, version upgrade, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.MAINTENANCE_FAILURE">MAINTENANCE_FAILURE</a></code> | Database maintenance failure event: update of Oracle time zone failed. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.MAINTENANCE_NOTIFICATION">MAINTENANCE_NOTIFICATION</a></code> | Database maintenance notification event: time zone update, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.NOTIFICATION">NOTIFICATION</a></code> | Database notification event: patching delayed, operator issued notification, exceeding best practices, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.READ_REPLICA">READ_REPLICA</a></code> | Database read replica event: replication started, stopped, etc. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.RECOVERY">RECOVERY</a></code> | Database recovery event: recovery started, complete. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.RESTORATION">RESTORATION</a></code> | Database restoration event: restored instance. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.SECURITY">SECURITY</a></code> | Database security event: decrypting HSM password to update instance. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventCategory.SECURITY_PATCHING">SECURITY_PATCHING</a></code> | Database security patching event: system update available. |
+
+---
+
+##### `AVAILABILITY` <a name="AVAILABILITY" id="@kikoda/cdk-constructs.DatabaseEventCategory.AVAILABILITY"></a>
+
+Database availability event: shutdown, restart, etc.
+
+---
+
+
+##### `BACKUP` <a name="BACKUP" id="@kikoda/cdk-constructs.DatabaseEventCategory.BACKUP"></a>
+
+Database backup event: started backup, finished backup, etc.
+
+---
+
+
+##### `CONFIGURATION_CHANGE` <a name="CONFIGURATION_CHANGE" id="@kikoda/cdk-constructs.DatabaseEventCategory.CONFIGURATION_CHANGE"></a>
+
+Database configuration change event: updated parameter group, modified instance class, reset credentials, etc.
+
+---
+
+
+##### `CREATION` <a name="CREATION" id="@kikoda/cdk-constructs.DatabaseEventCategory.CREATION"></a>
+
+Database creation event: instance created.
+
+---
+
+
+##### `DELETION` <a name="DELETION" id="@kikoda/cdk-constructs.DatabaseEventCategory.DELETION"></a>
+
+Database deletion event: instance deleted.
+
+---
+
+
+##### `FAILOVER` <a name="FAILOVER" id="@kikoda/cdk-constructs.DatabaseEventCategory.FAILOVER"></a>
+
+Database failover event: failover started, failover complete, etc.
+
+---
+
+
+##### `FAILURE` <a name="FAILURE" id="@kikoda/cdk-constructs.DatabaseEventCategory.FAILURE"></a>
+
+Database failure event: instance failure, etc.
+
+---
+
+
+##### `LOW_STORAGE` <a name="LOW_STORAGE" id="@kikoda/cdk-constructs.DatabaseEventCategory.LOW_STORAGE"></a>
+
+Database low storage event: storage exhausted, etc.
+
+---
+
+
+##### `MAINTENANCE` <a name="MAINTENANCE" id="@kikoda/cdk-constructs.DatabaseEventCategory.MAINTENANCE"></a>
+
+Database maintenance event: instance patched, version upgrade, etc.
+
+---
+
+
+##### `MAINTENANCE_FAILURE` <a name="MAINTENANCE_FAILURE" id="@kikoda/cdk-constructs.DatabaseEventCategory.MAINTENANCE_FAILURE"></a>
+
+Database maintenance failure event: update of Oracle time zone failed.
+
+---
+
+
+##### `MAINTENANCE_NOTIFICATION` <a name="MAINTENANCE_NOTIFICATION" id="@kikoda/cdk-constructs.DatabaseEventCategory.MAINTENANCE_NOTIFICATION"></a>
+
+Database maintenance notification event: time zone update, etc.
+
+---
+
+
+##### `NOTIFICATION` <a name="NOTIFICATION" id="@kikoda/cdk-constructs.DatabaseEventCategory.NOTIFICATION"></a>
+
+Database notification event: patching delayed, operator issued notification, exceeding best practices, etc.
+
+---
+
+
+##### `READ_REPLICA` <a name="READ_REPLICA" id="@kikoda/cdk-constructs.DatabaseEventCategory.READ_REPLICA"></a>
+
+Database read replica event: replication started, stopped, etc.
+
+---
+
+
+##### `RECOVERY` <a name="RECOVERY" id="@kikoda/cdk-constructs.DatabaseEventCategory.RECOVERY"></a>
+
+Database recovery event: recovery started, complete.
+
+etc.
+
+---
+
+
+##### `RESTORATION` <a name="RESTORATION" id="@kikoda/cdk-constructs.DatabaseEventCategory.RESTORATION"></a>
+
+Database restoration event: restored instance.
+
+---
+
+
+##### `SECURITY` <a name="SECURITY" id="@kikoda/cdk-constructs.DatabaseEventCategory.SECURITY"></a>
+
+Database security event: decrypting HSM password to update instance.
+
+---
+
+
+##### `SECURITY_PATCHING` <a name="SECURITY_PATCHING" id="@kikoda/cdk-constructs.DatabaseEventCategory.SECURITY_PATCHING"></a>
+
+Database security patching event: system update available.
 
 ---
 
