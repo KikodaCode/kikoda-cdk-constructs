@@ -59,14 +59,32 @@
      "Statement": [
       {
        "Action": "s3:GetObject",
+       "Condition": {
+        "StringEquals": {
+         "AWS:SourceArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":cloudfront::",
+            {
+             "Ref": "AWS::AccountId"
+            },
+            ":distribution/",
+            {
+             "Ref": "WebsiteSpaCloudfrontDistributionDA3296EE"
+            }
+           ]
+          ]
+         }
+        }
+       },
        "Effect": "Allow",
        "Principal": {
-        "CanonicalUser": {
-         "Fn::GetAtt": [
-          "WebsiteSpaCloudfrontDistributionOrigin1S3Origin0B9C09E7",
-          "S3CanonicalUserId"
-         ]
-        }
+        "Service": "cloudfront.amazonaws.com"
        },
        "Resource": {
         "Fn::Join": [
@@ -88,11 +106,14 @@
     }
    }
   },
-  "WebsiteSpaCloudfrontDistributionOrigin1S3Origin0B9C09E7": {
-   "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+  "WebsiteSpaCloudfrontDistributionOrigin1S3OriginAccessControl29D44BB7": {
+   "Type": "AWS::CloudFront::OriginAccessControl",
    "Properties": {
-    "CloudFrontOriginAccessIdentityConfig": {
-     "Comment": "Identity for WebStackWebsiteSpaCloudfrontDistributionOrigin17EC2D8AF"
+    "OriginAccessControlConfig": {
+     "Name": "WebStackWebsiteSpaCloudfrontOrigin1S3OriginAccessControl013E9CC2",
+     "OriginAccessControlOriginType": "s3",
+     "SigningBehavior": "always",
+     "SigningProtocol": "sigv4"
     }
    }
   },
@@ -133,18 +154,14 @@
         ]
        },
        "Id": "WebStackWebsiteSpaCloudfrontDistributionOrigin17EC2D8AF",
+       "OriginAccessControlId": {
+        "Fn::GetAtt": [
+         "WebsiteSpaCloudfrontDistributionOrigin1S3OriginAccessControl29D44BB7",
+         "Id"
+        ]
+       },
        "S3OriginConfig": {
-        "OriginAccessIdentity": {
-         "Fn::Join": [
-          "",
-          [
-           "origin-access-identity/cloudfront/",
-           {
-            "Ref": "WebsiteSpaCloudfrontDistributionOrigin1S3Origin0B9C09E7"
-           }
-          ]
-         ]
-        }
+        "OriginAccessIdentity": ""
        }
       }
      ],
@@ -165,7 +182,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "8a84a8f465fbe0c48af2c256847ec9abfe095d23781b749728b998315f3ad732.zip"
+     "S3Key": "fa8e14e761e0a29058a42409f160eea065c3dd13909951db47e4a0f1c44f01aa.zip"
     },
     "Description": "/opt/awscli/aws"
    }
@@ -198,8 +215,6 @@
   "WebsiteSpaAliastestexamplecom4147B52F": {
    "Type": "AWS::Route53::RecordSet",
    "Properties": {
-    "Name": "test.example.com.",
-    "Type": "A",
     "AliasTarget": {
      "DNSName": {
       "Fn::GetAtt": [
@@ -219,7 +234,9 @@
     },
     "HostedZoneId": {
      "Ref": "HostedZoneDB99F866"
-    }
+    },
+    "Name": "test.example.com.",
+    "Type": "A"
    }
   },
   "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": {
@@ -354,13 +371,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd.zip"
-    },
-    "Role": {
-     "Fn::GetAtt": [
-      "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
-      "Arn"
-     ]
+     "S3Key": "0158f40002a8c211635388a87874fd4dcc3d68f525fe08a0fe0f014069ae539c.zip"
     },
     "Environment": {
      "Variables": {
@@ -373,7 +384,13 @@
       "Ref": "WebsiteSpaBucketDeploymentAwsCliLayer07BEB88F"
      }
     ],
-    "Runtime": "python3.9",
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11",
     "Timeout": 900
    },
    "DependsOn": [

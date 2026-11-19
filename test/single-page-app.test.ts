@@ -126,7 +126,7 @@ describe('Given simple Single Page App', () => {
     });
   });
 
-  let spaStack1 = new SPAStack({
+  const spaStack1 = new SPAStack({
     appDir: __dirname,
     domainName: 'test.example.com',
     indexDoc: 'indexDoc',
@@ -142,6 +142,49 @@ describe('Given simple Single Page App', () => {
     spaStack1.singlePageApp.disableBucketDeployment();
 
     expect(spaStack1.singlePageApp.bucketDeployment).toBeUndefined();
+  });
+
+  test('CF Distribution Comment contains description', () => {
+    const descriptionSpaStack = new SPAStack({
+      appDir: __dirname,
+      domainName: 'test.example.com',
+      indexDoc: 'indexDoc',
+      description: 'spa description',
+    });
+    const descriptionTemplate = Template.fromStack(descriptionSpaStack);
+
+    descriptionTemplate.hasResourceProperties('AWS::CloudFront::Distribution', {
+      DistributionConfig: {
+        Comment: 'spa description',
+      },
+    });
+  });
+
+  test('CF Distribution Prune defaults to false', () => {
+    const defaultPruneStack = new SPAStack({
+      appDir: __dirname,
+      domainName: 'test.example.com',
+      indexDoc: 'indexDoc',
+    });
+    const defaultPruneTemplate = Template.fromStack(defaultPruneStack);
+
+    defaultPruneTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
+      Prune: false,
+    });
+  });
+
+  test('CF Distribution Prune true when pruneBucket true', () => {
+    const pruneStack = new SPAStack({
+      appDir: __dirname,
+      domainName: 'test.example.com',
+      indexDoc: 'indexDoc',
+      pruneBucket: true,
+    });
+    const pruneTemplate = Template.fromStack(pruneStack);
+
+    pruneTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
+      Prune: true,
+    });
   });
 });
 

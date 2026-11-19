@@ -92,6 +92,49 @@ describe('Given a Website', () => {
       generatedConfigStack.website.generatedWebConfig?.config.additionalConfig?.configValue,
     ).toBe(true);
   });
+
+  test('CF Distribution Comment contains description', () => {
+    const descriptionStack = new WebStack({
+      stage: 'test',
+      appDir: __dirname,
+      domainName: `${subDomain}.${baseDomain}`,
+      description: 'website description',
+    });
+    const descriptionTemplate = Template.fromStack(descriptionStack);
+
+    descriptionTemplate.hasResourceProperties('AWS::CloudFront::Distribution', {
+      DistributionConfig: {
+        Comment: 'website description',
+      },
+    });
+  });
+
+  test('CF Distribution Prune defaults to false', () => {
+    const defaultPruneStack = new WebStack({
+      stage: 'test',
+      appDir: __dirname,
+      domainName: `${subDomain}.${baseDomain}`,
+    });
+    const defaultPruneTemplate = Template.fromStack(defaultPruneStack);
+
+    defaultPruneTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
+      Prune: false,
+    });
+  });
+
+  test('CF Distribution Prune true when pruneBucket true', () => {
+    const pruneStack = new WebStack({
+      stage: 'test',
+      appDir: __dirname,
+      domainName: `${subDomain}.${baseDomain}`,
+      pruneBucket: true,
+    });
+    const pruneTemplate = Template.fromStack(pruneStack);
+
+    pruneTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
+      Prune: true,
+    });
+  });
 });
 
 describe('Given an only default domain Website ', () => {

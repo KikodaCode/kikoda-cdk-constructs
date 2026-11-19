@@ -56,6 +56,9 @@ export interface WebsiteProps {
 
   readonly bundling?: SinglePageAppProps['bundling'];
 
+  /** A description of the website. */
+  readonly description?: string;
+
   /** The name of the index document to load, typically 'index.html'
    *
    * @default "index.html"
@@ -113,6 +116,12 @@ export interface WebsiteProps {
    * @default - wildcard invalidation ['/*']
    */
   readonly cloudfrontInvalidationPaths?: string[];
+
+  /**
+   * Whether to delete files in the destination bucket that do not exist in the source.
+   * @default false
+   */
+  readonly pruneBucket?: boolean;
 }
 
 /** Deploy a single page app with a standard static website architecture to AWS using CloudFront, S3, and Route53. This is typically
@@ -137,12 +146,14 @@ export class Website extends Construct {
       bundling,
       cloudfrontInvalidationPaths,
       corsAllowedOrigins,
+      description,
       domainName,
       enableCors,
       generateWebConfigProps,
       hostedZone,
       indexDoc,
       onlyDefaultDomain,
+      pruneBucket,
       repoRoot,
       stage,
     } = props;
@@ -169,6 +180,7 @@ export class Website extends Construct {
       ],
       buildCommand,
       bundling,
+      description,
       indexDoc: indexDoc ?? 'index.html',
       securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
       originRequestPolicy: enableCors ? OriginRequestPolicy.CORS_S3_ORIGIN : undefined,
@@ -187,6 +199,7 @@ export class Website extends Construct {
       cloudfrontInvalidationPaths: !generateWebConfigProps
         ? cloudfrontInvalidationPaths
         : undefined,
+      pruneBucket,
     });
 
     // export endpoint
