@@ -11,7 +11,7 @@ import {
   ViewerProtocolPolicy,
   IOriginRequestPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
-import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
+import { S3BucketOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { ARecord, RecordTarget, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { BlockPublicAccess, Bucket, BucketEncryption, CorsRule } from 'aws-cdk-lib/aws-s3';
@@ -66,7 +66,10 @@ export interface SinglePageAppProps {
 
   readonly bundling?: AssetOptions['bundling'];
 
-  /** This should be the full absolute path of root directory of the git repository. Dependending on your repository setup
+  /** A description of the application. */
+  readonly description?: string;
+
+  /** This should be the full absolute path of root directory of the git repository. Depending on your repository setup
    * this may be required for Docker-based bundling. This path, if provided will be used as the mount point
    * for the Docker container during bundling. If this is not provided, the `appDir` path will be used.
    */
@@ -88,6 +91,18 @@ export interface SinglePageAppProps {
   readonly securityPolicy?: SecurityPolicyProtocol;
   readonly originRequestPolicy?: IOriginRequestPolicy;
   readonly cloudfrontInvalidationPaths?: BucketDeploymentProps['distributionPaths'];
+  /**
+   * If true, files in the destination bucket that do not exist in the asset
+   * will be deleted during deployment (create/update).
+   *
+   * If false or undefined, files that do not exist in the asset will NOT be
+   * deleted during deployment (create/update).
+   *
+   * @see https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
+   *
+   * @default false
+   */
+  readonly pruneBucket?: BucketDeploymentProps['prune'];
 }
 
 /**
@@ -166,8 +181,9 @@ export class SinglePageApp extends Construct {
     }
 
     this.distribution = new Distribution(this, 'CloudfrontDistribution', {
+      comment: props.description,
       defaultBehavior: {
-        origin: new S3Origin(this.websiteBucket),
+        origin: S3BucketOrigin.withOriginAccessControl(this.websiteBucket),
         viewerProtocolPolicy: props.viewerProtocolPolicy ?? ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         originRequestPolicy: props.originRequestPolicy,
       },
@@ -189,7 +205,6 @@ export class SinglePageApp extends Construct {
       certificate,
       minimumProtocolVersion: props.securityPolicy ?? SecurityPolicyProtocol.TLS_V1_2_2021,
     });
-    // console.log(this.distribution);
 
     let assetOpts: AssetOptions = {
       exclude: props.buildAssetExcludes,
@@ -253,7 +268,7 @@ export class SinglePageApp extends Construct {
     this.bucketDeployment = new BucketDeployment(this, 'BucketDeployment', {
       sources: [this.sourceAsset],
       destinationBucket: this.websiteBucket,
-      prune: false,
+      prune: props.pruneBucket ?? false,
       distribution: props.cloudfrontInvalidationPaths ? this.distribution : undefined,
       distributionPaths: props.cloudfrontInvalidationPaths,
     });
