@@ -17,7 +17,6 @@ const project = new AwsCdkConstructLibrary({
   stability: 'experimental',
   license: 'Apache-2.0',
   cdkVersion: '2.156.0',
-  constructsVersion: '10.6.0',
   projenrcTs: true,
   devContainer: true,
   vscode: true,
