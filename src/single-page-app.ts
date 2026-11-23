@@ -51,6 +51,11 @@ export interface SinglePageAppProps {
   readonly acmCertificateArn?: string;
 
   /**
+   * Additional sources to deploy to the bucket.
+   */
+  readonly additionalSources?: ISource[];
+
+  /**
    * Do not create or look up a hosted zone or certificates for the website. The website will be served under the default CloudFront domain only.
    * Setting this to `true` will ignore the values set for `acmCertificateArn`, `domainName`, `alternateDomainNames`, and `hostedZone`.
    *
@@ -266,7 +271,7 @@ export class SinglePageApp extends Construct {
     this.sourceAsset = Source.asset(props.repoRoot || props.appDir, assetOpts);
 
     this.bucketDeployment = new BucketDeployment(this, 'BucketDeployment', {
-      sources: [this.sourceAsset],
+      sources: [this.sourceAsset, ...(props.additionalSources ?? [])],
       destinationBucket: this.websiteBucket,
       prune: props.pruneBucket ?? false,
       distribution: props.cloudfrontInvalidationPaths ? this.distribution : undefined,
@@ -286,16 +291,5 @@ export class SinglePageApp extends Construct {
         }
       });
     }
-  }
-
-  /**
-   * Disable the default bucket deployment. This method will return
-   * the source asset that would have been used for the deployment.
-   * This can be used to create a custom deployment.
-   */
-  public disableBucketDeployment() {
-    this.bucketDeployment = undefined;
-
-    return this.sourceAsset;
   }
 }

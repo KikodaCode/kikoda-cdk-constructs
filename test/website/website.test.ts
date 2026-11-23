@@ -93,6 +93,17 @@ describe('Given a Website', () => {
     ).toBe(true);
   });
 
+  test('Generated config only creates a single CDKBucketDeployment', () => {
+    const generatedConfigTemplate = Template.fromStack(generatedConfigStack);
+
+    generatedConfigTemplate.resourceCountIs('Custom::CDKBucketDeployment', 1);
+
+    // Assert the app asset, config manifest, and config file are all deployed together.
+    generatedConfigTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
+      SourceObjectKeys: [Match.anyValue(), Match.anyValue(), Match.anyValue()],
+    });
+  });
+
   test('CF Distribution Comment contains description', () => {
     const descriptionStack = new WebStack({
       stage: 'test',

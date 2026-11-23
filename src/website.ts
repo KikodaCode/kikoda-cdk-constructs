@@ -2,10 +2,9 @@ import { ConfigManifest, GeneratedConfig, AdditionalConfigObject } from '@kikoda
 import { OriginRequestPolicy, SecurityPolicyProtocol } from 'aws-cdk-lib/aws-cloudfront';
 import { HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { HttpMethods } from 'aws-cdk-lib/aws-s3';
+import { Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { Construct } from 'constructs';
-
 import { SinglePageApp, SinglePageAppProps } from './single-page-app';
-import { WebConfig } from './web-config';
 
 /** Presets used for invalidation after deployments to Cloudfront Distributions */
 export const DistributionPathsConfig = {
@@ -112,8 +111,9 @@ export interface WebsiteProps {
    */
   readonly corsAllowedOrigins?: string[];
 
-  /** Specify the paths to be invalidated in the Cloudfront Distribution at the end of the deployment
-   * @default - wildcard invalidation ['/*']
+  /**
+   * Specify the paths to be invalidated in the Cloudfront Distribution at the end of the deployment.
+   * @default - wildcard invalidation ['/*'] if generateWebConfigProps is defined; otherwise undefined
    */
   readonly cloudfrontInvalidationPaths?: string[];
 
@@ -163,6 +163,17 @@ export class Website extends Construct {
       throw new Error(`domainName must be provided if onlyDefaultDomain is not true`);
     }
 
+    // create frontend config file asset
+    if (generateWebConfigProps) {
+      // generate dynamic config
+      this.generatedWebConfig = new GeneratedConfig({
+        stage,
+        srcPath: appDir,
+        configDir: generateWebConfigProps.configDir,
+        additionalConfig: generateWebConfigProps.additionalConfig,
+      });
+    }
+
     const spa = new SinglePageApp(this, 'Spa', {
       hostedZone: onlyDefaultDomain
         ? undefined
@@ -195,10 +206,11 @@ export class Website extends Construct {
             },
           ]
         : undefined,
-      // If we're not deploying a webconfig, we'll pass the invalidation paths through to the SPA construct
-      cloudfrontInvalidationPaths: !generateWebConfigProps
-        ? cloudfrontInvalidationPaths
+      additionalSources: this.generatedWebConfig
+        ? webConfigSources(this.generatedWebConfig)
         : undefined,
+      cloudfrontInvalidationPaths:
+        cloudfrontInvalidationPaths ?? (generateWebConfigProps ? ['/*'] : undefined),
       pruneBucket,
     });
 
@@ -208,24 +220,17 @@ export class Website extends Construct {
     } else {
       this.endpoint = `https://${domainName}`;
     }
-
-    // create frontend config file asset
-    if (!!generateWebConfigProps) {
-      // generate dynamic config
-      const { configDir, additionalConfig } = generateWebConfigProps;
-      this.generatedWebConfig = new GeneratedConfig({
-        stage,
-        srcPath: appDir,
-        configDir,
-        additionalConfig,
-      });
-
-      new WebConfig(this, 'WebConfig', {
-        spa,
-        config: this.generatedWebConfig.config,
-        configFileName: this.generatedWebConfig.fileName,
-        cloudfrontInvalidationPaths: cloudfrontInvalidationPaths ?? ['/*'],
-      });
-    }
   }
+}
+
+function webConfigSources<T extends AdditionalConfigObject>(
+  generatedWebConfig: GeneratedConfig<T>,
+) {
+  return [
+    Source.jsonData(
+      ConfigManifest.CONFIG_MANIFEST_FILENAME,
+      new ConfigManifest(generatedWebConfig.fileName),
+    ),
+    Source.jsonData(generatedWebConfig.fileName, generatedWebConfig.config),
+  ];
 }

@@ -126,22 +126,16 @@ describe('Given simple Single Page App', () => {
     });
   });
 
-  const spaStack1 = new SPAStack({
-    appDir: __dirname,
-    domainName: 'test.example.com',
-    indexDoc: 'indexDoc',
-    buildCommand: 'rm -rf dist && mkdir -p dist && touch dist/spa_local_build_artifact',
-    buildDir: 'dist',
-  });
-
   test('local bundling', () => {
+    new SPAStack({
+      appDir: __dirname,
+      domainName: 'test.example.com',
+      indexDoc: 'indexDoc',
+      buildCommand: 'rm -rf dist && mkdir -p dist && touch dist/spa_local_build_artifact',
+      buildDir: 'dist',
+    });
+
     expect(existsSync(`${__dirname}/dist/spa_local_build_artifact`)).toBe(true);
-  });
-
-  test('disable default bucket deployment', () => {
-    spaStack1.singlePageApp.disableBucketDeployment();
-
-    expect(spaStack1.singlePageApp.bucketDeployment).toBeUndefined();
   });
 
   test('CF Distribution Comment contains description', () => {
