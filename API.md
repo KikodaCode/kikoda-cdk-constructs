@@ -3760,7 +3760,7 @@ public readonly cloudfrontInvalidationPaths: string[];
 ```
 
 - *Type:* string[]
-- *Default:* wildcard invalidation ['/*']
+- *Default:* wildcard invalidation ['/*'] if generateWebConfigProps is defined; otherwise undefined
 
 Specify the paths to be invalidated in the Cloudfront Distribution at the end of the deployment.
 
