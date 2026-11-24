@@ -95,7 +95,20 @@ export interface SinglePageAppProps {
   readonly viewerProtocolPolicy?: ViewerProtocolPolicy;
   readonly securityPolicy?: SecurityPolicyProtocol;
   readonly originRequestPolicy?: IOriginRequestPolicy;
+  /**
+   * Specify the paths to be invalidated in the Cloudfront Distribution at the end of the deployment.
+   *
+   * @default - All files in the distribution will be invalidated unless disableInvalidation is set to true.
+   */
   readonly cloudfrontInvalidationPaths?: BucketDeploymentProps['distributionPaths'];
+  /**
+   * Disable the CloudFront Distribution cache invalidation that runs after deployment.
+   * When enabled, `cloudfrontInvalidationPaths` is ignored and updated files may
+   * continue to be served from the cache until they expire.
+   *
+   * @default - The files in the distribution are invalidated.
+   */
+  readonly disableInvalidation?: boolean;
   /**
    * If true, files in the destination bucket that do not exist in the asset
    * will be deleted during deployment (create/update).
@@ -105,7 +118,7 @@ export interface SinglePageAppProps {
    *
    * @see https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
    *
-   * @default false
+   * @default false - The files are not deleted.
    */
   readonly pruneBucket?: BucketDeploymentProps['prune'];
 }
@@ -274,8 +287,8 @@ export class SinglePageApp extends Construct {
       sources: [this.sourceAsset, ...(props.additionalSources ?? [])],
       destinationBucket: this.websiteBucket,
       prune: props.pruneBucket ?? false,
-      distribution: props.cloudfrontInvalidationPaths ? this.distribution : undefined,
-      distributionPaths: props.cloudfrontInvalidationPaths,
+      distribution: props.disableInvalidation ? undefined : this.distribution,
+      distributionPaths: props.disableInvalidation ? undefined : props.cloudfrontInvalidationPaths,
     });
 
     if (!props.onlyDefaultDomain) {

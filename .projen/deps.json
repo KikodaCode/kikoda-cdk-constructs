@@ -1,6 +1,10 @@
 {
   "dependencies": [
     {
+      "name": "@jest/globals",
+      "type": "build"
+    },
+    {
       "name": "@kikoda/generated-config",
       "type": "build"
     },

@@ -50,6 +50,7 @@ const project = new AwsCdkConstructLibrary({
     'minimatch',
   ] /* Dependencies that must be bundled into this module. */,
   devDeps: [
+    '@jest/globals',
     '@kikoda/generated-config',
     '@kikoda/projen-templates',
     '@types/md5',

@@ -1,3 +1,4 @@
+import { jest, describe, test, expect } from '@jest/globals';
 import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { HostedZoneProviderProps } from 'aws-cdk-lib/aws-route53';
@@ -6,7 +7,8 @@ import { Construct } from 'constructs';
 import { Website, WebsiteProps } from '../../src/website';
 
 jest.mock('aws-cdk-lib/aws-route53', () => {
-  const original = jest.requireActual('aws-cdk-lib/aws-route53');
+  type Route53 = typeof import('aws-cdk-lib/aws-route53');
+  const original = jest.requireActual<Route53>('aws-cdk-lib/aws-route53');
   return {
     __esModule: true,
     ...original,
@@ -144,6 +146,53 @@ describe('Given a Website', () => {
 
     pruneTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
       Prune: true,
+    });
+  });
+
+  test('BucketDeployment invalidates CloudFront by default', () => {
+    const invalidationStack = new WebStack({
+      stage: 'test',
+      appDir: __dirname,
+      domainName: `${subDomain}.${baseDomain}`,
+    });
+    const invalidationTemplate = Template.fromStack(invalidationStack);
+
+    invalidationTemplate.resourceCountIs('AWS::CloudFront::Distribution', 1);
+    invalidationTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
+      DistributionId: Match.anyValue(),
+    });
+  });
+
+  test('BucketDeployment invalidates CloudFront when cloudfrontInvalidationPaths is set', () => {
+    const invalidationStack = new WebStack({
+      stage: 'test',
+      appDir: __dirname,
+      domainName: `${subDomain}.${baseDomain}`,
+      cloudfrontInvalidationPaths: ['/index.html'],
+    });
+    const invalidationTemplate = Template.fromStack(invalidationStack);
+
+    invalidationTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
+      DistributionId: Match.anyValue(),
+      DistributionPaths: ['/index.html'],
+    });
+  });
+
+  test('BucketDeployment skips CloudFront invalidation when disableInvalidation is true', () => {
+    const disabledInvalidationStack = new WebStack({
+      stage: 'test',
+      appDir: __dirname,
+      domainName: `${subDomain}.${baseDomain}`,
+      cloudfrontInvalidationPaths: ['/index.html'],
+      disableInvalidation: true,
+    });
+    const disabledInvalidationTemplate = Template.fromStack(disabledInvalidationStack);
+
+    disabledInvalidationTemplate.resourceCountIs('AWS::CloudFront::Distribution', 1);
+
+    disabledInvalidationTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
+      DistributionId: Match.absent(),
+      DistributionPaths: Match.absent(),
     });
   });
 });

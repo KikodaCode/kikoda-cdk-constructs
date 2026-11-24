@@ -1,4 +1,5 @@
 import { existsSync } from 'fs';
+import { jest, describe, test, expect } from '@jest/globals';
 import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { HostedZone, HostedZoneProviderProps, IHostedZone } from 'aws-cdk-lib/aws-route53';
@@ -7,7 +8,8 @@ import { Construct } from 'constructs';
 import { SinglePageApp, SinglePageAppProps } from '../src/single-page-app';
 
 jest.mock('aws-cdk-lib/aws-route53', () => {
-  const original = jest.requireActual('aws-cdk-lib/aws-route53');
+  type Route53 = typeof import('aws-cdk-lib/aws-route53');
+  const original = jest.requireActual<Route53>('aws-cdk-lib/aws-route53');
   return {
     __esModule: true,
     ...original,
@@ -58,11 +60,11 @@ describe('Given simple Single Page App', () => {
   });
   const template = Template.fromStack(spaStack);
 
-  it('Has only one S3 Bucket', () => {
+  test('Has only one S3 Bucket', () => {
     template.resourceCountIs('AWS::S3::Bucket', 1);
   });
 
-  it('Has only one CF Distribution ', () => {
+  test('Has only one CF Distribution ', () => {
     template.resourceCountIs('AWS::CloudFront::Distribution', 1);
   });
 
@@ -178,6 +180,54 @@ describe('Given simple Single Page App', () => {
 
     pruneTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
       Prune: true,
+    });
+  });
+
+  test('BucketDeployment invalidates CloudFront by default', () => {
+    const invalidationStack = new SPAStack({
+      appDir: __dirname,
+      domainName: 'test.example.com',
+      indexDoc: 'indexDoc',
+    });
+    const invalidationTemplate = Template.fromStack(invalidationStack);
+
+    invalidationTemplate.resourceCountIs('AWS::CloudFront::Distribution', 1);
+    invalidationTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
+      DistributionId: Match.anyValue(),
+    });
+  });
+
+  test('BucketDeployment invalidates CloudFront when cloudfrontInvalidationPaths is set', () => {
+    const invalidationStack = new SPAStack({
+      appDir: __dirname,
+      domainName: 'test.example.com',
+      indexDoc: 'indexDoc',
+      cloudfrontInvalidationPaths: ['/index.html'],
+    });
+    const invalidationTemplate = Template.fromStack(invalidationStack);
+
+    invalidationTemplate.resourceCountIs('AWS::CloudFront::Distribution', 1);
+    invalidationTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
+      DistributionId: Match.anyValue(),
+      DistributionPaths: ['/index.html'],
+    });
+  });
+
+  test('BucketDeployment skips CloudFront invalidation when disableInvalidation is true', () => {
+    const disabledInvalidationStack = new SPAStack({
+      appDir: __dirname,
+      domainName: 'test.example.com',
+      indexDoc: 'indexDoc',
+      cloudfrontInvalidationPaths: ['/index.html'],
+      disableInvalidation: true,
+    });
+    const disabledInvalidationTemplate = Template.fromStack(disabledInvalidationStack);
+
+    disabledInvalidationTemplate.resourceCountIs('AWS::CloudFront::Distribution', 1);
+
+    disabledInvalidationTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
+      DistributionId: Match.absent(),
+      DistributionPaths: Match.absent(),
     });
   });
 });

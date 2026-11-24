@@ -207,7 +207,10 @@
     "DestinationBucketName": {
      "Ref": "WebsiteSpaWebsiteBucketC24185B9"
     },
-    "Prune": false
+    "Prune": false,
+    "DistributionId": {
+     "Ref": "WebsiteSpaCloudfrontDistributionDA3296EE"
+    }
    },
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
@@ -352,6 +355,14 @@
          ]
         }
        ]
+      },
+      {
+       "Action": [
+        "cloudfront:GetInvalidation",
+        "cloudfront:CreateInvalidation"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
       }
      ],
      "Version": "2012-10-17"

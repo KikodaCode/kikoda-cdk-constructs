@@ -3633,6 +3633,7 @@ const websiteProps: WebsiteProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.cloudfrontInvalidationPaths">cloudfrontInvalidationPaths</a></code> | <code>string[]</code> | Specify the paths to be invalidated in the Cloudfront Distribution at the end of the deployment. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.corsAllowedOrigins">corsAllowedOrigins</a></code> | <code>string[]</code> | Specify a list of allowed request origins to use when configuring CORS (must also specify `enableCors`). |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.description">description</a></code> | <code>string</code> | A description of the website. |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.disableInvalidation">disableInvalidation</a></code> | <code>boolean</code> | Disable the CloudFront Distribution cache invalidation that runs after deployment. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.domainName">domainName</a></code> | <code>string</code> | Specify a domain name to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.enableCors">enableCors</a></code> | <code>boolean</code> | Setup S3 bucket and Cloudfront distribution to allow CORS requests. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.generateWebConfigProps">generateWebConfigProps</a></code> | <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps">GenerateWebConfigProps</a></code> | Specify options for generating a web config from base and stage level configs. |
@@ -3760,7 +3761,7 @@ public readonly cloudfrontInvalidationPaths: string[];
 ```
 
 - *Type:* string[]
-- *Default:* wildcard invalidation ['/*'] if generateWebConfigProps is defined; otherwise undefined
+- *Default:* All files in the distribution will be invalidated unless disableInvalidation is set to true.
 
 Specify the paths to be invalidated in the Cloudfront Distribution at the end of the deployment.
 
@@ -3788,6 +3789,22 @@ public readonly description: string;
 - *Type:* string
 
 A description of the website.
+
+---
+
+##### `disableInvalidation`<sup>Optional</sup> <a name="disableInvalidation" id="@kikoda/cdk-constructs.WebsiteProps.property.disableInvalidation"></a>
+
+```typescript
+public readonly disableInvalidation: boolean;
+```
+
+- *Type:* boolean
+- *Default:* The files in the distribution are invalidated.
+
+Disable the CloudFront Distribution cache invalidation that runs after deployment.
+
+When enabled, `cloudfrontInvalidationPaths` is ignored and updated files may
+continue to be served from the cache until they expire.
 
 ---
 
@@ -3884,7 +3901,7 @@ public readonly pruneBucket: boolean;
 ```
 
 - *Type:* boolean
-- *Default:* false
+- *Default:* false - The files are not deleted.
 
 Whether to delete files in the destination bucket that do not exist in the source.
 
