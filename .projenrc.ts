@@ -17,6 +17,7 @@ const project = new AwsCdkConstructLibrary({
   stability: 'experimental',
   license: 'Apache-2.0',
   cdkVersion: '2.156.0',
+  workflowNodeVersion: '22',
   projenrcTs: true,
   devContainer: true,
   vscode: true,
