@@ -1,5 +1,5 @@
-import * as os from 'os';
-import { resolve } from 'path';
+import { resolve } from 'node:path';
+import { jest, describe, test, expect } from '@jest/globals';
 import { LogLevel } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { findLockFile, LockFile, PackageManager } from '../src/package-manager';
 import * as fileUtils from '../src/util';
@@ -12,6 +12,11 @@ test('from a package-lock.json', () => {
   expect(packageManager.runCommand).toEqual(['npx', '--no-install']);
 
   expect(packageManager.runBinCommand('my-bin')).toBe('npx --no-install my-bin');
+
+  expect(packageManager.scriptCommand).toEqual(['npm', 'run']);
+  expect(packageManager.scriptArgFlag).toEqual('--');
+  expect(packageManager.runScript('my-script')).toBe('npm run my-script');
+  expect(packageManager.runScript('my-script', '--flag')).toBe('npm run my-script -- --flag');
 });
 
 test('from a package-lock.json with LogLevel.ERROR', () => {
@@ -28,6 +33,10 @@ test('from a yarn.lock', () => {
   expect(packageManager.runCommand).toEqual(['yarn', 'run']);
 
   expect(packageManager.runBinCommand('my-bin')).toBe('yarn run my-bin');
+
+  expect(packageManager.scriptCommand).toEqual(['yarn']);
+  expect(packageManager.scriptArgFlag).toBeUndefined();
+  expect(packageManager.runScript('my-script', '--flag')).toBe('yarn my-script --flag');
 });
 
 test('from a yarn.lock with LogLevel.ERROR', () => {
@@ -43,6 +52,10 @@ test('from a pnpm-lock.yaml', () => {
   expect(packageManager.runCommand).toEqual(['pnpm', 'exec']);
 
   expect(packageManager.runBinCommand('my-bin')).toBe('pnpm exec -- my-bin');
+
+  expect(packageManager.scriptCommand).toEqual(['pnpm', 'run']);
+  expect(packageManager.scriptArgFlag).toBeUndefined();
+  expect(packageManager.runScript('my-script', '--flag')).toBe('pnpm run my-script --flag');
 });
 
 test('from a pnpm-lock.yaml with LogLevel.ERROR', () => {
@@ -55,8 +68,9 @@ test('defaults to NPM', () => {
   expect(packageManager.lockFile).toEqual(LockFile.NPM);
 });
 
-test.skip('Windows', () => {
-  const osPlatformMock = jest.spyOn(os, 'platform').mockReturnValue('win32');
+test('Windows', () => {
+  const osModule = jest.requireActual<typeof import('os')>('os');
+  const osPlatformMock = jest.spyOn(osModule, 'platform').mockReturnValue('win32');
 
   const packageManager = PackageManager.fromLockFile('/path/to/whatever');
   expect(packageManager.runBinCommand('my-bin')).toEqual('npx.cmd --no-install my-bin');
@@ -65,21 +79,33 @@ test.skip('Windows', () => {
 });
 
 describe('findLockFile', () => {
-  it('finds a direct path lock file', () => {
+  test('finds a direct path lock file', () => {
     expect(() => findLockFile(resolve(__dirname, './test-configs/package.json'))).not.toThrow();
   });
 
-  it('throws error on no existant file.', () => {
+  test('throws error on no existant file.', () => {
     expect(() => findLockFile(resolve(__dirname, './test-configs/package-bob.json'))).toThrow();
   });
 
-  it('throws error when it cannot find a lockfile.', () => {
+  test('throws error when the path points to a directory.', () => {
+    expect(() => findLockFile(resolve(__dirname, './test-configs'))).toThrow(
+      '`depsLockFilePath` should point to a file',
+    );
+  });
+
+  test('returns the single lock file found by walking up.', () => {
+    jest.spyOn(fileUtils, 'findUpMultiple').mockReturnValueOnce(['/path/to/yarn.lock']);
+
+    expect(findLockFile()).toBe('/path/to/yarn.lock');
+  });
+
+  test('throws error when it cannot find a lockfile.', () => {
     jest.spyOn(fileUtils, 'findUpMultiple').mockReturnValueOnce([]);
 
     expect(findLockFile).toThrow();
   });
 
-  it('throws error when it finds multiple lockfiles.', () => {
+  test('throws error when it finds multiple lockfiles.', () => {
     jest.spyOn(fileUtils, 'findUpMultiple').mockReturnValueOnce(['', '']);
 
     expect(findLockFile).toThrow();

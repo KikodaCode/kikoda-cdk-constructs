@@ -1,4 +1,4 @@
-import { existsSync } from 'fs';
+import { existsSync } from 'node:fs';
 import { jest, describe, test, expect } from '@jest/globals';
 import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
@@ -230,6 +230,51 @@ describe('Given simple Single Page App', () => {
       DistributionPaths: Match.absent(),
     });
   });
+
+  test('uses an existing ACM certificate', () => {
+    const certificateArn =
+      'arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012';
+    const certificateStack = new SPAStack({
+      appDir: __dirname,
+      domainName,
+      acmCertificateArn: certificateArn,
+      indexDoc: 'indexDoc',
+    });
+    const certificateTemplate = Template.fromStack(certificateStack);
+
+    certificateTemplate.hasResourceProperties('AWS::CloudFront::Distribution', {
+      DistributionConfig: {
+        ViewerCertificate: {
+          AcmCertificateArn: certificateArn,
+        },
+      },
+    });
+  });
+
+  test('rejects an ACM certificate outside us-east-1', () => {
+    expect(
+      () =>
+        new SPAStack({
+          appDir: __dirname,
+          domainName,
+          acmCertificateArn:
+            'arn:aws:acm:us-west-2:123456789012:certificate/12345678-1234-1234-1234-123456789012',
+          indexDoc: 'indexDoc',
+        }),
+    ).toThrow('The certificate must be in the us-east-1 region');
+  });
+
+  test('rejects alternate domain names outside the hosted zone', () => {
+    expect(
+      () =>
+        new SPAStack({
+          appDir: __dirname,
+          domainName,
+          alternateDomainNames: ['not-in-zone.example.org'],
+          indexDoc: 'indexDoc',
+        }),
+    ).toThrow('The alternate domain names must be in the same hosted zone');
+  });
 });
 
 describe('Given an only default domain Single Page App ', () => {
@@ -305,5 +350,25 @@ describe('Given an only default domain Single Page App ', () => {
         false,
       );
     }).toThrow();
+  });
+
+  test('onlyDefaultDomain does not create distribution alias or DNS record', () => {
+    const onlyDefaultDomainStack = new SPAStack(
+      {
+        appDir: __dirname,
+        indexDoc: 'indexDoc',
+        onlyDefaultDomain: true,
+      },
+      false,
+    );
+    const onlyDefaultDomainTemplate = Template.fromStack(onlyDefaultDomainStack);
+
+    onlyDefaultDomainTemplate.hasResourceProperties('AWS::CloudFront::Distribution', {
+      DistributionConfig: {
+        Aliases: Match.absent(),
+        ViewerCertificate: Match.absent(),
+      },
+    });
+    onlyDefaultDomainTemplate.resourceCountIs('AWS::Route53::RecordSet', 0);
   });
 });

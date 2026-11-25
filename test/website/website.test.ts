@@ -1,7 +1,7 @@
 import { jest, describe, test, expect } from '@jest/globals';
 import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
-import { HostedZoneProviderProps } from 'aws-cdk-lib/aws-route53';
+import { HostedZone, HostedZoneProviderProps } from 'aws-cdk-lib/aws-route53';
 import { CorsRule, HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 import { Website, WebsiteProps } from '../../src/website';
@@ -240,5 +240,45 @@ describe('Given an only default domain Website ', () => {
     expect(template.findResources('AWS::Route53::HostedZone')).toEqual({});
     expect(template.findResources('AWS::Route53::RecordSet')).toEqual({});
     expect(webStack.website.endpoint).not.toEqual('https://example.com');
+  });
+});
+
+describe('Website construct ', () => {
+  const baseDomain = 'baseDomain';
+  const subDomain = 'subDomain';
+
+  test('uses provided hosted zone, build excludes, index doc, and CORS origins', () => {
+    const stack = new Stack();
+    const hostedZone = HostedZone.fromLookup(stack, 'HostedZone', {
+      domainName: baseDomain,
+    });
+
+    new Website(stack, 'Website', {
+      stage: 'test',
+      appDir: __dirname,
+      domainName: `${subDomain}.${baseDomain}`,
+      hostedZone,
+      buildAssetExcludes: ['*.txt'],
+      indexDoc: 'custom-index.html',
+      enableCors: true,
+      corsAllowedOrigins: ['https://allowed.example.com'],
+    });
+
+    const providedValuesTemplate = Template.fromStack(stack);
+
+    providedValuesTemplate.resourceCountIs('AWS::Route53::HostedZone', 1);
+    providedValuesTemplate.hasResourceProperties('AWS::S3::Bucket', {
+      CorsConfiguration: {
+        CorsRules: [Match.objectLike({ AllowedOrigins: ['https://allowed.example.com'] })],
+      },
+    });
+    providedValuesTemplate.hasResourceProperties('AWS::CloudFront::Distribution', {
+      DistributionConfig: {
+        CustomErrorResponses: [
+          Match.objectLike({ ResponsePagePath: '/custom-index.html' }),
+          Match.objectLike({ ResponsePagePath: '/custom-index.html' }),
+        ],
+      },
+    });
   });
 });
