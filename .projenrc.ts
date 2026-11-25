@@ -16,7 +16,8 @@ const project = new AwsCdkConstructLibrary({
   keywords: ['cdk', 'awscdk', 'compliance', 'configuration', 'websites', 'scaffolding', 'cicd'],
   stability: 'experimental',
   license: 'Apache-2.0',
-  cdkVersion: '2.78.0',
+  cdkVersion: '2.156.0',
+  workflowNodeVersion: '22',
   projenrcTs: true,
   devContainer: true,
   vscode: true,
@@ -50,6 +51,7 @@ const project = new AwsCdkConstructLibrary({
     'minimatch',
   ] /* Dependencies that must be bundled into this module. */,
   devDeps: [
+    '@jest/globals',
     '@kikoda/generated-config',
     '@kikoda/projen-templates',
     '@types/md5',

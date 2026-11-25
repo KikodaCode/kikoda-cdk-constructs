@@ -2,10 +2,9 @@ import { ConfigManifest, GeneratedConfig, AdditionalConfigObject } from '@kikoda
 import { OriginRequestPolicy, SecurityPolicyProtocol } from 'aws-cdk-lib/aws-cloudfront';
 import { HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { HttpMethods } from 'aws-cdk-lib/aws-s3';
+import { Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { Construct } from 'constructs';
-
 import { SinglePageApp, SinglePageAppProps } from './single-page-app';
-import { WebConfig } from './web-config';
 
 /** Presets used for invalidation after deployments to Cloudfront Distributions */
 export const DistributionPathsConfig = {
@@ -56,7 +55,11 @@ export interface WebsiteProps {
 
   readonly bundling?: SinglePageAppProps['bundling'];
 
-  /** The name of the index document to load, typically 'index.html'
+  /** A description of the website. */
+  readonly description?: string;
+
+  /**
+   * The name of the index document to load, typically 'index.html'
    *
    * @default "index.html"
    */
@@ -104,15 +107,35 @@ export interface WebsiteProps {
   /** Setup S3 bucket and Cloudfront distribution to allow CORS requests. Optionally specify the allowed Origins with `corsAllowedOrigins` */
   readonly enableCors?: boolean;
 
-  /** Specify a list of allowed request origins to use when configuring CORS (must also specify `enableCors`)
-   * @default ['*']
+  /**
+   * Specify a list of allowed request origins to use when configuring CORS (must also specify `enableCors`).
+   *
+   * @default - ['*']
    */
   readonly corsAllowedOrigins?: string[];
 
-  /** Specify the paths to be invalidated in the Cloudfront Distribution at the end of the deployment
-   * @default - wildcard invalidation ['/*']
+  /**
+   * Specify the paths to be invalidated in the Cloudfront Distribution at the end of the deployment.
+   *
+   * @default - All files in the distribution will be invalidated unless disableInvalidation is set to true.
    */
   readonly cloudfrontInvalidationPaths?: string[];
+
+  /**
+   * Disable the CloudFront Distribution cache invalidation that runs after deployment.
+   * When enabled, `cloudfrontInvalidationPaths` is ignored and updated files may
+   * continue to be served from the cache until they expire.
+   *
+   * @default - The files in the distribution are invalidated.
+   */
+  readonly disableInvalidation?: boolean;
+
+  /**
+   * Whether to delete files in the destination bucket that do not exist in the source.
+   *
+   * @default false - The files are not deleted.
+   */
+  readonly pruneBucket?: boolean;
 }
 
 /** Deploy a single page app with a standard static website architecture to AWS using CloudFront, S3, and Route53. This is typically
@@ -137,12 +160,15 @@ export class Website extends Construct {
       bundling,
       cloudfrontInvalidationPaths,
       corsAllowedOrigins,
+      description,
+      disableInvalidation,
       domainName,
       enableCors,
       generateWebConfigProps,
       hostedZone,
       indexDoc,
       onlyDefaultDomain,
+      pruneBucket,
       repoRoot,
       stage,
     } = props;
@@ -150,6 +176,17 @@ export class Website extends Construct {
     // check domain props
     if (!onlyDefaultDomain && domainName === undefined) {
       throw new Error(`domainName must be provided if onlyDefaultDomain is not true`);
+    }
+
+    // create frontend config file asset
+    if (generateWebConfigProps) {
+      // generate dynamic config
+      this.generatedWebConfig = new GeneratedConfig({
+        stage,
+        srcPath: appDir,
+        configDir: generateWebConfigProps.configDir,
+        additionalConfig: generateWebConfigProps.additionalConfig,
+      });
     }
 
     const spa = new SinglePageApp(this, 'Spa', {
@@ -169,6 +206,7 @@ export class Website extends Construct {
       ],
       buildCommand,
       bundling,
+      description,
       indexDoc: indexDoc ?? 'index.html',
       securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
       originRequestPolicy: enableCors ? OriginRequestPolicy.CORS_S3_ORIGIN : undefined,
@@ -183,10 +221,12 @@ export class Website extends Construct {
             },
           ]
         : undefined,
-      // If we're not deploying a webconfig, we'll pass the invalidation paths through to the SPA construct
-      cloudfrontInvalidationPaths: !generateWebConfigProps
-        ? cloudfrontInvalidationPaths
+      additionalSources: this.generatedWebConfig
+        ? webConfigSources(this.generatedWebConfig)
         : undefined,
+      cloudfrontInvalidationPaths: cloudfrontInvalidationPaths,
+      disableInvalidation: disableInvalidation,
+      pruneBucket,
     });
 
     // export endpoint
@@ -195,24 +235,17 @@ export class Website extends Construct {
     } else {
       this.endpoint = `https://${domainName}`;
     }
-
-    // create frontend config file asset
-    if (!!generateWebConfigProps) {
-      // generate dynamic config
-      const { configDir, additionalConfig } = generateWebConfigProps;
-      this.generatedWebConfig = new GeneratedConfig({
-        stage,
-        srcPath: appDir,
-        configDir,
-        additionalConfig,
-      });
-
-      new WebConfig(this, 'WebConfig', {
-        spa,
-        config: this.generatedWebConfig.config,
-        configFileName: this.generatedWebConfig.fileName,
-        cloudfrontInvalidationPaths: cloudfrontInvalidationPaths ?? ['/*'],
-      });
-    }
   }
+}
+
+function webConfigSources<T extends AdditionalConfigObject>(
+  generatedWebConfig: GeneratedConfig<T>,
+) {
+  return [
+    Source.jsonData(
+      ConfigManifest.CONFIG_MANIFEST_FILENAME,
+      new ConfigManifest(generatedWebConfig.fileName),
+    ),
+    Source.jsonData(generatedWebConfig.fileName, generatedWebConfig.config),
+  ];
 }

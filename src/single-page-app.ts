@@ -11,7 +11,7 @@ import {
   ViewerProtocolPolicy,
   IOriginRequestPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
-import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
+import { S3BucketOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { ARecord, RecordTarget, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { BlockPublicAccess, Bucket, BucketEncryption, CorsRule } from 'aws-cdk-lib/aws-s3';
@@ -51,6 +51,11 @@ export interface SinglePageAppProps {
   readonly acmCertificateArn?: string;
 
   /**
+   * Additional sources to deploy to the bucket.
+   */
+  readonly additionalSources?: ISource[];
+
+  /**
    * Do not create or look up a hosted zone or certificates for the website. The website will be served under the default CloudFront domain only.
    * Setting this to `true` will ignore the values set for `acmCertificateArn`, `domainName`, `alternateDomainNames`, and `hostedZone`.
    *
@@ -66,7 +71,10 @@ export interface SinglePageAppProps {
 
   readonly bundling?: AssetOptions['bundling'];
 
-  /** This should be the full absolute path of root directory of the git repository. Dependending on your repository setup
+  /** A description of the application. */
+  readonly description?: string;
+
+  /** This should be the full absolute path of root directory of the git repository. Depending on your repository setup
    * this may be required for Docker-based bundling. This path, if provided will be used as the mount point
    * for the Docker container during bundling. If this is not provided, the `appDir` path will be used.
    */
@@ -87,7 +95,32 @@ export interface SinglePageAppProps {
   readonly viewerProtocolPolicy?: ViewerProtocolPolicy;
   readonly securityPolicy?: SecurityPolicyProtocol;
   readonly originRequestPolicy?: IOriginRequestPolicy;
+  /**
+   * Specify the paths to be invalidated in the Cloudfront Distribution at the end of the deployment.
+   *
+   * @default - All files in the distribution will be invalidated unless disableInvalidation is set to true.
+   */
   readonly cloudfrontInvalidationPaths?: BucketDeploymentProps['distributionPaths'];
+  /**
+   * Disable the CloudFront Distribution cache invalidation that runs after deployment.
+   * When enabled, `cloudfrontInvalidationPaths` is ignored and updated files may
+   * continue to be served from the cache until they expire.
+   *
+   * @default - The files in the distribution are invalidated.
+   */
+  readonly disableInvalidation?: boolean;
+  /**
+   * If true, files in the destination bucket that do not exist in the asset
+   * will be deleted during deployment (create/update).
+   *
+   * If false or undefined, files that do not exist in the asset will NOT be
+   * deleted during deployment (create/update).
+   *
+   * @see https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
+   *
+   * @default false - The files are not deleted.
+   */
+  readonly pruneBucket?: BucketDeploymentProps['prune'];
 }
 
 /**
@@ -166,8 +199,9 @@ export class SinglePageApp extends Construct {
     }
 
     this.distribution = new Distribution(this, 'CloudfrontDistribution', {
+      comment: props.description,
       defaultBehavior: {
-        origin: new S3Origin(this.websiteBucket),
+        origin: S3BucketOrigin.withOriginAccessControl(this.websiteBucket),
         viewerProtocolPolicy: props.viewerProtocolPolicy ?? ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         originRequestPolicy: props.originRequestPolicy,
       },
@@ -189,7 +223,6 @@ export class SinglePageApp extends Construct {
       certificate,
       minimumProtocolVersion: props.securityPolicy ?? SecurityPolicyProtocol.TLS_V1_2_2021,
     });
-    // console.log(this.distribution);
 
     let assetOpts: AssetOptions = {
       exclude: props.buildAssetExcludes,
@@ -251,11 +284,11 @@ export class SinglePageApp extends Construct {
     this.sourceAsset = Source.asset(props.repoRoot || props.appDir, assetOpts);
 
     this.bucketDeployment = new BucketDeployment(this, 'BucketDeployment', {
-      sources: [this.sourceAsset],
+      sources: [this.sourceAsset, ...(props.additionalSources ?? [])],
       destinationBucket: this.websiteBucket,
-      prune: false,
-      distribution: props.cloudfrontInvalidationPaths ? this.distribution : undefined,
-      distributionPaths: props.cloudfrontInvalidationPaths,
+      prune: props.pruneBucket ?? false,
+      distribution: props.disableInvalidation ? undefined : this.distribution,
+      distributionPaths: props.disableInvalidation ? undefined : props.cloudfrontInvalidationPaths,
     });
 
     if (!props.onlyDefaultDomain) {
@@ -271,16 +304,5 @@ export class SinglePageApp extends Construct {
         }
       });
     }
-  }
-
-  /**
-   * Disable the default bucket deployment. This method will return
-   * the source asset that would have been used for the deployment.
-   * This can be used to create a custom deployment.
-   */
-  public disableBucketDeployment() {
-    this.bucketDeployment = undefined;
-
-    return this.sourceAsset;
   }
 }

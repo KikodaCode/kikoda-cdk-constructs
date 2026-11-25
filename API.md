@@ -324,8 +324,6 @@ temporarily ensure that the CloudFormation Export still exists while you
 remove the reference from the consuming stack. After that, you can remove
 the resource and the manual export.
 
-## Example
-
 Here is how the process works. Let's say there are two stacks,
 `producerStack` and `consumerStack`, and `producerStack` has a bucket
 called `bucket`, which is referenced by `consumerStack` (perhaps because
@@ -336,7 +334,7 @@ deleted, `consumerStack` might still be using it.
 
 Instead, the process takes two deployments:
 
-### Deployment 1: break the relationship
+**Deployment 1: break the relationship**:
 
 - Make sure `consumerStack` no longer references `bucket.bucketName` (maybe the consumer
   stack now uses its own bucket, or it writes to an AWS DynamoDB table, or maybe you just
@@ -346,7 +344,7 @@ Instead, the process takes two deployments:
   between the two stacks is being broken.
 - Deploy (this will effectively only change the `consumerStack`, but it's safe to deploy both).
 
-### Deployment 2: remove the bucket resource
+**Deployment 2: remove the bucket resource**:
 
 - You are now free to remove the `bucket` resource from `producerStack`.
 - Don't forget to remove the `exportValue()` call as well.
@@ -984,7 +982,7 @@ If this is a nested stack, this represents its `AWS::CloudFormation::Stack` reso
 
 ---
 
-##### `terminationProtection`<sup>Optional</sup> <a name="terminationProtection" id="@kikoda/cdk-constructs.ComponentPipelineStack.property.terminationProtection"></a>
+##### `terminationProtection`<sup>Required</sup> <a name="terminationProtection" id="@kikoda/cdk-constructs.ComponentPipelineStack.property.terminationProtection"></a>
 
 ```typescript
 public readonly terminationProtection: boolean;
@@ -2143,6 +2141,7 @@ const branchPipelinesProps: BranchPipelinesProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.env">env</a></code> | <code>aws-cdk-lib.Environment</code> | The AWS environment (account/region) where this stack will be deployed. |
 | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.permissionsBoundary">permissionsBoundary</a></code> | <code>aws-cdk-lib.PermissionsBoundary</code> | Options for applying a permissions boundary to all IAM Roles and Users created within this Stage. |
 | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.stackName">stackName</a></code> | <code>string</code> | Name to deploy the stack with. |
+| <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.suppressTemplateIndentation">suppressTemplateIndentation</a></code> | <code>boolean</code> | Enable this flag to suppress indentation in generated CloudFormation templates. |
 | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.synthesizer">synthesizer</a></code> | <code>aws-cdk-lib.IStackSynthesizer</code> | Synthesis method to use while deploying this stack. |
 | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Stack tags that will be applied to all the taggable resources and the stack itself. |
 | <code><a href="#@kikoda/cdk-constructs.BranchPipelinesProps.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether to enable termination protection for this stack. |
@@ -2294,6 +2293,23 @@ public readonly stackName: string;
 - *Default:* Derived from construct path.
 
 Name to deploy the stack with.
+
+---
+
+##### `suppressTemplateIndentation`<sup>Optional</sup> <a name="suppressTemplateIndentation" id="@kikoda/cdk-constructs.BranchPipelinesProps.property.suppressTemplateIndentation"></a>
+
+```typescript
+public readonly suppressTemplateIndentation: boolean;
+```
+
+- *Type:* boolean
+- *Default:* the value of `@aws-cdk/core:suppressTemplateIndentation`, or `false` if that is not set.
+
+Enable this flag to suppress indentation in generated CloudFormation templates.
+
+If not specified, the value of the `@aws-cdk/core:suppressTemplateIndentation`
+context key will be used. If that is not specified, then the
+default value `false` will be used.
 
 ---
 
@@ -2493,6 +2509,7 @@ const componentPipelineStackProps: ComponentPipelineStackProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.env">env</a></code> | <code>aws-cdk-lib.Environment</code> | The AWS environment (account/region) where this stack will be deployed. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.permissionsBoundary">permissionsBoundary</a></code> | <code>aws-cdk-lib.PermissionsBoundary</code> | Options for applying a permissions boundary to all IAM Roles and Users created within this Stage. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.stackName">stackName</a></code> | <code>string</code> | Name to deploy the stack with. |
+| <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.suppressTemplateIndentation">suppressTemplateIndentation</a></code> | <code>boolean</code> | Enable this flag to suppress indentation in generated CloudFormation templates. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.synthesizer">synthesizer</a></code> | <code>aws-cdk-lib.IStackSynthesizer</code> | Synthesis method to use while deploying this stack. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Stack tags that will be applied to all the taggable resources and the stack itself. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStackProps.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether to enable termination protection for this stack. |
@@ -2644,6 +2661,23 @@ public readonly stackName: string;
 - *Default:* Derived from construct path.
 
 Name to deploy the stack with.
+
+---
+
+##### `suppressTemplateIndentation`<sup>Optional</sup> <a name="suppressTemplateIndentation" id="@kikoda/cdk-constructs.ComponentPipelineStackProps.property.suppressTemplateIndentation"></a>
+
+```typescript
+public readonly suppressTemplateIndentation: boolean;
+```
+
+- *Type:* boolean
+- *Default:* the value of `@aws-cdk/core:suppressTemplateIndentation`, or `false` if that is not set.
+
+Enable this flag to suppress indentation in generated CloudFormation templates.
+
+If not specified, the value of the `@aws-cdk/core:suppressTemplateIndentation`
+context key will be used. If that is not specified, then the
+default value `false` will be used.
 
 ---
 
@@ -3598,12 +3632,15 @@ const websiteProps: WebsiteProps = { ... }
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.bundling">bundling</a></code> | <code>aws-cdk-lib.BundlingOptions</code> | *No description.* |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.cloudfrontInvalidationPaths">cloudfrontInvalidationPaths</a></code> | <code>string[]</code> | Specify the paths to be invalidated in the Cloudfront Distribution at the end of the deployment. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.corsAllowedOrigins">corsAllowedOrigins</a></code> | <code>string[]</code> | Specify a list of allowed request origins to use when configuring CORS (must also specify `enableCors`). |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.description">description</a></code> | <code>string</code> | A description of the website. |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.disableInvalidation">disableInvalidation</a></code> | <code>boolean</code> | Disable the CloudFront Distribution cache invalidation that runs after deployment. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.domainName">domainName</a></code> | <code>string</code> | Specify a domain name to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.enableCors">enableCors</a></code> | <code>boolean</code> | Setup S3 bucket and Cloudfront distribution to allow CORS requests. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.generateWebConfigProps">generateWebConfigProps</a></code> | <code><a href="#@kikoda/cdk-constructs.GenerateWebConfigProps">GenerateWebConfigProps</a></code> | Specify options for generating a web config from base and stage level configs. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | Specify an existing hosted zone to use for the website. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.indexDoc">indexDoc</a></code> | <code>string</code> | The name of the index document to load, typically 'index.html'. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.onlyDefaultDomain">onlyDefaultDomain</a></code> | <code>boolean</code> | Do not create or look up a hosted zone or certificates for the website. |
+| <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.pruneBucket">pruneBucket</a></code> | <code>boolean</code> | Whether to delete files in the destination bucket that do not exist in the source. |
 | <code><a href="#@kikoda/cdk-constructs.WebsiteProps.property.repoRoot">repoRoot</a></code> | <code>string</code> | This should be the root directory of the git repository. |
 
 ---
@@ -3724,7 +3761,7 @@ public readonly cloudfrontInvalidationPaths: string[];
 ```
 
 - *Type:* string[]
-- *Default:* wildcard invalidation ['/*']
+- *Default:* All files in the distribution will be invalidated unless disableInvalidation is set to true.
 
 Specify the paths to be invalidated in the Cloudfront Distribution at the end of the deployment.
 
@@ -3740,6 +3777,34 @@ public readonly corsAllowedOrigins: string[];
 - *Default:* ['*']
 
 Specify a list of allowed request origins to use when configuring CORS (must also specify `enableCors`).
+
+---
+
+##### `description`<sup>Optional</sup> <a name="description" id="@kikoda/cdk-constructs.WebsiteProps.property.description"></a>
+
+```typescript
+public readonly description: string;
+```
+
+- *Type:* string
+
+A description of the website.
+
+---
+
+##### `disableInvalidation`<sup>Optional</sup> <a name="disableInvalidation" id="@kikoda/cdk-constructs.WebsiteProps.property.disableInvalidation"></a>
+
+```typescript
+public readonly disableInvalidation: boolean;
+```
+
+- *Type:* boolean
+- *Default:* The files in the distribution are invalidated.
+
+Disable the CloudFront Distribution cache invalidation that runs after deployment.
+
+When enabled, `cloudfrontInvalidationPaths` is ignored and updated files may
+continue to be served from the cache until they expire.
 
 ---
 
@@ -3826,6 +3891,19 @@ Do not create or look up a hosted zone or certificates for the website.
 
 The website will be served under the default CloudFront domain only.
 Setting this to `true` will ignore the values set for `acmCertificateArn`, `domainName`, `alternateDomainNames`, and `hostedZone`.
+
+---
+
+##### `pruneBucket`<sup>Optional</sup> <a name="pruneBucket" id="@kikoda/cdk-constructs.WebsiteProps.property.pruneBucket"></a>
+
+```typescript
+public readonly pruneBucket: boolean;
+```
+
+- *Type:* boolean
+- *Default:* false - The files are not deleted.
+
+Whether to delete files in the destination bucket that do not exist in the source.
 
 ---
 

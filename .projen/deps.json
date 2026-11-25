@@ -1,6 +1,10 @@
 {
   "dependencies": [
     {
+      "name": "@jest/globals",
+      "type": "build"
+    },
+    {
       "name": "@kikoda/generated-config",
       "type": "build"
     },
@@ -175,7 +179,7 @@
     },
     {
       "name": "aws-cdk-lib",
-      "version": "^2.78.0",
+      "version": "^2.156.0",
       "type": "peer"
     },
     {

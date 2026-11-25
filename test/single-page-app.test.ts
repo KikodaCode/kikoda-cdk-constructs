@@ -1,4 +1,5 @@
-import { existsSync } from 'fs';
+import { existsSync } from 'node:fs';
+import { jest, describe, test, expect } from '@jest/globals';
 import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { HostedZone, HostedZoneProviderProps, IHostedZone } from 'aws-cdk-lib/aws-route53';
@@ -7,7 +8,8 @@ import { Construct } from 'constructs';
 import { SinglePageApp, SinglePageAppProps } from '../src/single-page-app';
 
 jest.mock('aws-cdk-lib/aws-route53', () => {
-  const original = jest.requireActual('aws-cdk-lib/aws-route53');
+  type Route53 = typeof import('aws-cdk-lib/aws-route53');
+  const original = jest.requireActual<Route53>('aws-cdk-lib/aws-route53');
   return {
     __esModule: true,
     ...original,
@@ -58,11 +60,11 @@ describe('Given simple Single Page App', () => {
   });
   const template = Template.fromStack(spaStack);
 
-  it('Has only one S3 Bucket', () => {
+  test('Has only one S3 Bucket', () => {
     template.resourceCountIs('AWS::S3::Bucket', 1);
   });
 
-  it('Has only one CF Distribution ', () => {
+  test('Has only one CF Distribution ', () => {
     template.resourceCountIs('AWS::CloudFront::Distribution', 1);
   });
 
@@ -126,22 +128,152 @@ describe('Given simple Single Page App', () => {
     });
   });
 
-  let spaStack1 = new SPAStack({
-    appDir: __dirname,
-    domainName: 'test.example.com',
-    indexDoc: 'indexDoc',
-    buildCommand: 'rm -rf dist && mkdir -p dist && touch dist/spa_local_build_artifact',
-    buildDir: 'dist',
-  });
-
   test('local bundling', () => {
+    new SPAStack({
+      appDir: __dirname,
+      domainName: 'test.example.com',
+      indexDoc: 'indexDoc',
+      buildCommand: 'rm -rf dist && mkdir -p dist && touch dist/spa_local_build_artifact',
+      buildDir: 'dist',
+    });
+
     expect(existsSync(`${__dirname}/dist/spa_local_build_artifact`)).toBe(true);
   });
 
-  test('disable default bucket deployment', () => {
-    spaStack1.singlePageApp.disableBucketDeployment();
+  test('CF Distribution Comment contains description', () => {
+    const descriptionSpaStack = new SPAStack({
+      appDir: __dirname,
+      domainName: 'test.example.com',
+      indexDoc: 'indexDoc',
+      description: 'spa description',
+    });
+    const descriptionTemplate = Template.fromStack(descriptionSpaStack);
 
-    expect(spaStack1.singlePageApp.bucketDeployment).toBeUndefined();
+    descriptionTemplate.hasResourceProperties('AWS::CloudFront::Distribution', {
+      DistributionConfig: {
+        Comment: 'spa description',
+      },
+    });
+  });
+
+  test('CF Distribution Prune defaults to false', () => {
+    const defaultPruneStack = new SPAStack({
+      appDir: __dirname,
+      domainName: 'test.example.com',
+      indexDoc: 'indexDoc',
+    });
+    const defaultPruneTemplate = Template.fromStack(defaultPruneStack);
+
+    defaultPruneTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
+      Prune: false,
+    });
+  });
+
+  test('CF Distribution Prune true when pruneBucket true', () => {
+    const pruneStack = new SPAStack({
+      appDir: __dirname,
+      domainName: 'test.example.com',
+      indexDoc: 'indexDoc',
+      pruneBucket: true,
+    });
+    const pruneTemplate = Template.fromStack(pruneStack);
+
+    pruneTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
+      Prune: true,
+    });
+  });
+
+  test('BucketDeployment invalidates CloudFront by default', () => {
+    const invalidationStack = new SPAStack({
+      appDir: __dirname,
+      domainName: 'test.example.com',
+      indexDoc: 'indexDoc',
+    });
+    const invalidationTemplate = Template.fromStack(invalidationStack);
+
+    invalidationTemplate.resourceCountIs('AWS::CloudFront::Distribution', 1);
+    invalidationTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
+      DistributionId: Match.anyValue(),
+    });
+  });
+
+  test('BucketDeployment invalidates CloudFront when cloudfrontInvalidationPaths is set', () => {
+    const invalidationStack = new SPAStack({
+      appDir: __dirname,
+      domainName: 'test.example.com',
+      indexDoc: 'indexDoc',
+      cloudfrontInvalidationPaths: ['/index.html'],
+    });
+    const invalidationTemplate = Template.fromStack(invalidationStack);
+
+    invalidationTemplate.resourceCountIs('AWS::CloudFront::Distribution', 1);
+    invalidationTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
+      DistributionId: Match.anyValue(),
+      DistributionPaths: ['/index.html'],
+    });
+  });
+
+  test('BucketDeployment skips CloudFront invalidation when disableInvalidation is true', () => {
+    const disabledInvalidationStack = new SPAStack({
+      appDir: __dirname,
+      domainName: 'test.example.com',
+      indexDoc: 'indexDoc',
+      cloudfrontInvalidationPaths: ['/index.html'],
+      disableInvalidation: true,
+    });
+    const disabledInvalidationTemplate = Template.fromStack(disabledInvalidationStack);
+
+    disabledInvalidationTemplate.resourceCountIs('AWS::CloudFront::Distribution', 1);
+
+    disabledInvalidationTemplate.hasResourceProperties('Custom::CDKBucketDeployment', {
+      DistributionId: Match.absent(),
+      DistributionPaths: Match.absent(),
+    });
+  });
+
+  test('uses an existing ACM certificate', () => {
+    const certificateArn =
+      'arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012';
+    const certificateStack = new SPAStack({
+      appDir: __dirname,
+      domainName,
+      acmCertificateArn: certificateArn,
+      indexDoc: 'indexDoc',
+    });
+    const certificateTemplate = Template.fromStack(certificateStack);
+
+    certificateTemplate.hasResourceProperties('AWS::CloudFront::Distribution', {
+      DistributionConfig: {
+        ViewerCertificate: {
+          AcmCertificateArn: certificateArn,
+        },
+      },
+    });
+  });
+
+  test('rejects an ACM certificate outside us-east-1', () => {
+    expect(
+      () =>
+        new SPAStack({
+          appDir: __dirname,
+          domainName,
+          acmCertificateArn:
+            'arn:aws:acm:us-west-2:123456789012:certificate/12345678-1234-1234-1234-123456789012',
+          indexDoc: 'indexDoc',
+        }),
+    ).toThrow('The certificate must be in the us-east-1 region');
+  });
+
+  test('rejects alternate domain names outside the hosted zone', () => {
+    expect(
+      () =>
+        new SPAStack({
+          appDir: __dirname,
+          domainName,
+          alternateDomainNames: ['not-in-zone.example.org'],
+          indexDoc: 'indexDoc',
+        }),
+    ).toThrow('The alternate domain names must be in the same hosted zone');
   });
 });
 
@@ -218,5 +350,25 @@ describe('Given an only default domain Single Page App ', () => {
         false,
       );
     }).toThrow();
+  });
+
+  test('onlyDefaultDomain does not create distribution alias or DNS record', () => {
+    const onlyDefaultDomainStack = new SPAStack(
+      {
+        appDir: __dirname,
+        indexDoc: 'indexDoc',
+        onlyDefaultDomain: true,
+      },
+      false,
+    );
+    const onlyDefaultDomainTemplate = Template.fromStack(onlyDefaultDomainStack);
+
+    onlyDefaultDomainTemplate.hasResourceProperties('AWS::CloudFront::Distribution', {
+      DistributionConfig: {
+        Aliases: Match.absent(),
+        ViewerCertificate: Match.absent(),
+      },
+    });
+    onlyDefaultDomainTemplate.resourceCountIs('AWS::Route53::RecordSet', 0);
   });
 });
