@@ -4,6 +4,8 @@
 
 ### CodeSource <a name="CodeSource" id="@kikoda/cdk-constructs.CodeSource"></a>
 
+- *Implements:* constructs.IConstruct, constructs.IDependable
+
 Configuration properties for the code source repository.
 
 Currently supports CodeCommit and GitHub Sources.
@@ -48,6 +50,7 @@ new CodeSource(scope: Construct, branchName: string, config: CodeCommitSourceCon
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.CodeSource.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@kikoda/cdk-constructs.CodeSource.with">with</a></code> | Applies one or more mixins to this construct. |
 
 ---
 
@@ -59,6 +62,27 @@ public toString(): string
 
 Returns a string representation of this construct.
 
+##### `with` <a name="with" id="@kikoda/cdk-constructs.CodeSource.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@kikoda/cdk-constructs.CodeSource.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
+
 #### Static Functions <a name="Static Functions" id="Static Functions"></a>
 
 | **Name** | **Description** |
@@ -67,7 +91,7 @@ Returns a string representation of this construct.
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@kikoda/cdk-constructs.CodeSource.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@kikoda/cdk-constructs.CodeSource.isConstruct"></a>
 
 ```typescript
 import { CodeSource } from '@kikoda/cdk-constructs'
@@ -76,6 +100,20 @@ CodeSource.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@kikoda/cdk-constructs.CodeSource.isConstruct.parameter.x"></a>
 
@@ -121,6 +159,8 @@ The Source of the pipeline.
 
 ### ComponentPipelineStack <a name="ComponentPipelineStack" id="@kikoda/cdk-constructs.ComponentPipelineStack"></a>
 
+- *Implements:* constructs.IConstruct, constructs.IDependable, aws-cdk-lib.ITaggable
+
 An individual component deployment pipeline stack.
 
 #### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.ComponentPipelineStack.Initializer"></a>
@@ -162,6 +202,7 @@ new ComponentPipelineStack(scope: Construct, id: string, props: ComponentPipelin
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.addDependency">addDependency</a></code> | Add a dependency between this stack and another stack. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.addMetadata">addMetadata</a></code> | Adds an arbitary key-value pair, with information you want to record about the stack. |
 | <code><a href="#@kikoda/cdk-constructs.ComponentPipelineStack.addTransform">addTransform</a></code> | Add a Transform to this stack. A Transform is a macro that AWS CloudFormation uses to process your template. |
@@ -186,6 +227,27 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@kikoda/cdk-constructs.ComponentPipelineStack.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@kikoda/cdk-constructs.ComponentPipelineStack.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
 
 ##### `addDependency` <a name="addDependency" id="@kikoda/cdk-constructs.ComponentPipelineStack.addDependency"></a>
 
@@ -579,7 +641,7 @@ Convert an object, potentially containing tokens, to a YAML string.
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@kikoda/cdk-constructs.ComponentPipelineStack.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@kikoda/cdk-constructs.ComponentPipelineStack.isConstruct"></a>
 
 ```typescript
 import { ComponentPipelineStack } from '@kikoda/cdk-constructs'
@@ -588,6 +650,20 @@ ComponentPipelineStack.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@kikoda/cdk-constructs.ComponentPipelineStack.isConstruct.parameter.x"></a>
 
@@ -1009,6 +1085,8 @@ Instance of the CDK.CodePipeline created.
 
 ### ConfiguredStage <a name="ConfiguredStage" id="@kikoda/cdk-constructs.ConfiguredStage"></a>
 
+- *Implements:* constructs.IConstruct, constructs.IDependable
+
 A Stage that has a specific configuration.
 
 #### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.ConfiguredStage.Initializer"></a>
@@ -1056,6 +1134,7 @@ The configuration based upon a generic type.
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#@kikoda/cdk-constructs.ConfiguredStage.synth">synth</a></code> | Synthesize this stage into a cloud assembly. |
 
 ---
@@ -1067,6 +1146,27 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@kikoda/cdk-constructs.ConfiguredStage.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@kikoda/cdk-constructs.ConfiguredStage.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
 
 ##### `synth` <a name="synth" id="@kikoda/cdk-constructs.ConfiguredStage.synth"></a>
 
@@ -1097,7 +1197,7 @@ calls will return the same assembly.
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@kikoda/cdk-constructs.ConfiguredStage.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@kikoda/cdk-constructs.ConfiguredStage.isConstruct"></a>
 
 ```typescript
 import { ConfiguredStage } from '@kikoda/cdk-constructs'
@@ -1106,6 +1206,20 @@ ConfiguredStage.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@kikoda/cdk-constructs.ConfiguredStage.isConstruct.parameter.x"></a>
 
@@ -1338,6 +1452,8 @@ The configuration for the stage.
 
 ### DatabaseEventRule <a name="DatabaseEventRule" id="@kikoda/cdk-constructs.DatabaseEventRule"></a>
 
+- *Implements:* constructs.IConstruct, constructs.IDependable, aws-cdk-lib.IResource, aws-cdk-lib.aws_events.IRule
+
 Create a CloudWatch event rule which triggers for database instance events.
 
 > [{@link https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Events.Messages.html} for a listing of the RDS event categories and event messages.]({@link https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Events.Messages.html} for a listing of the RDS event categories and event messages.)
@@ -1381,6 +1497,7 @@ new DatabaseEventRule(scope: Construct, id: string, props: DatabaseEventRuleProp
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
 | <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.addEventPattern">addEventPattern</a></code> | Adds an event pattern filter to this rule. |
 | <code><a href="#@kikoda/cdk-constructs.DatabaseEventRule.addTarget">addTarget</a></code> | Adds a target to the rule. The abstract class RuleTarget can be extended to define new targets. |
@@ -1394,6 +1511,27 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@kikoda/cdk-constructs.DatabaseEventRule.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@kikoda/cdk-constructs.DatabaseEventRule.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
 
 ##### `applyRemovalPolicy` <a name="applyRemovalPolicy" id="@kikoda/cdk-constructs.DatabaseEventRule.applyRemovalPolicy"></a>
 
@@ -1489,7 +1627,7 @@ No-op if target is undefined.
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@kikoda/cdk-constructs.DatabaseEventRule.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@kikoda/cdk-constructs.DatabaseEventRule.isConstruct"></a>
 
 ```typescript
 import { DatabaseEventRule } from '@kikoda/cdk-constructs'
@@ -1498,6 +1636,20 @@ DatabaseEventRule.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@kikoda/cdk-constructs.DatabaseEventRule.isConstruct.parameter.x"></a>
 
@@ -1655,6 +1807,8 @@ The name event rule.
 
 ### InstanceAutoStart <a name="InstanceAutoStart" id="@kikoda/cdk-constructs.InstanceAutoStart"></a>
 
+- *Implements:* constructs.IConstruct, constructs.IDependable
+
 `InstanceAutoStart` creates an AWS CloudWatch Event Rule that starts an EC2 instance on a schedule.
 
 #### Initializers <a name="Initializers" id="@kikoda/cdk-constructs.InstanceAutoStart.Initializer"></a>
@@ -1696,6 +1850,7 @@ new InstanceAutoStart(scope: Construct, id: string, props: InstanceAutoStartProp
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.InstanceAutoStart.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStart.with">with</a></code> | Applies one or more mixins to this construct. |
 
 ---
 
@@ -1707,6 +1862,27 @@ public toString(): string
 
 Returns a string representation of this construct.
 
+##### `with` <a name="with" id="@kikoda/cdk-constructs.InstanceAutoStart.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@kikoda/cdk-constructs.InstanceAutoStart.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
+
 #### Static Functions <a name="Static Functions" id="Static Functions"></a>
 
 | **Name** | **Description** |
@@ -1715,7 +1891,7 @@ Returns a string representation of this construct.
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@kikoda/cdk-constructs.InstanceAutoStart.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@kikoda/cdk-constructs.InstanceAutoStart.isConstruct"></a>
 
 ```typescript
 import { InstanceAutoStart } from '@kikoda/cdk-constructs'
@@ -1724,6 +1900,20 @@ InstanceAutoStart.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@kikoda/cdk-constructs.InstanceAutoStart.isConstruct.parameter.x"></a>
 
@@ -1755,6 +1945,8 @@ The tree node.
 
 
 ### InstanceAutoStop <a name="InstanceAutoStop" id="@kikoda/cdk-constructs.InstanceAutoStop"></a>
+
+- *Implements:* constructs.IConstruct, constructs.IDependable
 
 `InstanceAutoStop` creates an AWS CloudWatch Event Rule that stops an EC2 instance on a schedule.
 
@@ -1797,6 +1989,7 @@ new InstanceAutoStop(scope: Construct, id: string, props: InstanceAutoStopProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.InstanceAutoStop.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@kikoda/cdk-constructs.InstanceAutoStop.with">with</a></code> | Applies one or more mixins to this construct. |
 
 ---
 
@@ -1808,6 +2001,27 @@ public toString(): string
 
 Returns a string representation of this construct.
 
+##### `with` <a name="with" id="@kikoda/cdk-constructs.InstanceAutoStop.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@kikoda/cdk-constructs.InstanceAutoStop.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
+
 #### Static Functions <a name="Static Functions" id="Static Functions"></a>
 
 | **Name** | **Description** |
@@ -1816,7 +2030,7 @@ Returns a string representation of this construct.
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@kikoda/cdk-constructs.InstanceAutoStop.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@kikoda/cdk-constructs.InstanceAutoStop.isConstruct"></a>
 
 ```typescript
 import { InstanceAutoStop } from '@kikoda/cdk-constructs'
@@ -1825,6 +2039,20 @@ InstanceAutoStop.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@kikoda/cdk-constructs.InstanceAutoStop.isConstruct.parameter.x"></a>
 
@@ -1856,6 +2084,8 @@ The tree node.
 
 
 ### StageAlarmTopic <a name="StageAlarmTopic" id="@kikoda/cdk-constructs.StageAlarmTopic"></a>
+
+- *Implements:* constructs.IConstruct, constructs.IDependable
 
 An alarm topic and optional cfn export of the topic name.
 
@@ -1904,6 +2134,7 @@ The configuration for the construct.
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.StageAlarmTopic.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@kikoda/cdk-constructs.StageAlarmTopic.with">with</a></code> | Applies one or more mixins to this construct. |
 
 ---
 
@@ -1915,6 +2146,27 @@ public toString(): string
 
 Returns a string representation of this construct.
 
+##### `with` <a name="with" id="@kikoda/cdk-constructs.StageAlarmTopic.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@kikoda/cdk-constructs.StageAlarmTopic.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
+
 #### Static Functions <a name="Static Functions" id="Static Functions"></a>
 
 | **Name** | **Description** |
@@ -1923,7 +2175,7 @@ Returns a string representation of this construct.
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@kikoda/cdk-constructs.StageAlarmTopic.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@kikoda/cdk-constructs.StageAlarmTopic.isConstruct"></a>
 
 ```typescript
 import { StageAlarmTopic } from '@kikoda/cdk-constructs'
@@ -1932,6 +2184,20 @@ StageAlarmTopic.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@kikoda/cdk-constructs.StageAlarmTopic.isConstruct.parameter.x"></a>
 
@@ -1990,6 +2256,8 @@ The CFN Export, will be populated if createCfnExport is true.
 
 ### Website <a name="Website" id="@kikoda/cdk-constructs.Website"></a>
 
+- *Implements:* constructs.IConstruct, constructs.IDependable
+
 Deploy a single page app with a standard static website architecture to AWS using CloudFront, S3, and Route53.
 
 This is typically
@@ -2035,6 +2303,7 @@ new Website(scope: Construct, id: string, props: WebsiteProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@kikoda/cdk-constructs.Website.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@kikoda/cdk-constructs.Website.with">with</a></code> | Applies one or more mixins to this construct. |
 
 ---
 
@@ -2046,6 +2315,27 @@ public toString(): string
 
 Returns a string representation of this construct.
 
+##### `with` <a name="with" id="@kikoda/cdk-constructs.Website.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@kikoda/cdk-constructs.Website.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
+
 #### Static Functions <a name="Static Functions" id="Static Functions"></a>
 
 | **Name** | **Description** |
@@ -2054,7 +2344,7 @@ Returns a string representation of this construct.
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@kikoda/cdk-constructs.Website.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@kikoda/cdk-constructs.Website.isConstruct"></a>
 
 ```typescript
 import { Website } from '@kikoda/cdk-constructs'
@@ -2063,6 +2353,20 @@ Website.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@kikoda/cdk-constructs.Website.isConstruct.parameter.x"></a>
 
